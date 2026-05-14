@@ -1,1 +1,6 @@
 .worktrees/
+.claude/
+.DS_Store
+scratch/
+scratch-test*.js
+stress_results.json
