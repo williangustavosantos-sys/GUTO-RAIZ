@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GUTO · Chat Principal</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100dvh; background: radial-gradient(120% 80% at 50% 0%, #f4f8fc 0%, #d9e3ee 60%, #b9c8da 100%); -webkit-font-smoothing: antialiased; font-family: "Inter", system-ui, sans-serif; }
+  .stage { min-height: 100dvh; display: grid; place-items: center; padding: 28px 16px; }
+
+  /* Phone shell */
+  .phone {
+    position: relative;
+    width: min(420px, calc(100vw - 32px));
+    aspect-ratio: 393/852;
+    border-radius: 52px;
+    padding: 12px;
+    background: linear-gradient(180deg, #f6fbff 0%, #d6e1ec 12%, #93a4bc 29%, #eff6fd 44%, #91a4bd 58%, #d7e0ea 74%, #fdfefe 100%);
+    box-shadow:
+      0 50px 90px rgba(40, 60, 90, 0.34),
+      0 18px 30px rgba(40, 60, 90, 0.22),
+      0 0 0 1px rgba(255,255,255,0.55) inset;
+  }
+  .scr {
+    position: absolute; inset: 12px;
+    border-radius: 42px;
+    overflow: hidden;
+    background: #eef3f8;
+  }
+  .notch {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 118px; height: 32px; border-radius: 18px; background: #0a0e16; z-index: 30;
+  }
+  .sb {
+    position: absolute; top: 0; left: 0; right: 0; height: 54px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 32px 8px;
+    color: #0d2341; z-index: 20;
+    font: 700 15px/1 "Inter", sans-serif;
+    pointer-events: none;
+  }
+  .sb .right { display: flex; gap: 6px; align-items: center; }
+  .sb svg { display: block; }
+
+  /* Background + capsule + scan pillars */
+  .bg {
+    position: absolute; inset: 0;
+    background-image: url('assets/fundo.jpg');
+    background-size: cover;
+    background-position: 50% 30%;
+    transform: scale(1.05);
+    filter: saturate(1.05) brightness(1.02);
+  }
+  .bg::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.10) 22%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.30) 78%, rgba(220,232,244,0.85) 100%),
+      radial-gradient(120% 60% at 50% 8%, rgba(82,231,255,0.16), transparent 60%);
+    pointer-events: none;
+  }
+  .pillar {
+    position: absolute; top: 70px; bottom: 130px; width: 1.5px;
+    background: linear-gradient(180deg, transparent, rgba(82,231,255,0.7) 30%, rgba(82,231,255,0.35) 75%, transparent);
+    box-shadow: 0 0 14px rgba(82,231,255,0.7);
+    border-radius: 99px;
+  }
+  .pillar.l { left: 18px; } .pillar.r { right: 18px; }
+
+  /* Top bar — GUTO + partner */
+  .top {
+    position: absolute; top: 56px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 12px 22px;
+    z-index: 12;
+  }
+  .top .logo { height: 30px; filter: drop-shadow(0 0 14px rgba(82,231,255,0.55)); }
+  .top .amp {
+    color: #2D3748; font: 900 14px/1 "Inter", sans-serif; letter-spacing: 0.06em;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+  }
+  .top .amp .name {
+    color: #52e7ff;
+    text-shadow: 0 0 10px rgba(82,231,255,0.7), 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .top .gear {
+    position: absolute; right: 22px; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 10px rgba(90,124,168,0.10);
+    color: #4A5568;
+    display: grid; place-items: center;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* HUD — the big empowered circle around GUTO */
+  .hud {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(440px, 104%); aspect-ratio: 1;
+    z-index: 5;
+    pointer-events: none;
+  }
+  /* corner brackets — futurist tech frame */
+  .hud-frame {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(440px, 104%); aspect-ratio: 1;
+    z-index: 7;
+    pointer-events: none;
+  }
+  .hud-frame .br {
+    position: absolute; width: 28px; height: 28px;
+    border-color: rgba(82,231,255,0.85);
+    filter: drop-shadow(0 0 6px rgba(82,231,255,0.7));
+  }
+  .hud-frame .br.tl { top: -2%; left: 2%;  border-top: 2px solid; border-left: 2px solid; border-top-left-radius: 6px; }
+  .hud-frame .br.tr { top: -2%; right: 2%; border-top: 2px solid; border-right: 2px solid; border-top-right-radius: 6px; }
+  .hud-frame .br.bl { bottom: -2%; left: 2%; border-bottom: 2px solid; border-left: 2px solid; border-bottom-left-radius: 6px; }
+  .hud-frame .br.br2 { bottom: -2%; right: 2%; border-bottom: 2px solid; border-right: 2px solid; border-bottom-right-radius: 6px; }
+  /* radial spokes that glow out from center */
+  .hud-spokes {
+    position: absolute; inset: 12%; border-radius: 50%;
+    background:
+      conic-gradient(from 0deg,
+        transparent 0 14deg, rgba(82,231,255,0.18) 14deg 16deg, transparent 16deg 44deg,
+        rgba(82,231,255,0.18) 44deg 46deg, transparent 46deg 74deg,
+        rgba(82,231,255,0.18) 74deg 76deg, transparent 76deg 104deg,
+        rgba(82,231,255,0.18) 104deg 106deg, transparent 106deg 134deg,
+        rgba(82,231,255,0.18) 134deg 136deg, transparent 136deg 164deg,
+        rgba(82,231,255,0.18) 164deg 166deg, transparent 166deg 194deg,
+        rgba(82,231,255,0.18) 194deg 196deg, transparent 196deg 224deg,
+        rgba(82,231,255,0.18) 224deg 226deg, transparent 226deg 254deg,
+        rgba(82,231,255,0.18) 254deg 256deg, transparent 256deg 284deg,
+        rgba(82,231,255,0.18) 284deg 286deg, transparent 286deg 314deg,
+        rgba(82,231,255,0.18) 314deg 316deg, transparent 316deg 344deg,
+        rgba(82,231,255,0.18) 344deg 346deg, transparent 346deg 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 26%, #000 28% 46%, transparent 48%);
+            mask: radial-gradient(circle, transparent 0 26%, #000 28% 46%, transparent 48%);
+    mix-blend-mode: screen;
+  }
+  .hud .ring {
+    position: absolute; inset: 0; border-radius: 50%;
+  }
+  .hud .ring.r1 { /* outermost soft glow */
+    background: radial-gradient(circle, rgba(82,231,255,0.16) 0%, rgba(82,231,255,0.08) 45%, transparent 70%);
+    animation: pulse-soft 4.6s ease-in-out infinite;
+  }
+  .hud .ring.r0 { /* extra outer hairline with degree numerals */
+    inset: 2%;
+    border: 1px solid rgba(82,231,255,0.30);
+    box-shadow: 0 0 24px rgba(82,231,255,0.18);
+  }
+  .hud .ring.r2 { /* outer hairline */
+    inset: 8%;
+    border: 1px solid rgba(82,231,255,0.45);
+    box-shadow: 0 0 28px rgba(82,231,255,0.28), inset 0 0 28px rgba(82,231,255,0.18);
+  }
+  .hud .ring.r3 { /* dashed orbit */
+    inset: 16%;
+    border: 1px dashed rgba(82,231,255,0.55);
+    animation: rotate-cw 38s linear infinite;
+  }
+  .hud .ring.r4 { /* mid solid ring */
+    inset: 24%;
+    border: 1.5px solid rgba(82,231,255,0.7);
+    box-shadow: 0 0 18px rgba(82,231,255,0.45), inset 0 0 18px rgba(82,231,255,0.25);
+    background: radial-gradient(circle, rgba(82,231,255,0.10), transparent 55%);
+  }
+  .hud .ring.r5 { /* inner pad — bright glow */
+    inset: 30%;
+    background:
+      radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(82,231,255,0.32) 40%, rgba(82,231,255,0.10) 70%, transparent 85%);
+    filter: blur(0.4px);
+    animation: pulse 3.2s ease-in-out infinite;
+  }
+  /* Tick marks around mid ring */
+  .hud .ticks {
+    position: absolute; inset: 22%;
+    border-radius: 50%;
+    --tick: rgba(82,231,255,0.55);
+    background:
+      conic-gradient(from 0deg,
+        var(--tick) 0 0.6deg, transparent 0.6deg 30deg,
+        var(--tick) 30deg 30.6deg, transparent 30.6deg 60deg,
+        var(--tick) 60deg 60.6deg, transparent 60.6deg 90deg,
+        var(--tick) 90deg 90.6deg, transparent 90.6deg 120deg,
+        var(--tick) 120deg 120.6deg, transparent 120.6deg 150deg,
+        var(--tick) 150deg 150.6deg, transparent 150.6deg 180deg,
+        var(--tick) 180deg 180.6deg, transparent 180.6deg 210deg,
+        var(--tick) 210deg 210.6deg, transparent 210.6deg 240deg,
+        var(--tick) 240deg 240.6deg, transparent 240.6deg 270deg,
+        var(--tick) 270deg 270.6deg, transparent 270.6deg 300deg,
+        var(--tick) 300deg 300.6deg, transparent 300.6deg 330deg,
+        var(--tick) 330deg 330.6deg, transparent 330.6deg 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 calc(50% - 8px), #000 calc(50% - 8px) 50%, transparent 50%);
+            mask: radial-gradient(circle, transparent 0 calc(50% - 8px), #000 calc(50% - 8px) 50%, transparent 50%);
+    opacity: 0.85;
+    animation: rotate-ccw 60s linear infinite;
+  }
+  /* Quadrant cyan dots */
+  .hud .pip { position: absolute; width: 8px; height: 8px; border-radius: 50%;
+    background: #52e7ff; box-shadow: 0 0 12px rgba(82,231,255,0.95); }
+  .hud .pip.t { top: 22%; left: 50%; transform: translate(-50%, -50%); }
+  .hud .pip.r { right: 22%; top: 50%; transform: translate(50%, -50%); }
+  .hud .pip.b { bottom: 22%; left: 50%; transform: translate(-50%, 50%); }
+  .hud .pip.l { left: 22%; top: 50%; transform: translate(-50%, -50%); }
+
+  /* Data lines connecting GUTO to corner readouts */
+  .data-lines {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(440px, 104%); aspect-ratio: 1;
+    z-index: 6; pointer-events: none;
+    overflow: visible;
+  }
+  .data-lines svg { width: 100%; height: 100%; overflow: visible; }
+  .data-lines .ln { stroke: rgba(82,231,255,0.55); stroke-width: 1; fill: none;
+    filter: drop-shadow(0 0 4px rgba(82,231,255,0.8));
+    stroke-dasharray: 3 4;
+    animation: dash 4s linear infinite;
+  }
+  .data-lines .nd { fill: #52e7ff; filter: drop-shadow(0 0 6px rgba(82,231,255,1)); }
+  @keyframes dash { to { stroke-dashoffset: -28; } }
+
+  /* HUD readouts (corner tech labels) */
+  .hud .tag {
+    position: absolute;
+    font: 800 8.5px/1 "JetBrains Mono", "SFMono-Regular", monospace;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: #52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.7);
+    white-space: nowrap;
+  }
+  .hud .tag.tl { top: 6%; left: 12%; }
+  .hud .tag.tr { top: 6%; right: 12%; text-align: right; }
+  .hud .tag.bl { bottom: 6%; left: 12%; }
+  .hud .tag.br { bottom: 6%; right: 12%; text-align: right; }
+  .hud .tag b { color: #2D3748; text-shadow: 0 1px 0 rgba(255,255,255,0.7); display: block; font-weight: 900; font-size: 11px; letter-spacing: 0.08em; }
+
+  /* Scan line sweeping across the ring */
+  .hud .scan {
+    position: absolute; inset: 24%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(82,231,255,0.65) 18deg, transparent 36deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 calc(50% - 32px), #000 calc(50% - 32px) calc(50% - 1px), transparent calc(50% - 1px));
+            mask: radial-gradient(circle, transparent 0 calc(50% - 32px), #000 calc(50% - 32px) calc(50% - 1px), transparent calc(50% - 1px));
+    animation: rotate-cw 6s linear infinite;
+    mix-blend-mode: screen;
+  }
+
+  /* GUTO video centered in ring */
+  .guto-stage {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(420px, 108%); aspect-ratio: 1;
+    z-index: 9;
+    display: flex; align-items: flex-end; justify-content: center;
+    pointer-events: none;
+    animation: float 5.2s ease-in-out infinite;
+  }
+  /* Click target — only the central avatar area is tappable so chat below still works */
+  .guto-touch {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 36px));
+    width: 58%; aspect-ratio: 1;
+    z-index: 13;
+    cursor: pointer;
+    border-radius: 50%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* React glow — rings & platform bloom cyan in sync with GUTO */
+  .hud .ring, .hud .scan, .hud .ticks,
+  .platform .rim, .platform .disc { transition: filter 600ms ease; }
+  .hud.react .ring, .hud.react .scan, .hud.react .ticks,
+  .platform.react .rim, .platform.react .disc {
+    filter: drop-shadow(0 0 18px rgba(82,231,255,1)) brightness(1.30) saturate(1.4);
+  }
+  /* Slow expanding ring — radiates out while the glow builds */
+  .touch-ripple {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 36px));
+    width: 36%; aspect-ratio: 1; border-radius: 50%;
+    border: 1.5px solid rgba(82,231,255,0.8);
+    box-shadow: 0 0 28px rgba(82,231,255,0.7), inset 0 0 22px rgba(82,231,255,0.45);
+    pointer-events: none;
+    z-index: 14;
+    opacity: 0;
+  }
+  .touch-ripple.go { animation: ripple-out 1100ms cubic-bezier(.22,.61,.36,1) forwards; }
+  @keyframes ripple-out {
+    0%   { opacity: 0;    transform: translate(-50%, calc(-50% - 36px)) scale(0.55); }
+    15%  { opacity: 0.9; }
+    100% { opacity: 0;    transform: translate(-50%, calc(-50% - 36px)) scale(1.9); }
+  }
+  /* GUTO video centered in ring — TWO stacked wrappers crossfaded by JS rAF. */
+  .guto-stage .v-layer {
+    position: absolute; left: 50%; bottom: 0;
+    transform: translateX(-50%);
+    width: 108%;
+    transform-origin: 50% 80%;
+    will-change: opacity;
+    display: block;
+  }
+  .guto-stage video {
+    display: block; width: 100%; height: auto; object-fit: contain;
+    margin-bottom: 2%;
+    filter:
+      drop-shadow(0 24px 16px rgba(13,35,65,0.55))
+      drop-shadow(0 0 28px rgba(82,231,255,0.6))
+      drop-shadow(0 0 60px rgba(82,231,255,0.32));
+  }
+  /* React state — glow boost, applied via class toggle */
+  .guto-stage.react video {
+    filter:
+      drop-shadow(0 24px 18px rgba(13,35,65,0.55))
+      drop-shadow(0 0 60px rgba(82,231,255,1))
+      drop-shadow(0 0 120px rgba(82,231,255,0.85))
+      brightness(1.18) saturate(1.25);
+  }
+  /* Brief white-out at the peak of the transition — hides the video src swap */
+  .guto-veil {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(420px, 108%); aspect-ratio: 1;
+    z-index: 12;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(180,240,255,0.7) 30%, rgba(82,231,255,0.35) 55%, transparent 75%);
+    opacity: 0;
+    transition: opacity 320ms ease;
+    mix-blend-mode: screen;
+  }
+  .guto-veil.go { opacity: 1; }
+  @keyframes float {
+    0%, 100% { transform: translate(-50%, calc(-50% - 30px)); }
+    50%      { transform: translate(-50%, calc(-50% - 38px)); }
+  }
+
+  /* Hologram beam projecting GUTO from the platform */
+  .holo-beam {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(420px, 108%); aspect-ratio: 1;
+    z-index: 7;
+    pointer-events: none;
+  }
+  .holo-beam::before {
+    content: ""; position: absolute;
+    left: 50%; top: 28%; bottom: 14%;
+    width: 56%;
+    transform: translateX(-50%);
+    background:
+      linear-gradient(180deg,
+        rgba(82,231,255,0) 0%,
+        rgba(82,231,255,0.10) 35%,
+        rgba(82,231,255,0.32) 75%,
+        rgba(82,231,255,0.55) 100%);
+    -webkit-mask: linear-gradient(180deg, transparent 0%, #000 25%, #000 100%);
+            mask: linear-gradient(180deg, transparent 0%, #000 25%, #000 100%);
+    clip-path: polygon(28% 0%, 72% 0%, 92% 100%, 8% 100%);
+    filter: blur(2px);
+    mix-blend-mode: screen;
+  }
+  .holo-beam::after {
+    content: ""; position: absolute;
+    left: 50%; bottom: 12%;
+    width: 76%; height: 22%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center bottom, rgba(82,231,255,0.55) 0%, rgba(82,231,255,0.22) 40%, transparent 75%);
+    filter: blur(4px);
+    mix-blend-mode: screen;
+  }
+
+  /* Floating particles rising from the platform */
+  .particles {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(420px, 108%); aspect-ratio: 1;
+    z-index: 8; pointer-events: none;
+    overflow: hidden;
+    -webkit-mask: radial-gradient(circle, #000 0 50%, transparent 52%);
+            mask: radial-gradient(circle, #000 0 50%, transparent 52%);
+  }
+  .particles span {
+    position: absolute; bottom: 8%;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(82,231,255,1), 0 0 20px rgba(82,231,255,0.7);
+    animation: rise 4.5s linear infinite;
+    opacity: 0;
+  }
+  .particles span:nth-child(1) { left: 28%; animation-delay: 0.0s; }
+  .particles span:nth-child(2) { left: 42%; animation-delay: 0.6s; width:3px; height:3px; }
+  .particles span:nth-child(3) { left: 50%; animation-delay: 1.2s; width:5px; height:5px; }
+  .particles span:nth-child(4) { left: 58%; animation-delay: 1.8s; width:3px; height:3px; }
+  .particles span:nth-child(5) { left: 72%; animation-delay: 2.4s; }
+  .particles span:nth-child(6) { left: 36%; animation-delay: 3.0s; width:3px; height:3px; }
+  .particles span:nth-child(7) { left: 64%; animation-delay: 3.6s; width:4px; height:4px; }
+  .particles span:nth-child(8) { left: 48%; animation-delay: 4.2s; width:3px; height:3px; }
+  @keyframes rise {
+    0%   { transform: translateY(0)     scale(1);   opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: translateY(-220px) scale(0.4); opacity: 0; }
+  }
+  /* fallback while video loads */
+  .guto-stage .fallback { width: 60%; height: 60%; }
+  /* Platform / pedestal that GUTO stands on — sits at bottom of the HUD */
+  .platform {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, calc(-50% - 30px));
+    width: min(420px, 108%); aspect-ratio: 1;
+    z-index: 10; pointer-events: none;
+  }
+  /* Contact shadow */
+  .platform .shadow {
+    position: absolute; left: 50%; bottom: 13%;
+    width: 58%; height: 22px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(13,35,65,0.55) 0%, rgba(13,35,65,0.25) 40%, transparent 75%);
+    filter: blur(6px);
+    animation: shadow-pulse 5.2s ease-in-out infinite;
+  }
+  @keyframes shadow-pulse {
+    0%, 100% { width: 58%; opacity: 0.9; }
+    50%      { width: 50%; opacity: 0.6; }
+  }
+  /* Big glowing disc — the platform */
+  .platform .disc {
+    position: absolute; left: 50%; bottom: 5%;
+    width: 78%; height: 64px;
+    transform: translateX(-50%);
+  }
+  .platform .disc .ring-glow {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(82,231,255,0.85) 0%, rgba(82,231,255,0.35) 40%, transparent 75%);
+    filter: blur(6px);
+  }
+  .platform .disc .plate {
+    position: absolute; left: 8%; right: 8%; top: 40%; bottom: 16%;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 50% 30%, #ffffff 0%, #d6f7ff 25%, #7fcedf 60%, #2a6f85 100%);
+    box-shadow:
+      0 8px 18px rgba(82,231,255,0.65),
+      0 0 28px rgba(82,231,255,0.55),
+      inset 0 2px 0 rgba(255,255,255,0.95),
+      inset 0 -3px 6px rgba(13,35,65,0.32);
+  }
+  .platform .disc .plate::before {
+    content: ""; position: absolute; inset: 18% 14%;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(82,231,255,0.85), rgba(82,231,255,0.20));
+    box-shadow: 0 0 14px rgba(82,231,255,0.9), inset 0 1px 0 rgba(255,255,255,0.85);
+  }
+  /* Cyan rim ring around the platform — "power on" glow */
+  .platform .rim {
+    position: absolute; left: 50%; bottom: 8%;
+    width: 86%; height: 30px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    border: 1.5px solid rgba(82,231,255,0.85);
+    box-shadow: 0 0 22px rgba(82,231,255,0.65), inset 0 0 16px rgba(82,231,255,0.32);
+    animation: rim-pulse 2.8s ease-in-out infinite;
+  }
+  @keyframes rim-pulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(82,231,255,0.55), inset 0 0 14px rgba(82,231,255,0.30); }
+    50%      { box-shadow: 0 0 32px rgba(82,231,255,0.95), inset 0 0 22px rgba(82,231,255,0.50); }
+  }
+
+  /* Status chip floating above the circle */
+  .status-chip {
+    position: absolute; left: 50%; top: 122px; transform: translateX(-50%);
+    z-index: 11;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.32);
+    border: 1px solid rgba(82,231,255,0.55);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 0 18px rgba(82,231,255,0.30);
+    color: #0d2341;
+    font: 900 9px/1 "JetBrains Mono", monospace; letter-spacing: 0.30em; text-transform: uppercase;
+  }
+  .status-chip .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #52e7ff;
+    box-shadow: 0 0 10px rgba(82,231,255,1);
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  /* === Chat overlay sitting slightly ON TOP of GUTO === */
+  .chat-stack {
+    position: absolute; left: 18px; right: 18px; bottom: 178px;
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 14;
+    pointer-events: none;
+  }
+  .chat-stack > * { pointer-events: auto; }
+
+  .bubble {
+    position: relative;
+    align-self: stretch;
+    padding: 14px 18px 14px 16px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(220,240,250,0.32) 100%);
+    border: 1px solid rgba(255,255,255,0.55);
+    backdrop-filter: blur(22px) saturate(1.4);
+    -webkit-backdrop-filter: blur(22px) saturate(1.4);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      inset 0 0 0 1px rgba(82,231,255,0.25),
+      0 0 28px rgba(82,231,255,0.22),
+      0 18px 38px rgba(40,60,90,0.18);
+    color: #0d2341;
+  }
+  .bubble.guto::before {
+    content: ""; position: absolute; left: 22px; bottom: -8px;
+    width: 16px; height: 16px;
+    background: inherit; border: inherit;
+    border-top: none; border-left: none;
+    transform: rotate(45deg);
+    backdrop-filter: inherit; -webkit-backdrop-filter: inherit;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble .who {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    font: 900 9px/1 "JetBrains Mono", monospace; letter-spacing: 0.30em; text-transform: uppercase;
+    color: #52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.6), 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .bubble .who .live { width: 6px; height: 6px; border-radius: 50%; background:#52e7ff; box-shadow: 0 0 8px rgba(82,231,255,1); animation: pulse-dot 1.6s ease-in-out infinite; }
+  .bubble .text {
+    font: 600 14.5px/1.45 "Inter", sans-serif;
+    color: #0d2341; letter-spacing: -0.005em;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .bubble .text strong { color: #0d2341; font-weight: 800; }
+
+  /* Quick reply chips — even more transparent */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 2px; }
+  .chip {
+    padding: 9px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.22);
+    border: 1px solid rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    color: #0d2341;
+    font: 800 11px/1 "Inter", sans-serif; letter-spacing: 0.06em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 6px 18px rgba(40,60,90,0.10);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip:hover { background: rgba(82,231,255,0.20); border-color: rgba(82,231,255,0.7); }
+  .chip .k { color: #52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.7); font: 900 9px/1 "JetBrains Mono", monospace; letter-spacing: 0.18em; }
+
+  /* Chat input pill */
+  .input-wrap {
+    position: absolute; left: 18px; right: 18px; bottom: 110px;
+    z-index: 15;
+  }
+  .input {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 7px 7px 16px;
+    background: rgba(255,255,255,0.55);
+    border-radius: 999px;
+    border: 1px solid rgba(82,231,255,0.65);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.95),
+      0 0 24px rgba(82,231,255,0.30),
+      0 14px 30px rgba(40,60,90,0.12);
+  }
+  .input input {
+    flex: 1; min-width: 0;
+    border: none; outline: none; background: transparent;
+    color: #0d2341;
+    font: 600 14px/1.2 "Inter", sans-serif;
+    padding: 10px 4px;
+  }
+  .input input::placeholder { color: rgba(13,35,65,0.45); }
+  .input button {
+    width: 38px; height: 38px; border-radius: 999px; border: none; cursor: pointer;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .input .mic { background: transparent; color: #52e7ff; }
+  .input .send {
+    background: linear-gradient(180deg, #7df0ff 0%, #52e7ff 50%, #1ec1de 100%);
+    color: #0d2341;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 4px 14px rgba(82,231,255,0.55);
+  }
+
+  /* Bottom nav — 6 tiles, GUTO active */
+  .nav {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 10px 14px max(env(safe-area-inset-bottom), 18px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(228,237,247,0.78) 60%, rgba(228,237,247,0.92) 100%);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border-top: 1px solid rgba(255,255,255,0.85);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 -8px 22px rgba(122,138,156,0.10);
+    z-index: 16;
+  }
+  .nav .row {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+  }
+  .nav button {
+    height: 56px; border-radius: 16px; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    background: rgba(255,255,255,0.55);
+    box-shadow: inset 1px 2px 4px rgba(152,163,179,0.20), inset -2px -3px 6px rgba(255,255,255,0.95);
+    color: rgba(13,35,65,0.55);
+  }
+  .nav button.active {
+    background: linear-gradient(180deg, rgba(82,231,255,0.34), rgba(82,231,255,0.12));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 0 14px rgba(82,231,255,0.55);
+    color: #52e7ff;
+  }
+  .nav button .lbl {
+    font: 900 7.5px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.20em; text-transform: uppercase;
+  }
+  .nav button.active .lbl { text-shadow: 0 0 6px rgba(82,231,255,0.55); }
+
+  /* Animations */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 1.0; transform: scale(1.06); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1.0; }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(0.7); opacity: 0.6; }
+  }
+  @keyframes rotate-cw  { to { transform: rotate(360deg);  } }
+  @keyframes rotate-ccw { to { transform: rotate(-360deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hud .ring, .hud .ticks, .hud .scan, .status-chip .dot, .bubble .who .live { animation: none !important; }
+  }
+
+  /* Floor caption under the phone */
+  .caption {
+    margin-top: 26px; text-align: center;
+    color: #4A5568; font: 800 10px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.30em; text-transform: uppercase;
+  }
+  .caption span { color: #52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.55); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div>
+  <div class="phone" data-screen-label="01 CHAT PRINCIPAL">
+    <div class="scr">
+      <!-- background capsule -->
+      <div class="bg"></div>
+      <div class="pillar l"></div>
+      <div class="pillar r"></div>
+
+      <!-- Notch + status bar -->
+      <div class="notch"></div>
+      <div class="sb">
+        <span>9:41</span>
+        <span class="right">
+          <svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="6" width="3" height="5" rx="0.6" fill="currentColor"/><rect x="5" y="4" width="3" height="7" rx="0.6" fill="currentColor"/><rect x="10" y="2" width="3" height="9" rx="0.6" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx="0.6" fill="currentColor"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 3C10 3 11.8 3.8 13.2 5.1L14.2 4.1C12.5 2.5 10.4 1.5 8 1.5C5.6 1.5 3.5 2.5 1.8 4.1L2.8 5.1C4.2 3.8 6 3 8 3Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.4" fill="currentColor"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity="0.4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/><path d="M24 4V8C24.7 7.7 25.3 6.9 25.3 6C25.3 5.1 24.7 4.3 24 4Z" fill="currentColor" fill-opacity="0.5"/></svg>
+        </span>
+      </div>
+
+      <!-- Top header — logo + partner + CHAT title -->
+      <div class="top">
+        <img class="logo" src="assets/logo.png" alt="GUTO">
+        <span class="amp">&amp; <span class="name">WILLIAN</span></span>
+        <button class="gear" aria-label="Configurações">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        </button>
+      </div>
+      <div style="position:absolute;top:104px;left:0;right:0;text-align:center;z-index:11;">
+        <div style="display:inline-flex;align-items:center;gap:10px;padding:5px 16px;border-radius:999px;background:rgba(255,255,255,0.4);border:1px solid rgba(82,231,255,0.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.8),0 0 14px rgba(82,231,255,0.18);font:900 11px/1 'JetBrains Mono',monospace;letter-spacing:0.36em;color:#0d2341;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#52e7ff;box-shadow:0 0 10px rgba(82,231,255,1);"></span>
+          CHAT
+        </div>
+      </div>
+
+      <!-- Live status chip -->
+      <div class="status-chip">
+        <span class="dot"></span>
+        GUTO · ONLINE
+      </div>
+
+      <!-- HUD — the empowered circle -->
+      <div class="hud">
+        <div class="ring r0"></div>
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="ring r4"></div>
+        <div class="ring r5"></div>
+        <div class="ticks"></div>
+        <div class="hud-spokes"></div>
+        <div class="scan"></div>
+        <span class="pip t"></span>
+        <span class="pip r"></span>
+        <span class="pip b"></span>
+        <span class="pip l"></span>
+        <div class="tag tl">XP <b>1.250</b></div>
+        <div class="tag tr">FORMA<br><b>BABY</b></div>
+        <div class="tag bl">DIA <b>23</b></div>
+        <div class="tag br">PACTO<br><b>ATIVO</b></div>
+      </div>
+      <div class="hud-frame">
+        <span class="br tl"></span>
+        <span class="br tr"></span>
+        <span class="br bl"></span>
+        <span class="br br2"></span>
+      </div>
+
+      <!-- Data lines from GUTO core to corner readouts -->
+      <div class="data-lines">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path class="ln" d="M 38 38 L 18 18 L 4 18"/>
+          <path class="ln" d="M 62 38 L 82 18 L 96 18"/>
+          <path class="ln" d="M 38 62 L 18 82 L 4 82"/>
+          <path class="ln" d="M 62 62 L 82 82 L 96 82"/>
+          <circle class="nd" cx="38" cy="38" r="1.2"/>
+          <circle class="nd" cx="62" cy="38" r="1.2"/>
+          <circle class="nd" cx="38" cy="62" r="1.2"/>
+          <circle class="nd" cx="62" cy="62" r="1.2"/>
+        </svg>
+      </div>
+
+      <!-- Hologram projection beam -->
+      <div class="holo-beam"></div>
+
+      <!-- Platform that GUTO stands on -->
+      <div class="platform">
+        <div class="shadow"></div>
+        <div class="disc">
+          <div class="ring-glow"></div>
+          <div class="plate"></div>
+        </div>
+        <div class="rim"></div>
+      </div>
+
+      <!-- Floating particles -->
+      <div class="particles">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <!-- GUTO video, centered inside the circle, standing on platform -->
+      <!-- Two stacked videos: A is the base (normal baby), B is the alt costume (super).
+           Tap → smooth crossfade between them. Both play in sync (same currentTime)
+           so it looks like the avatar simply changed outfits mid-motion. -->
+      <div class="guto-stage">
+        <div class="v-layer" id="gutoLayerA" style="opacity: 1;">
+          <video id="gutoVideoA" src="assets/guto-baby.webm"       autoplay loop muted playsinline></video>
+        </div>
+        <div class="v-layer" id="gutoLayerB" style="opacity: 0;">
+          <video id="gutoVideoB" src="assets/guto-baby-super.webm" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+
+      <!-- Invisible tap target sitting on top of GUTO so any click on him triggers the reaction -->
+      <div class="guto-touch" id="gutoTouch" role="button" aria-label="Tocar no GUTO"></div>
+
+      <!-- Ripple that bursts out when GUTO is tapped -->
+      <div class="touch-ripple" id="gutoRipple"></div>
+
+      <!-- White veil that flashes at the peak of the transition to hide the video swap -->
+      <div class="guto-veil" id="gutoVeil"></div>
+
+      <!-- Chat stack overlapping the lower half of GUTO -->
+      <div class="chat-stack">
+        <div class="bubble guto" data-comment-anchor="chat-bubble-guto">
+          <div class="who"><span class="live"></span> GUTO · AGORA</div>
+          <div class="text">Finalmente, <strong>WILLIAN</strong>. Tava te esperando. Já organizei o teu plano de hoje — bora começar?</div>
+        </div>
+        <div class="chips">
+          <button class="chip"><span class="k">A</span> Bora treinar</button>
+          <button class="chip"><span class="k">B</span> Me mostra o plano</button>
+          <button class="chip"><span class="k">C</span> Hoje tô zerado</button>
+        </div>
+      </div>
+
+      <!-- Chat input -->
+      <div class="input-wrap">
+        <div class="input">
+          <button class="mic" aria-label="Falar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 0 1-14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+          <input type="text" placeholder="Falar com GUTO…">
+          <button class="send" aria-label="Enviar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <nav class="nav">
+        <div class="row">
+          <button class="active" aria-label="Guto">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>
+            <span class="lbl">GUTO</span>
+          </button>
+          <button aria-label="Treino">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg>
+            <span class="lbl">TREINO</span>
+          </button>
+          <button aria-label="Dieta">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2M6 11v11M14 4v6a2 2 0 0 0 2 2h2v10M16 2v2"/></svg>
+            <span class="lbl">DIETA</span>
+          </button>
+          <button aria-label="Arena">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5 18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/></svg>
+            <span class="lbl">ARENA</span>
+          </button>
+          <button aria-label="Evolução">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            <span class="lbl">EVO.</span>
+          </button>
+          <button aria-label="Percurso">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span class="lbl">PERC.</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="caption">08 · CHAT GUTO &nbsp;·&nbsp; <span>página principal</span></div>
+  </div>
+</div>
+<script>
+  (function () {
+    const stage   = document.querySelector('.guto-stage');
+    const vidA    = document.getElementById('gutoVideoA'); // base costume
+    const vidB    = document.getElementById('gutoVideoB'); // alt costume
+    const layerA  = document.getElementById('gutoLayerA');
+    const layerB  = document.getElementById('gutoLayerB');
+    const touch   = document.getElementById('gutoTouch');
+    const ripple  = document.getElementById('gutoRipple');
+    const hud     = document.querySelector('.hud');
+    const plat    = document.querySelector('.platform');
+    // Veil left in DOM for back-compat but unused in the new crossfade flow
+    const veil    = document.getElementById('gutoVeil');
+
+    let busy = false;
+    let showingAlt = false; // false = A visible, true = B visible
+
+    // Keep both videos in time-sync so the crossfade looks like the SAME baby
+    // simply changing outfit — not two clips fighting each other.
+    function syncTime(from, to) {
+      try {
+        if (isFinite(from.currentTime)) {
+          to.currentTime = from.currentTime;
+        }
+      } catch (_) {}
+    }
+    // Whenever the visible video loops, snap the hidden one to match
+    vidA.addEventListener('timeupdate', () => { if (!showingAlt) syncTime(vidA, vidB); });
+    vidB.addEventListener('timeupdate', () => { if ( showingAlt) syncTime(vidB, vidA); });
+
+    function enterReact() {
+      hud.classList.add('react');
+      plat.classList.add('react');
+      stage.classList.add('react');
+    }
+    function exitReact() {
+      hud.classList.remove('react');
+      plat.classList.remove('react');
+      stage.classList.remove('react');
+    }
+    function popRipple() {
+      ripple.classList.remove('go');
+      void ripple.offsetWidth;
+      ripple.classList.add('go');
+    }
+
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+    // JS-driven opacity crossfade (CSS transitions are unreliable on these wrappers in some previews)
+    function rafFade(elFrom, elTo, durMs) {
+      return new Promise((resolve) => {
+        const start = performance.now();
+        function tick(now) {
+          const t = Math.min(1, (now - start) / durMs);
+          // ease in-out cubic
+          const e = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+          elFrom.style.setProperty('opacity', String(1 - e), 'important');
+          elTo  .style.setProperty('opacity', String(e),     'important');
+          if (t < 1) requestAnimationFrame(tick); else resolve();
+        }
+        requestAnimationFrame(tick);
+      });
+    }
+
+    async function react() {
+      if (busy) return;
+      busy = true;
+
+      // 1) Glow + ripple build-up
+      popRipple();
+      enterReact();
+      await wait(320);
+
+      // 2) Sync the hidden video to the visible one's timestamp, kick play, then crossfade
+      if (!showingAlt) {
+        syncTime(vidA, vidB);
+        const p = vidB.play(); if (p && p.catch) p.catch(() => {});
+        await rafFade(layerA, layerB, 520);
+        showingAlt = true;
+      } else {
+        syncTime(vidB, vidA);
+        const p = vidA.play(); if (p && p.catch) p.catch(() => {});
+        await rafFade(layerB, layerA, 520);
+        showingAlt = false;
+      }
+
+      // 3) Cool down the glow
+      await wait(160);
+      exitReact();
+
+      await wait(220);
+      busy = false;
+    }
+
+    touch.addEventListener('click',      react);
+    touch.addEventListener('touchstart', (e) => { e.preventDefault(); react(); }, { passive: false });
+  })();
+</script>
+</body>
+</html>

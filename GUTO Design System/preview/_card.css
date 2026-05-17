@@ -1,0 +1,87 @@
+/* Shared base for all preview cards. ~700x150 default frame. */
+@import url("../colors_and_type.css");
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-page);
+  font-family: var(--guto-font-tech);
+  color: var(--fg1);
+  -webkit-font-smoothing: antialiased;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  background: var(--bg-page);
+}
+
+.row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.col { display: flex; flex-direction: column; }
+.fill { flex: 1; min-width: 0; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-6 { gap: 24px; }
+
+/* ----- a single frosted GUTO plate, scaled to fit a card ----- */
+.plate {
+  background: var(--guto-frost-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--guto-radius-lg);
+  box-shadow:
+      var(--guto-deboss),
+      var(--guto-shadow-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ----- swatch tile ----- */
+.swatch {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--guto-radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8px 10px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(13,35,65,0.06);
+  flex-shrink: 0;
+}
+.swatch.sm { width: 64px; height: 64px; }
+.swatch .name {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.swatch .hex {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  opacity: 0.78;
+  margin-top: 3px;
+}
+
+.token-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(13,35,65,0.10);
+  font-size: 11px;
+}
+.token-row:last-child { border-bottom: none; }
+.token-row .k { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg2); }
+.token-row .v { font-family: var(--guto-font-tech); color: var(--fg1); font-weight: 500; }

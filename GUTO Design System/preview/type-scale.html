@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Type ramp</title>
+<style>
+  .card { flex-direction: column; align-items: stretch; gap: 4px; padding: 18px 24px; }
+  .row {
+    display: grid;
+    grid-template-columns: 90px 1fr 88px;
+    align-items: baseline;
+    gap: 16px;
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(13,35,65,0.10);
+  }
+  .row:last-child { border-bottom: none; }
+  .lbl { font-size: 9px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg3); }
+  .meta { font-family: var(--guto-font-tech); font-size: 9px; color: var(--fg3); text-align: right; letter-spacing: 0.04em; }
+  .sample { color: var(--fg1); }
+</style>
+</head><body>
+<div class="card">
+  <div class="row"><div class="lbl">Hero</div><div class="sample" style="font: 900 44px/0.95 var(--guto-font-tech); letter-spacing:-0.01em;">GUTO</div><div class="meta">Mono · 900 · 44/0.95</div></div>
+  <div class="row"><div class="lbl">H2</div><div class="sample" style="font: 900 22px/1.15 var(--guto-font-tech);">Calibragem inicial</div><div class="meta">Mono · 900 · 22/1.15</div></div>
+  <div class="row"><div class="lbl">H3</div><div class="sample" style="font: 800 16px/1.2 var(--guto-font-tech);">Peito e tríceps</div><div class="meta">Mono · 800 · 16/1.2</div></div>
+  <div class="row"><div class="lbl">Body</div><div class="sample" style="font: 500 13px/1.5 var(--guto-font-tech);">Estamos prontos. Sem distrações.</div><div class="meta">Mono · 500 · 13/1.5</div></div>
+  <div class="row"><div class="lbl">Label</div><div class="sample" style="font: 900 10px/1 var(--guto-font-tech); letter-spacing:0.18em; text-transform:uppercase; color: var(--fg2);">USUÁRIO OU E-MAIL</div><div class="meta">Mono · 900 · 10 · 0.18em</div></div>
+  <div class="row"><div class="lbl">Stamp</div><div class="sample" style="font: 900 9px/1 var(--guto-font-tech); letter-spacing:0.30em; text-transform:uppercase; color: var(--fg3);">ACESSO RESTRITO</div><div class="meta">Mono · 900 · 9 · 0.30em</div></div>
+</div>
+</body></html>

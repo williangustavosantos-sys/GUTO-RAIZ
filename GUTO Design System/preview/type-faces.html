@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Two faces</title>
+<style>
+  .card { padding: 22px 24px; gap: 16px; }
+  .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+  .face {
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.7);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .face .stamp { font: 900 9px/1 var(--guto-font-tech); letter-spacing: 0.30em; text-transform: uppercase; color: var(--fg2); }
+  .face .name { font-weight: 900; font-size: 18px; }
+  .face .sample { font-size: 28px; font-weight: 900; }
+  .face .meta { font: 500 10px/1.4 var(--guto-font-tech); color: var(--fg2); margin-top: auto; }
+  .display .name, .display .sample { font-family: var(--guto-font-display); }
+  .tech .name, .tech .sample { font-family: var(--guto-font-tech); }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="face tech">
+    <div class="stamp">TECH · PRIMARY UI</div>
+    <div class="name">JetBrains Mono</div>
+    <div class="sample">GUTO 0123</div>
+    <div class="meta">→ Substitutes for SF Mono. Used for every label, button, eyebrow, value readout. Wide tracking on uppercase.</div>
+  </div>
+  <div class="face display">
+    <div class="stamp">DISPLAY · BRAND MARK</div>
+    <div class="name">Inter Tight</div>
+    <div class="sample">GUTO 0123</div>
+    <div class="meta">→ Substitutes for SF Pro Display. Reserved for hero / brand. Almost never used in chrome.</div>
+  </div>
+</div></div>
+</body></html>

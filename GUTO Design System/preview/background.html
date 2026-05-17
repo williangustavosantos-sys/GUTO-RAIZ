@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Background</title>
+<style>
+  .card { padding: 0; align-items: stretch; }
+  .stage { width: 100%; display: grid; grid-template-columns: 1fr 1.4fr; }
+  .image {
+    background: url("../assets/FUNDO_APP.jpg") center / cover no-repeat;
+    position: relative;
+  }
+  .image::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.14) 100%);
+  }
+  .meta {
+    padding: 22px 26px;
+    background: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    border-left: 1px solid var(--card-border);
+  }
+  .stamp { font: 900 9px/1 var(--guto-font-tech); letter-spacing: 0.30em; text-transform: uppercase; color: var(--fg2); }
+  h3 { margin: 0; font: 900 18px/1.15 var(--guto-font-tech); color: var(--fg1); }
+  p { margin: 0; font: 500 11px/1.5 var(--guto-font-tech); color: var(--fg2); }
+  .file { font: 600 10px/1 var(--guto-font-tech); color: var(--fg3); padding-top: 6px; border-top: 1px dashed rgba(13,35,65,0.1); }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="image"></div>
+  <div class="meta">
+    <div class="stamp">Hero · The Capsule</div>
+    <h3>Sala-GUTO</h3>
+    <p>White-room photographic interior. Used full-bleed behind the avatar stage. Slight cool cast, no grain. Reuse as-is — never recreate.</p>
+    <div class="file">assets/FUNDO_APP.jpg</div>
+  </div>
+</div></div>
+</body></html>

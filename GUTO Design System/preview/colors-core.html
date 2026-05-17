@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Core palette</title>
+<style>
+  .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; width: 100%; }
+  .sw {
+    height: 110px;
+    border-radius: 14px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(13,35,65,0.08);
+  }
+  .sw .top {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .sw .bot { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; line-height: 1.1; }
+</style>
+</head><body>
+<div class="card"><div class="grid">
+  <div class="sw" style="background:#ffffff; color:#0d2341;">
+    <div class="top">white</div><div class="bot">#FFFFFF<br><span style="opacity:0.6">--guto-white</span></div>
+  </div>
+  <div class="sw" style="background:#f7f9fc; color:#0d2341;">
+    <div class="top">surface</div><div class="bot">#F7F9FC<br><span style="opacity:0.6">--guto-surface</span></div>
+  </div>
+  <div class="sw" style="background:#edf2f8; color:#0d2341;">
+    <div class="top">surface deep</div><div class="bot">#EDF2F8<br><span style="opacity:0.6">--surface-deep</span></div>
+  </div>
+  <div class="sw" style="background:#52e7ff; color:#0d2341;">
+    <div class="top">cyan ⚡</div><div class="bot">#52E7FF<br><span style="opacity:0.7">--guto-cyan</span></div>
+  </div>
+  <div class="sw" style="background:#0d2341; color:#52e7ff;">
+    <div class="top">navy</div><div class="bot" style="color:#fff;">#0D2341<br><span style="opacity:0.6">--guto-navy</span></div>
+  </div>
+  <div class="sw" style="background:#9d2b2b; color:#fff;">
+    <div class="top">destructive</div><div class="bot">#9D2B2B<br><span style="opacity:0.7">--destructive</span></div>
+  </div>
+</div></div>
+</body></html>

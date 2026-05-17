@@ -1,0 +1,59 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Cyan accent</title>
+<style>
+  .card { padding: 22px; gap: 18px; }
+  .grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; width: 100%; align-items: stretch; }
+  .glow-stage {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(82,231,255,0.18) 0%, rgba(82,231,255,0) 60%),
+      linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .orb {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #aaf3ff 0%, #52e7ff 50%, #1ec1de 100%);
+    box-shadow:
+      0 0 22px rgba(82,231,255,0.42),
+      0 0 60px rgba(82,231,255,0.34),
+      inset 0 -8px 14px rgba(13,35,65,0.18);
+  }
+  .scan {
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(82,231,255,0.72), transparent);
+    filter: blur(0.4px) drop-shadow(0 0 8px rgba(82,231,255,0.52));
+  }
+  .meta-stack { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .alpha-row { display: grid; grid-template-columns: 28px 1fr 80px; gap: 10px; align-items: center; font-size: 10px; }
+  .alpha-row .pip { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(13,35,65,0.10); }
+  .alpha-row .lbl { font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase; color: var(--fg2); }
+  .alpha-row .v { font-family: var(--guto-font-tech); color: var(--fg1); font-weight: 600; }
+</style>
+</head><body>
+<div class="card">
+<div class="grid">
+  <div class="glow-stage">
+    <div class="scan"></div>
+    <div class="orb"></div>
+    <div style="font-family: var(--guto-font-tech); font-size: 10px; letter-spacing: 0.30em; text-transform: uppercase; color:#52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.7);">SIGNAL · ALIVE</div>
+  </div>
+  <div class="meta-stack">
+    <div class="alpha-row"><div class="pip" style="background:#52e7ff"></div><div class="lbl">solid</div><div class="v">#52E7FF</div></div>
+    <div class="alpha-row"><div class="pip" style="background:rgba(82,231,255,0.32)"></div><div class="lbl">ring</div><div class="v">cyan / .32</div></div>
+    <div class="alpha-row"><div class="pip" style="background:rgba(82,231,255,0.18)"></div><div class="lbl">soft</div><div class="v">cyan / .18</div></div>
+    <div class="alpha-row"><div class="pip" style="background:rgba(82,231,255,0.08)"></div><div class="lbl">tint</div><div class="v">cyan / .08</div></div>
+    <div class="alpha-row" style="margin-top: 4px; padding-top:6px; border-top:1px dashed rgba(13,35,65,0.10);"><div class="pip" style="background:linear-gradient(135deg, rgba(82,231,255,0.6), rgba(82,231,255,0.1)); box-shadow: 0 0 10px rgba(82,231,255,0.5);"></div><div class="lbl">glow-md</div><div class="v">0 0 24px /.36</div></div>
+  </div>
+</div>
+</div>
+</body></html>

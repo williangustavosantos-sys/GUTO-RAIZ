@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GUTO — Relatório de Telas</title>
+<style>
+*{box-sizing:border-box;margin:0;}
+html,body{background:#f4f8fc;font-family:"Inter",system-ui,sans-serif;color:#2D3748;-webkit-font-smoothing:antialiased;}
+.page{max-width:1000px;margin:0 auto;padding:48px 24px 80px;}
+/* header */
+.hero{margin-bottom:48px;padding-bottom:24px;border-bottom:2px solid rgba(82,231,255,0.5);}
+.eye{font:900 9px/1 "JetBrains Mono",monospace;letter-spacing:.32em;text-transform:uppercase;color:#52e7ff;display:inline-flex;align-items:center;gap:8px;}
+.eye b{width:6px;height:6px;border-radius:50%;background:#52e7ff;display:inline-block;}
+h1.title{margin-top:12px;font:900 34px/1.05 "Inter",sans-serif;letter-spacing:-.02em;color:#0d2341;}
+h1.title em{color:#52e7ff;font-style:normal;}
+.lede{margin-top:12px;font-size:15px;color:#4A5568;max-width:700px;}
+.badges{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;}
+.badge{padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid rgba(82,231,255,.4);font:900 9px/1 "JetBrains Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:#0d2341;}
+.badge em{color:#52e7ff;font-style:normal;margin-right:4px;}
+/* blocks */
+.block{margin-top:50px;}
+.sec{display:flex;align-items:baseline;gap:12px;border-bottom:1px dashed rgba(82,231,255,.4);padding-bottom:10px;margin-bottom:18px;}
+.sec .n{font:900 22px/1 "JetBrains Mono",monospace;color:#52e7ff;}
+.sec .t{font:900 20px/1 "Inter",sans-serif;color:#0d2341;}
+.sec .m{margin-left:auto;font:800 9px/1 "JetBrains Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:#5A7CA8;}
+.intro{font-size:13px;color:#4A5568;margin-bottom:14px;}
+/* group */
+.grp{margin:18px 0 8px;font:900 9px/1 "JetBrains Mono",monospace;letter-spacing:.28em;text-transform:uppercase;color:#5A7CA8;display:flex;align-items:center;gap:10px;}
+.grp::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(90,124,168,.3),transparent);}
+/* list */
+ul.rows{list-style:none;padding:0;display:grid;gap:6px;}
+ul.rows li{display:grid;grid-template-columns:46px 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.85);border:1px solid rgba(193,204,218,.7);box-shadow:0 2px 4px rgba(90,124,168,.05);}
+ul.rows li:hover{border-color:rgba(82,231,255,.5);background:#fff;}
+ul.rows li.new{border-color:rgba(82,231,255,.5);background:linear-gradient(180deg,rgba(82,231,255,.07),rgba(255,255,255,.85));}
+.nn{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;font:900 13px/1 "JetBrains Mono",monospace;background:rgba(82,231,255,.12);border:1px solid rgba(82,231,255,.35);color:#0d2341;}
+li.new .nn{background:linear-gradient(180deg,#7df0ff,#52e7ff);box-shadow:0 0 12px rgba(82,231,255,.4);}
+.info .nm{font:700 14px/1.2 "Inter",sans-serif;color:#0d2341;}
+.info .ds{margin-top:2px;font-size:11.5px;color:#4A5568;}
+.tag{font:900 8px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;padding:4px 9px;border-radius:999px;white-space:nowrap;}
+.tag.ok{background:rgba(82,231,255,.12);border:1px solid rgba(82,231,255,.4);color:#0d2341;}
+.tag.new{background:linear-gradient(180deg,#7df0ff,#52e7ff);color:#0d2341;box-shadow:0 0 8px rgba(82,231,255,.4);}
+.tag.wip{background:rgba(255,214,107,.18);border:1px solid rgba(196,140,30,.35);color:#8a5a00;}
+/* file box */
+.files{margin-top:22px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid rgba(193,204,218,.7);}
+.files h3{font:900 9px/1 "JetBrains Mono",monospace;letter-spacing:.28em;text-transform:uppercase;color:#52e7ff;margin-bottom:10px;}
+.files ul{list-style:none;padding:0;display:grid;gap:5px;}
+.files li{display:flex;align-items:center;gap:8px;font-size:13px;}
+.files li .ext{font:800 8px/1 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:rgba(90,124,168,.1);color:#5A7CA8;}
+.files li .ext.h{background:rgba(82,231,255,.14);color:#0d2341;}
+/* summary */
+.sum{margin-top:50px;padding:24px 26px;border-radius:18px;background:linear-gradient(180deg,rgba(82,231,255,.10),rgba(255,255,255,.85));border:1px solid rgba(82,231,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.9);}
+.sum h3{font:900 9px/1 "JetBrains Mono",monospace;letter-spacing:.28em;text-transform:uppercase;color:#52e7ff;margin-bottom:16px;}
+.sum .g{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+.stat .v{font:900 30px/1 "Inter",sans-serif;color:#0d2341;letter-spacing:-.02em;}
+.stat .v em{color:#52e7ff;font-style:normal;}
+.stat .l{margin-top:4px;font:800 8px/1 "JetBrains Mono",monospace;letter-spacing:.22em;text-transform:uppercase;color:#5A7CA8;}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid rgba(193,204,218,.7);display:flex;justify-content:space-between;font:800 8px/1 "JetBrains Mono",monospace;letter-spacing:.22em;text-transform:uppercase;color:#5A7CA8;}
+footer em{color:#52e7ff;font-style:normal;}
+@media(max-width:620px){.sum .g{grid-template-columns:repeat(2,1fr);} ul.rows li{grid-template-columns:42px 1fr;} .tag{display:none;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hero">
+  <div class="eye"><b></b> GUTO Design System · 2026</div>
+  <h1 class="title">Relatório de <em>Telas</em></h1>
+  <p class="lede">Mapa completo de todas as telas do app GUTO e do Painel de Comando (ADM) — ordem, número, nome e status de cada página.</p>
+  <div class="badges">
+    <span class="badge"><em>54</em> telas totais</span>
+    <span class="badge"><em>38</em> app mobile</span>
+    <span class="badge"><em>16</em> painel ADM</span>
+    <span class="badge"><em>5</em> fluxos</span>
+    <span class="badge"><em>17/05/2026</em></span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BLOCO A — ONBOARDING (01–07)
+════════════════════════════════════════ -->
+<div class="block">
+  <div class="sec"><span class="n">A</span><span class="t">Onboarding &amp; Autenticação</span><span class="m">Telas 01–07 · 7 telas</span></div>
+  <p class="intro">Fluxo de entrada: o usuário seleciona idioma, faz login ou cadastro, aceita os termos e informa seu nome antes de avançar à calibragem.</p>
+  <ul class="rows">
+    <li><div class="nn">01</div><div class="info"><div class="nm">Idioma</div><div class="ds">Seleção de idioma com 4 bandeiras circulares (PT, EN, ES, IT)</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">02</div><div class="info"><div class="nm">Login</div><div class="ds">E-mail + senha com opção de escolher perfil Admin ou Coach</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">03</div><div class="info"><div class="nm">Cadastrar Senha</div><div class="ds">Criação e confirmação de senha nova</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">04</div><div class="info"><div class="nm">Termos</div><div class="ds">Aceite de termos de uso e privacidade com hold-to-confirm</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">05</div><div class="info"><div class="nm">Nome</div><div class="ds">Captura de nome do usuário — primeiro campo do perfil</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">06</div><div class="info"><div class="nm">Calibragem</div><div class="ds">Gênero · Idade · Peso · Altura · IMC · Restrições · Intolerâncias · Objetivo · Local</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">07</div><div class="info"><div class="nm">Pacto Inicial</div><div class="ds">Hold-to-confirm com digital fingerprint — GUTO + usuário fazem o pacto</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BLOCO B — APP PRINCIPAL (08–15)
+════════════════════════════════════════ -->
+<div class="block">
+  <div class="sec"><span class="n">B</span><span class="t">App Principal</span><span class="m">Telas 08–15 · 8 telas</span></div>
+  <p class="intro">Uso diário do app: chat com GUTO, treino do dia, dieta semanal, arena social, percurso e evolução de formas.</p>
+  <ul class="rows">
+    <li class="new"><div class="nn">08</div><div class="info"><div class="nm">Chat Principal</div><div class="ds">GUTO Baby com HUD ciânico · bubble · input · chips de resposta rápida · avatar interativo com toque</div></div><span class="tag new">Em andamento</span></li>
+    <li><div class="nn">09</div><div class="info"><div class="nm">Treino do Dia</div><div class="ds">Lista de exercícios com vídeo por exercício · séries · reps · peso</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">10</div><div class="info"><div class="nm">Dieta da Semana</div><div class="ds">Refeições + macros + botão de dúvida por refeição · 08/05–14/05</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">11</div><div class="info"><div class="nm">Arena · Semana</div><div class="ds">Ranking semanal com campo TIME</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">12</div><div class="info"><div class="nm">Arena · Mês</div><div class="ds">Hall do mês · Maio 2026 · ranking mensal</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">13</div><div class="info"><div class="nm">Arena · Individual</div><div class="ds">Perfil de competidor · ranking pessoal</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">14</div><div class="info"><div class="nm">Percurso</div><div class="ds">Calendário mensal + progresso diário · Maio 2026</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">15</div><div class="info"><div class="nm">Evolução</div><div class="ds">Níveis do mascote GUTO · Baby → Teen → Adult → Elit</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BLOCO C — GUTO ONLINE (16–17) NOVO
+════════════════════════════════════════ -->
+<div class="block">
+  <div class="sec"><span class="n">C</span><span class="t">GUTO Online · Treino ao Vivo</span><span class="m">Telas 16–17 · 2 telas · NOVAS</span></div>
+  <p class="intro">Modo ativo durante o treino — GUTO acompanha o usuário em tempo real, conta reps, monitora forma e dá feedback por voz.</p>
+  <ul class="rows">
+    <li class="new"><div class="nn">16</div><div class="info"><div class="nm">GUTO Online — Sentinela (escuro)</div><div class="ds">Tema navy escuro · orbe sentinela central SVG · HUD flutuante com dados · voz · exercício + séries</div></div><span class="tag new">Criado</span></li>
+    <li class="new"><div class="nn">17</div><div class="info"><div class="nm">GUTO Online — Glassmorphism (claro)</div><div class="ds">Tema claro · logo GUTO · câmara holográfica de vidro · cards empilhados · input de chat · Série Feita</div></div><span class="tag new">Criado</span></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BLOCO D — CONFIGURAÇÕES (20–32)
+════════════════════════════════════════ -->
+<div class="block">
+  <div class="sec"><span class="n">D</span><span class="t">Ajustes &amp; Configurações</span><span class="m">Telas 20–32 · 13 telas</span></div>
+  <p class="intro">Bloco de ajustes: o usuário pode alterar idioma, nome, dados pessoais, dados biométricos, alimentação e privacidade.</p>
+
+  <div class="grp">Menu e Identidade</div>
+  <ul class="rows">
+    <li><div class="nn">20</div><div class="info"><div class="nm">Menu Configurações</div><div class="ds">Ponto de entrada — lista de todas as opções de ajuste</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">21</div><div class="info"><div class="nm">Idioma</div><div class="ds">Mesma estrutura da tela 01 — troca de idioma no pós-onboarding</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">22</div><div class="info"><div class="nm">Alterar Nome</div><div class="ds">Campo de edição do nome do usuário</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">Dados Pessoais</div>
+  <ul class="rows">
+    <li><div class="nn">23</div><div class="info"><div class="nm">Perfil</div><div class="ds">Gênero · silhueta corporal · xray view</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">24</div><div class="info"><div class="nm">Objetivo</div><div class="ds">Chips de objetivo (Hipertrofia · Emagrecimento · Performance...)</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">25</div><div class="info"><div class="nm">Local de Treino</div><div class="ds">Academia · Em casa · Ao ar livre</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">26</div><div class="info"><div class="nm">Limitações</div><div class="ds">Lesões e restrições físicas — chips selecionáveis</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">Biometria e Moradia</div>
+  <ul class="rows">
+    <li><div class="nn">27</div><div class="info"><div class="nm">Peso e Altura</div><div class="ds">Campos de peso (kg) · altura (cm) · IMC calculado</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">28</div><div class="info"><div class="nm">Onde Mora</div><div class="ds">Estado + cidade — localização para personalização do plano</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">Alimentação</div>
+  <ul class="rows">
+    <li><div class="nn">29</div><div class="info"><div class="nm">Restrições Alimentares</div><div class="ds">Vegano · Vegetariano · Sem glúten · Halal etc.</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">30</div><div class="info"><div class="nm">Intolerâncias / Alergias</div><div class="ds">Lactose · Glúten · Amendoim · Frutos do mar etc.</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">Privacidade</div>
+  <ul class="rows">
+    <li><div class="nn">31</div><div class="info"><div class="nm">Privacidade e Dados</div><div class="ds">Gestão de dados · permissões · LGPD</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">32</div><div class="info"><div class="nm">Excluir Conta</div><div class="ds">Confirmação de exclusão com hold · irreversível</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BLOCO E — PAINEL ADM (P01–P16)
+════════════════════════════════════════ -->
+<div class="block">
+  <div class="sec"><span class="n">E</span><span class="t">Painel de Comando · ADM</span><span class="m">P01–P16 · 16 telas</span></div>
+  <p class="intro">Interface de administração para operadores e coaches — tema cockpit escuro. Login com 2FA, painel de visão geral, gestão de alunos, operações e sistema.</p>
+
+  <div class="grp">01 · Acesso</div>
+  <ul class="rows">
+    <li><div class="nn">P01</div><div class="info"><div class="nm">Login do Operador</div><div class="ds">E-mail + chave de acesso + toggle Admin/Coach + biometria</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P02</div><div class="info"><div class="nm">Verificação 2FA</div><div class="ds">OTP de 6 dígitos para segundo fator de autenticação</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">02 · Comando</div>
+  <ul class="rows">
+    <li><div class="nn">P03</div><div class="info"><div class="nm">Painel · Visão Geral</div><div class="ds">Métricas do dia · alunos ativos · status do sistema · stream ao vivo</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">03 · Alunos</div>
+  <ul class="rows">
+    <li><div class="nn">P04</div><div class="info"><div class="nm">Lista de Alunos (default)</div><div class="ds">Lista densa com 1.449 alunos · filtros · busca</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P05</div><div class="info"><div class="nm">Lista · Hover na linha</div><div class="ds">Estado hover com ações rápidas visíveis</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P06</div><div class="info"><div class="nm">Lista · Filtros abertos</div><div class="ds">Drawer de filtros expandido</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P07</div><div class="info"><div class="nm">Detalhe · Identidade</div><div class="ds">Perfil completo do aluno — dados pessoais e status</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P08</div><div class="info"><div class="nm">Detalhe · Treinos</div><div class="ds">Histórico e plano de treinos do aluno</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P09</div><div class="info"><div class="nm">Detalhe · Dieta</div><div class="ds">Plano alimentar do aluno</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P10</div><div class="info"><div class="nm">Detalhe · Evolução / XP</div><div class="ds">XP acumulado · forma atual · progresso histórico</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P11</div><div class="info"><div class="nm">Modal · Pausar Acesso</div><div class="ds">Confirmação de pausa/bloqueio do aluno com modal</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">04 · Operações</div>
+  <ul class="rows">
+    <li><div class="nn">P12</div><div class="info"><div class="nm">Convites</div><div class="ds">Gestão de 47 links de convite · status · expiração</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P13</div><div class="info"><div class="nm">Coaches</div><div class="ds">Equipe de 23 coaches · status · atribuições</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P14</div><div class="info"><div class="nm">Pagamentos / Financeiro</div><div class="ds">Relatório financeiro mensal · exportação</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+
+  <div class="grp">05 · Sistema</div>
+  <ul class="rows">
+    <li><div class="nn">P15</div><div class="info"><div class="nm">Logs · Auditoria ao Vivo</div><div class="ds">Stream de eventos em tempo real · auditoria do sistema</div></div><span class="tag ok">Feito</span></li>
+    <li><div class="nn">P16</div><div class="info"><div class="nm">Configurações ADM</div><div class="ds">Conta · segurança · ajustes do painel</div></div><span class="tag ok">Feito</span></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ARQUIVOS DO PROJETO
+════════════════════════════════════════ -->
+<div class="block">
+  <div class="sec"><span class="n">📁</span><span class="t">Arquivos do Projeto</span></div>
+
+  <div class="files">
+    <h3>App mobile — design_handoff_guto_app/</h3>
+    <ul>
+      <li><span class="ext h">HTML</span> Vistoria 32 Telas.html — visão consolidada das 32 telas do app (01–32)</li>
+      <li><span class="ext h">HTML</span> Todas as Telas.html — grid das telas 01–15 (React-mounted)</li>
+      <li><span class="ext h">HTML</span> Telas de Configuração.html — grid estático das telas 20–32</li>
+      <li><span class="ext">JSX</span> screens-v2.jsx — telas 02–15 (Auth, Calibração, Chat, Percurso, Evolução, Treino, Dieta, Arena)</li>
+      <li><span class="ext">JSX</span> screens-extra.jsx — telas 01, 03, 05 (Idioma, Senha, Nome)</li>
+      <li><span class="ext">JSX</span> components.jsx — átomos compartilhados (Plate, Header, BottomNav...)</li>
+      <li><span class="ext">JSX</span> mascot.jsx — componente GUTO avatar (webm loop)</li>
+    </ul>
+  </div>
+
+  <div class="files" style="margin-top:10px;">
+    <h3>Chat principal — chat-principal/</h3>
+    <ul>
+      <li><span class="ext h">HTML</span> Chat Principal.html — <strong>Tela 08</strong> · GUTO Baby com HUD + interação de toque (guto-baby-toque.webm)</li>
+      <li><span class="ext h">HTML</span> Telas App.html — Treino · Dieta · Arena Semana · Arena Mês · Arena Individual</li>
+    </ul>
+  </div>
+
+  <div class="files" style="margin-top:10px;">
+    <h3>GUTO Online — guto-online/ (NOVAS)</h3>
+    <ul>
+      <li><span class="ext h">HTML</span> Guto Online.html — <strong>Tela 16</strong> · Sentinela escuro (tema navy + SVG orbe)</li>
+      <li><span class="ext h">HTML</span> Guto Online v2.html — <strong>Tela 17</strong> · Glassmorphism claro (câmara holográfica + logo)</li>
+    </ul>
+  </div>
+
+  <div class="files" style="margin-top:10px;">
+    <h3>Painel ADM — painel-comando/</h3>
+    <ul>
+      <li><span class="ext h">HTML</span> Painel Comando.html — canvas com as 16 telas do painel ADM (P01–P16)</li>
+      <li><span class="ext">JSX</span> comando-screens-1.jsx — Login · 2FA · Dashboard · Alunos</li>
+      <li><span class="ext">JSX</span> comando-screens-2.jsx — Convites · Coaches · Pagamentos · Logs · Config</li>
+      <li><span class="ext">JSX</span> comando-shell.jsx — Phone frame, Header, Nav e componentes do cockpit</li>
+    </ul>
+  </div>
+
+  <div class="files" style="margin-top:10px;">
+    <h3>Design System — raiz /</h3>
+    <ul>
+      <li><span class="ext h">CSS</span> colors_and_type.css — tokens de cor, tipografia, espaçamento e radii</li>
+      <li><span class="ext h">HTML</span> preview/* — fichas individuais de cada token (cores, tipo, sombras, radii...)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     RESUMO
+════════════════════════════════════════ -->
+<div class="sum">
+  <h3>Resumo Executivo</h3>
+  <div class="g">
+    <div class="stat"><div class="v"><em>54</em></div><div class="l">Telas totais</div></div>
+    <div class="stat"><div class="v"><em>38</em></div><div class="l">App mobile</div></div>
+    <div class="stat"><div class="v"><em>16</em></div><div class="l">Painel ADM</div></div>
+    <div class="stat"><div class="v"><em>2</em></div><div class="l">Novas · mai/26</div></div>
+    <div class="stat"><div class="v"><em>4</em></div><div class="l">Avatares GUTO</div></div>
+  </div>
+</div>
+
+<footer>
+  <span>GUTO Design System · 2026</span>
+  <em>54 telas · 1 fluxo completo</em>
+</footer>
+
+</div>
+</body>
+</html>
