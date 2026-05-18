@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GUTO · COMANDO — Painel ADM</title>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #03060c; color: #e8f4ff; font-family: "JetBrains Mono", monospace; }
+  @keyframes blink { 50% { opacity: 0 } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="comando-shell.jsx"></script>
+<script type="text/babel" src="comando-screens-1.jsx"></script>
+<script type="text/babel" src="comando-screens-2.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+function App() {
+  return (
+    <DesignCanvas
+      title="GUTO · COMANDO — Painel ADM"
+      subtitle="Mobile · 390×844 · tema cockpit · do login até o aluno"
+      bg="#03060c"
+    >
+      <DCSection id="acesso" title="01 · Acesso">
+        <DCArtboard id="login"  label="Login do operador"     width={390} height={844}><ScrLogin/></DCArtboard>
+        <DCArtboard id="2fa"    label="Verificação 2FA"        width={390} height={844}><Scr2FA/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="comando" title="02 · Comando">
+        <DCArtboard id="dash"   label="Painel · visão geral"   width={390} height={844}><ScrDashboard/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="alunos" title="03 · Alunos · do índice ao detalhe">
+        <DCArtboard id="lista"  label="Lista densa (default)"  width={390} height={844}><ScrAlunos/></DCArtboard>
+        <DCArtboard id="hover"  label="Lista · hover na linha" width={390} height={844}><ScrAlunosHover/></DCArtboard>
+        <DCArtboard id="filtro" label="Lista · filtros abertos" width={390} height={844}><ScrAlunosFiltro/></DCArtboard>
+        <DCArtboard id="detal"  label="Detalhe · identidade"   width={390} height={844}><ScrAlunoDetalhe/></DCArtboard>
+        <DCArtboard id="treino" label="Detalhe · treinos"      width={390} height={844}><ScrAlunoTreinos/></DCArtboard>
+        <DCArtboard id="dieta"  label="Detalhe · dieta"        width={390} height={844}><ScrAlunoDieta/></DCArtboard>
+        <DCArtboard id="evo"    label="Detalhe · evolução / XP" width={390} height={844}><ScrAlunoEvo/></DCArtboard>
+        <DCArtboard id="modal"  label="Modal · pausar acesso"  width={390} height={844}><ScrPauseModal/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="ops" title="04 · Operações">
+        <DCArtboard id="conv"   label="Convites"                width={390} height={844}><ScrConvites/></DCArtboard>
+        <DCArtboard id="coach"  label="Coaches"                 width={390} height={844}><ScrCoaches/></DCArtboard>
+        <DCArtboard id="pag"    label="Pagamentos / financeiro" width={390} height={844}><ScrPagamentos/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="sistema" title="05 · Sistema">
+        <DCArtboard id="logs"   label="Logs · auditoria"        width={390} height={844}><ScrLogs/></DCArtboard>
+        <DCArtboard id="config" label="Configurações ADM"        width={390} height={844}><ScrConfig/></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

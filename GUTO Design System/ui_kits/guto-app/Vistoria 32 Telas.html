@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GUTO · Vistoria · 32 Telas</title>
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:radial-gradient(120% 80% at 50% 0%,#f4f8fc 0%,#d9e3ee 60%,#b9c8da 100%);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#0d2341;}
+  .head{padding:48px 24px 8px;text-align:center;max-width:880px;margin:0 auto;}
+  .head h1{margin:0;font:900 30px/1.1 "Inter",sans-serif;letter-spacing:-0.01em;color:#2D3748;}
+  .head p{margin:10px auto 0;max-width:680px;font:500 14px/1.5 "Inter",sans-serif;color:#4A5568;}
+  .head .badge{display:inline-block;margin-top:14px;padding:5px 14px;border-radius:99px;background:rgba(82,231,255,0.18);border:1px solid rgba(82,231,255,0.55);color:#2D3748;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.30em;text-transform:uppercase;}
+  .nav{position:sticky;top:0;z-index:50;display:flex;justify-content:center;gap:6px;padding:14px 16px;background:linear-gradient(180deg,rgba(244,248,252,.92),rgba(244,248,252,.65));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(193,212,232,.55);margin-top:18px;}
+  .nav a{padding:8px 16px;border-radius:999px;border:1px solid rgba(82,231,255,.55);background:rgba(255,255,255,.6);color:#0d2341;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.28em;text-transform:uppercase;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
+  .nav a:hover{background:rgba(82,231,255,.16);}
+  .section-head{display:flex;align-items:center;gap:14px;margin:32px auto 18px;max-width:1500px;width:calc(100% - 48px);}
+  .section-head .line{flex:1;height:1px;background:linear-gradient(90deg,rgba(82,231,255,0.45),transparent);}
+  .section-head .lbl{font:800 11px/1 "Inter",sans-serif;letter-spacing:0.34em;text-transform:uppercase;color:#5A7CA8;white-space:nowrap;}
+  .section-head .lbl b{color:#52e7ff;text-shadow:0 0 8px rgba(82,231,255,.5);font-weight:900;}
+  .frame-wrap{width:100%;display:flex;justify-content:center;}
+  iframe{width:100%;max-width:1500px;border:none;background:transparent;display:block;height:1200px;}
+  .footer{padding:40px 24px 60px;text-align:center;font:800 9px/1 "Inter",sans-serif;letter-spacing:0.28em;color:rgba(45,55,72,0.55);text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>GUTO · Vistoria Final</h1>
+  <p>32 telas em ordem — Onboarding, Calibragem, App principal, Backstage e Ajustes. Todas com a mesma escala, fundo e tipografia.</p>
+  <span class="badge">32 telas · 1 fluxo completo</span>
+</div>
+
+<div class="nav">
+  <a href="#bloco-a">01 → 15 · App + Onboarding</a>
+  <a href="#bloco-b">20 → 32 · Ajustes</a>
+</div>
+
+<section id="bloco-a">
+  <div class="section-head">
+    <span class="lbl"><b>01 → 19</b> · Entrada · App principal · Backstage</span>
+    <span class="line"></span>
+  </div>
+  <div class="frame-wrap">
+    <iframe id="ifA" src="Todas as Telas.html" onload="onFrame(this)"></iframe>
+  </div>
+</section>
+
+<section id="bloco-b">
+  <div class="section-head">
+    <span class="lbl"><b>20 → 32</b> · Menu de Ajustes</span>
+    <span class="line"></span>
+  </div>
+  <div class="frame-wrap">
+    <iframe id="ifB" src="Telas de Configuração.html" onload="onFrame(this)"></iframe>
+  </div>
+</section>
+
+<div class="footer">FIM · 32/32 telas revisadas</div>
+
+<script>
+const NORMALIZE_CSS = `
+  html,body{background:transparent !important;margin:0 !important;padding:0 !important;}
+  body::before, body::after{display:none !important;}
+  /* Hide the source page's own header/title block */
+  .head, .section-head{display:none !important;}
+  /* Unified grid: same column width across both files */
+  .wrap{padding:24px 24px 80px !important;display:grid !important;grid-template-columns:repeat(auto-fill,420px) !important;gap:80px 32px !important;justify-content:center !important;justify-items:center !important;background:transparent !important;}
+  body > .pwr, body > .phone, body > .phone-rn{margin:0 auto;}
+  /* Force same phone size on both styles */
+  .phone-rn{width:420px !important;height:912px !important;}
+  .phone{width:420px !important;aspect-ratio:393/852 !important;}
+  /* Kill original page background elements */
+  *{background-image:none !important;}
+  .phone .scr .bg, .bg{background-image:url('assets/fundo.jpg') !important;}
+`;
+
+function onFrame(f){
+  try{
+    const doc = f.contentDocument || f.contentWindow.document;
+    // Inject normalize CSS
+    if (!doc.getElementById('__norm')){
+      const s = doc.createElement('style');
+      s.id = '__norm';
+      s.textContent = NORMALIZE_CSS;
+      doc.head.appendChild(s);
+    }
+    // For "Telas de Configuração" which has phones at the body root (not in .wrap), wrap them
+    if (!doc.querySelector('.wrap')){
+      const wrapper = doc.createElement('div');
+      wrapper.className = 'wrap';
+      wrapper.style.cssText = 'padding:24px 24px 80px;display:grid;grid-template-columns:repeat(auto-fill,420px);gap:80px 32px;justify-content:center;justify-items:center;background:transparent;';
+      const phones = [...doc.body.children].filter(n => n.classList && (n.classList.contains('pwr') || n.classList.contains('phone') || n.classList.contains('phone-rn')));
+      phones.forEach(p => wrapper.appendChild(p));
+      doc.body.insertBefore(wrapper, doc.body.firstChild);
+    }
+    const resize = () => {
+      const h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+      f.style.height = (h + 60) + 'px';
+    };
+    resize();
+    setTimeout(resize, 600);
+    setTimeout(resize, 1500);
+    setTimeout(resize, 3000);
+    // Watch for late layout (React mounts, images)
+    new ResizeObserver(resize).observe(doc.body);
+  }catch(e){console.warn(e);}
+}
+</script>
+</body>
+</html>

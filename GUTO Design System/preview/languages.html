@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Languages</title>
+<style>
+  .card { padding: 18px 22px; }
+  .stage { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; }
+  .lang {
+    height: 130px;
+    border-radius: 14px;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.18) 48%, transparent 78%),
+      linear-gradient(180deg, rgba(255,255,255,0.54) 0%, rgba(247,250,253,0.34) 100%);
+    border: 1.5px solid rgba(82,231,255,0.88);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      inset 0 -16px 26px rgba(181,196,214,0.14),
+      0 14px 30px rgba(122,138,156,0.12);
+    backdrop-filter: blur(18px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+  }
+  .lang img { width: 56px; height: 56px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(13,35,65,0.10)); }
+  .lang .name { font: 900 10px/1 var(--guto-font-tech); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(13,35,65,0.68); }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="lang"><img src="../assets/idioma-portugues.svg" alt="pt"><div class="name">pt-BR</div></div>
+  <div class="lang"><img src="../assets/idioma-english.svg" alt="en"><div class="name">en-US</div></div>
+  <div class="lang"><img src="../assets/idioma-italiano.svg" alt="it"><div class="name">it-IT</div></div>
+  <div class="lang"><img src="../assets/idioma-espanol.svg" alt="es"><div class="name">es-ES</div></div>
+</div></div>
+</body></html>

@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Card</title>
+<style>
+  .card { padding: 22px 26px; }
+  .plate {
+    width: 100%;
+    background:
+      radial-gradient(circle at 50% 12%, rgba(255,255,255,0.72), rgba(255,255,255,0.18) 54%, transparent 82%),
+      rgba(255,255,255,0.18);
+    border-radius: 22px;
+    padding: 18px 22px;
+    box-shadow:
+      inset 4px 5px 14px rgba(121,136,156,0.14),
+      inset -8px -9px 18px rgba(255,255,255,0.86),
+      0 0 0 1px rgba(82,231,255,0.18),
+      0 14px 30px rgba(122,138,156,0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .badge {
+    width: 72px; height: 72px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(248,250,253,0.94) 0%, rgba(236,242,249,0.9) 100%);
+    border: 1px solid rgba(255,255,255,0.88);
+    box-shadow: inset 10px 12px 24px rgba(112,128,148,0.24), inset -10px -10px 22px rgba(255,255,255,0.96);
+    display: grid; place-items: center;
+    color: #52e7ff;
+    font-size: 28px;
+  }
+  .body { display:flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .kicker { font: 900 9px/1 var(--guto-font-tech); letter-spacing: 0.30em; text-transform: uppercase; color: rgba(13,35,65,0.62); }
+  .title { font: 900 17px/1.15 var(--guto-font-tech); color: #0d2341; }
+  .sub { font: 500 12px/1.4 var(--guto-font-tech); color: rgba(13,35,65,0.62); }
+</style>
+</head><body>
+<div class="card">
+  <div class="plate">
+    <div class="badge">▲</div>
+    <div class="body">
+      <div class="kicker">Próxima Evolução</div>
+      <div class="title">GUTO TEEN</div>
+      <div class="sub">+ 240 XP para desbloquear · Streak de 3 dias</div>
+    </div>
+  </div>
+</div>
+</body></html>

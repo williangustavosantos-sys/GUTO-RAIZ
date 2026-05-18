@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "GUTO",
+    "slug": "guto-mobile",
+    "scheme": "guto",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.guto.mobile",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio", "remote-notification"],
+        "NSMicrophoneUsageDescription": "O GUTO usa o microfone para o Quick Talk durante o treino.",
+        "NSCameraUsageDescription": "O GUTO usa a camera para validar o treino com seguranca."
+      }
+    },
+    "android": {
+      "package": "app.guto.mobile",
+      "permissions": [
+        "RECORD_AUDIO",
+        "CAMERA",
+        "POST_NOTIFICATIONS",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "WAKE_LOCK"
+      ]
+    },
+    "plugins": [
+      "expo-av",
+      "expo-notifications",
+      "expo-secure-store",
+      [
+        "react-native-track-player",
+        {
+          "iosCategory": "playback"
+        }
+      ]
+    ],
+    "extra": {
+      "apiUrl": "http://localhost:3001"
+    }
+  }
+}

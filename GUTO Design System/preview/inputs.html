@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Inputs</title>
+<style>
+  .card { padding: 22px 26px; gap: 14px; }
+  .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
+  .field {
+    background: rgba(255,255,255,0.92);
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: inset 2px 2px 8px rgba(152,163,179,0.22), inset -6px -6px 12px rgba(255,255,255,0.94);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .field.focus {
+    box-shadow:
+      inset 2px 2px 8px rgba(152,163,179,0.22),
+      inset -6px -6px 12px rgba(255,255,255,0.94),
+      0 0 0 1px #52e7ff,
+      0 0 18px rgba(82,231,255,0.42);
+  }
+  .field .lbl { font: 900 9px/1 var(--guto-font-tech); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(13,35,65,0.55); }
+  .field .val { font: 900 14px/1 var(--guto-font-tech); color: #0d2341; }
+  .field .ph  { font: 900 14px/1 var(--guto-font-tech); color: rgba(13,35,65,0.20); }
+  .meta { font: 600 10px/1.3 var(--guto-font-tech); color: var(--fg2); margin-top: 4px; }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div>
+    <div class="field"><div class="lbl">Usuário ou E-mail</div><div class="ph">IDENTIDADE</div></div>
+    <div class="meta">Default · empty</div>
+  </div>
+  <div>
+    <div class="field focus"><div class="lbl">Senha</div><div class="val">••••••••</div></div>
+    <div class="meta">Focused · cyan ring</div>
+  </div>
+</div></div>
+</body></html>

@@ -4,3 +4,5 @@
 scratch/
 scratch-test*.js
 stress_results.json
+node_modules
+.cursor/*.log

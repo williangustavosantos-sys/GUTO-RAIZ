@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Chips</title>
+<style>
+  .card { padding: 22px 24px; gap: 12px; flex-wrap: wrap; }
+  .stage { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .chip {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(210,239,255,0.45);
+    background: rgba(255,255,255,0.4);
+    color: rgba(13,35,65,0.62);
+    font: 900 10px/1 var(--guto-font-tech);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: grid; place-items: center;
+    backdrop-filter: blur(8px);
+  }
+  .chip.cyan {
+    background: rgba(82,231,255,0.18);
+    border-color: rgba(82,231,255,0.6);
+    color: #0d2341;
+    box-shadow: 0 0 14px rgba(82,231,255,0.22);
+  }
+  .chip.cyan-solid {
+    background: #52e7ff;
+    border-color: transparent;
+    color: #0d2341;
+    box-shadow: 0 4px 14px rgba(82,231,255,0.30);
+  }
+  .chip.dark {
+    background: rgba(13,35,65,0.06);
+    border-color: rgba(13,35,65,0.10);
+    color: rgba(13,35,65,0.68);
+  }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="chip">CONSISTÊNCIA</div>
+  <div class="chip cyan">PERDER GORDURA</div>
+  <div class="chip cyan-solid">+100 XP</div>
+  <div class="chip dark">JOELHO</div>
+  <div class="chip">MOBILIDADE</div>
+  <div class="chip cyan">ATIVO</div>
+  <div class="chip">CONDICIONAMENTO</div>
+  <div class="chip dark">PAUSADO</div>
+  <div class="chip cyan-solid">DESBLOQUEADO</div>
+</div></div>
+</body></html>

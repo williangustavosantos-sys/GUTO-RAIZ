@@ -1,0 +1,42 @@
+import type { GutoWorkoutPlan } from "../contracts/guto-api"
+
+export const sampleWorkoutPlan: GutoWorkoutPlan = {
+  focus: "Treino do dia",
+  focusKey: "full_body",
+  dateLabel: "Hoje",
+  scheduledFor: new Date().toISOString(),
+  summary: "Spike nativo do GUTO Online com plano realista local.",
+  locationMode: "home",
+  exercises: [
+    {
+      id: "agachamento-livre",
+      name: "Agachamento livre",
+      canonicalNamePt: "Agachamento livre",
+      muscleGroup: "pernas",
+      sets: 3,
+      reps: "12",
+      rest: "45s",
+      restSeconds: 45,
+      cue: "Desce controlado, joelho alinhado, sobe forte.",
+      note: "Sem pressa e sem ego.",
+      videoUrl: "/exercise/visuals/agachamento-livre.mp4",
+      videoProvider: "local",
+      sourceFileName: "agachamento-livre.mp4",
+    },
+    {
+      id: "flexao",
+      name: "Flexao",
+      canonicalNamePt: "Flexao",
+      muscleGroup: "peito",
+      sets: 3,
+      reps: "8-12",
+      rest: "45s",
+      restSeconds: 45,
+      cue: "Corpo firme, peito desce junto, cotovelo controlado.",
+      note: "Se pesar, apoia o joelho e continua.",
+      videoUrl: "/exercise/visuals/flexao.mp4",
+      videoProvider: "local",
+      sourceFileName: "flexao.mp4",
+    },
+  ],
+}

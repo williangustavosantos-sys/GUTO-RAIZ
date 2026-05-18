@@ -1,0 +1,78 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>GUTO logo</title>
+<style>
+  .card { padding: 0; align-items: stretch; }
+  .stage {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0;
+  }
+  .hero {
+    background:
+      radial-gradient(120% 64% at 50% -10%, rgba(255,255,255,0.96) 0%, rgba(235,241,248,0.5) 36%, rgba(255,255,255,0) 64%),
+      linear-gradient(180deg, #ffffff 0%, #f7f9fc 48%, #edf2f8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(13,35,65,0.025) 0 1px, transparent 1px 42px);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .hero img {
+    width: min(70%, 320px);
+    height: auto;
+    filter:
+      drop-shadow(0 4px 8px rgba(13,35,65,0.10))
+      drop-shadow(0 0 18px rgba(82,231,255,0.34));
+    position: relative;
+    z-index: 1;
+  }
+  .meta {
+    background: rgba(13,35,65,0.04);
+    border-left: 1px solid var(--card-border);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+  .meta .stamp {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: var(--fg2);
+  }
+  .meta h1 {
+    margin: 0;
+    font-family: var(--guto-font-tech);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    color: var(--fg1);
+  }
+  .meta p {
+    margin: 0;
+    font-size: 11px;
+    color: var(--fg2);
+    line-height: 1.5;
+  }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="hero"><img src="../assets/logo_guto.png" alt="GUTO"></div>
+  <div class="meta">
+    <div class="stamp">Wordmark · Primary</div>
+    <h1>GUTO</h1>
+    <p>Brushed-chrome gradient with cyan inner glow. Use over white/portal backgrounds. Never recolor.</p>
+  </div>
+</div></div>
+</body></html>

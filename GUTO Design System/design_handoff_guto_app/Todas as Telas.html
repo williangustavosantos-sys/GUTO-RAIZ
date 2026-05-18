@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GUTO · Todas as Telas</title>
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:radial-gradient(120% 80% at 50% 0%,#f4f8fc 0%,#d9e3ee 60%,#b9c8da 100%);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#0d2341;}
+  .wrap{padding:48px 24px 80px;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:80px 32px;justify-items:center;}
+  .head{grid-column:1/-1;text-align:center;max-width:880px;margin:0 auto;}
+  .head h1{margin:0;font:900 30px/1.1 "Inter",sans-serif;letter-spacing:-0.01em;color:#2D3748;}
+  .head p{margin:10px auto 0;max-width:680px;font:500 14px/1.5 "Inter",sans-serif;color:#4A5568;}
+  .head .badge{display:inline-block;margin-top:14px;padding:5px 14px;border-radius:99px;background:rgba(82,231,255,0.18);border:1px solid rgba(82,231,255,0.55);color:#2D3748;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.30em;text-transform:uppercase;}
+
+  .section-head{grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-top:28px;max-width:1400px;width:100%;}
+  .section-head .line{flex:1;height:1px;background:linear-gradient(90deg,rgba(82,231,255,0.45),transparent);}
+  .section-head .lbl{font:800 11px/1 "Inter",sans-serif;letter-spacing:0.34em;text-transform:uppercase;color:#5A7CA8;white-space:nowrap;}
+
+  /* React-mounted phone (onboarding etc) — same chrome as ui_kits/guto-app/index.html */
+  .phone-rn{width:380px;height:780px;border-radius:48px;padding:12px;background:linear-gradient(180deg,#f6fbff 0%,#d6e1ec 12%,#93a4bc 29%,#eff6fd 44%,#91a4bd 58%,#d7e0ea 74%,#fdfefe 100%);box-shadow:0 30px 60px rgba(91,109,132,0.22),0 0 0 1px rgba(255,255,255,0.5) inset;position:relative;}
+  .phone-rn .scr{width:100%;height:100%;border-radius:38px;overflow:hidden;position:relative;background:#fff;}
+  .phone-rn .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#0a0e16;border-radius:18px;z-index:9;}
+  .phone-rn .sb{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:700 13px/1 "Inter",sans-serif;color:#2D3748;z-index:10;}
+  .phone-rn .mount{position:absolute;inset:0;padding-top:44px;}
+  .phone-rn .label,.phone-app .label{position:absolute;left:0;right:0;bottom:-32px;text-align:center;font:900 10px/1 "JetBrains Mono",monospace;letter-spacing:0.30em;color:rgba(45,55,72,0.55);text-transform:uppercase;white-space:nowrap;}
+  .phone-rn .label b,.phone-app .label b{color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.5);}
+
+  /* App phone styles (extracted from Telas App.html) */
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:radial-gradient(120% 80% at 50% 0%,#f4f8fc 0%,#d9e3ee 60%,#b9c8da 100%);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#0d2341;}
+  .wrap{padding:48px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:80px 32px;justify-items:center;}
+  .head{grid-column:1/-1;text-align:center;}
+  .head h1{margin:0;font:900 26px/1.1 "Inter",sans-serif;letter-spacing:-0.01em;color:#2D3748;}
+  .head p{margin:8px auto 0;max-width:680px;font:500 13px/1.5 "Inter",sans-serif;color:#4A5568;}
+
+  .phone{position:relative;width:min(420px,calc(100vw - 48px));aspect-ratio:393/852;border-radius:52px;padding:12px;background:linear-gradient(180deg,#f6fbff 0%,#d6e1ec 12%,#93a4bc 29%,#eff6fd 44%,#91a4bd 58%,#d7e0ea 74%,#fdfefe 100%);box-shadow:0 50px 90px rgba(40,60,90,.34),0 18px 30px rgba(40,60,90,.22),0 0 0 1px rgba(255,255,255,.55) inset;}
+  .scr{position:absolute;inset:12px;border-radius:42px;overflow:hidden;background:#eef3f8;}
+  .label{position:absolute;left:0;right:0;bottom:-32px;text-align:center;font:900 10px/1 "JetBrains Mono",monospace;letter-spacing:0.34em;color:rgba(45,55,72,0.55);text-transform:uppercase;}
+  .label b{color:#52e7ff;text-shadow:0 0 8px rgba(82,231,255,.5);}
+  .notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:118px;height:32px;border-radius:18px;background:#0a0e16;z-index:30;}
+  .sb{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 32px 8px;color:#0d2341;z-index:20;font:700 15px/1 "Inter",sans-serif;pointer-events:none;}
+  .sb .right{display:flex;gap:6px;align-items:center;}
+  .bg{position:absolute;inset:0;background-image:url('assets/fundo.jpg');background-size:cover;background-position:center center;transform:scale(1.05);filter:saturate(1.05) brightness(1.02);}
+  .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.18) 22%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.45) 78%,rgba(220,232,244,.85) 100%),radial-gradient(120% 60% at 50% 8%,rgba(82,231,255,.16),transparent 60%);pointer-events:none;}
+  .pillar{position:absolute;top:70px;bottom:130px;width:1.5px;background:linear-gradient(180deg,transparent,rgba(82,231,255,.7) 30%,rgba(82,231,255,.35) 75%,transparent);box-shadow:0 0 14px rgba(82,231,255,.7);border-radius:99px;}
+  .pillar.l{left:18px;}.pillar.r{right:18px;}
+
+  /* Header (title + back/gear) */
+  .ph{position:absolute;top:54px;left:0;right:0;padding:8px 22px 12px;z-index:12;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .ph .back{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);display:grid;place-items:center;color:#4A5568;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .ph .ttlwrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 12px 9px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(232,242,252,.85));border:1px solid rgba(255,255,255,.95);backdrop-filter:blur(16px) saturate(1.25);-webkit-backdrop-filter:blur(16px) saturate(1.25);box-shadow:inset 0 1px 0 rgba(255,255,255,.98),0 6px 18px rgba(13,35,65,.18);position:relative;}
+  .ph .ttlwrap::before{content:"";position:absolute;left:50%;top:-1px;transform:translateX(-50%);width:36%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#52e7ff,transparent);box-shadow:0 0 10px rgba(82,231,255,.85);}
+  .ph h1{margin:0;font:900 19px/1 "Inter",sans-serif;letter-spacing:0.02em;color:#0a1a2e;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.95);white-space:nowrap;}
+  .ph .kicker{display:block;font:800 9px/1.1 "JetBrains Mono",monospace;letter-spacing:0.26em;color:#0d2341;text-transform:uppercase;text-align:center;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.75;}
+  .ph .gear{flex-shrink:0;width:36px;height:36px;border-radius:50%;border:1px solid rgba(82,231,255,.6);background:rgba(82,231,255,.10);display:grid;place-items:center;color:#0d2341;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 0 12px rgba(82,231,255,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .ph .back{flex-shrink:0;}
+
+  /* Content scroll area */
+  .body{position:absolute;top:128px;bottom:118px;left:0;right:0;padding:8px 18px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+  .body::-webkit-scrollbar{display:none;}
+
+  /* Plate */
+  .plate{background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(245,250,255,.62));border:1px solid rgba(255,255,255,.94);border-radius:20px;padding:14px 16px;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.96),inset 0 -1px 0 rgba(193,212,232,.45),0 12px 28px rgba(90,124,168,.10);}
+  .plate.glow{border-color:#52e7ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 0 22px rgba(82,231,255,.30),0 12px 28px rgba(90,124,168,.10);}
+  .ttl{margin:0;font:800 14px/1.2 "Inter",sans-serif;color:#0d2341;}
+  .sub{font:800 10px/1 "Inter",sans-serif;letter-spacing:0.28em;color:#5A7CA8;text-transform:uppercase;}
+  .sub.cy{color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.55);}
+  .body p{margin:0;font:500 12.5px/1.5 "Inter",sans-serif;color:#4A5568;}
+
+  /* Help / doubt button — appears on every exercise + every food */
+  .help{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(82,231,255,.14);border:1px solid rgba(82,231,255,.6);color:#0d2341;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.26em;text-transform:uppercase;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 12px rgba(82,231,255,.20);}
+  .help:hover{background:rgba(82,231,255,.28);}
+  .help svg{stroke:#52e7ff;}
+  .help b{color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.6);}
+
+  /* Bottom nav */
+  .nav{position:absolute;left:0;right:0;bottom:0;padding:10px 14px max(env(safe-area-inset-bottom),18px);background:linear-gradient(180deg,rgba(255,255,255,.30) 0%,rgba(228,237,247,.80) 60%,rgba(228,237,247,.94) 100%);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);border-top:1px solid rgba(255,255,255,.85);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 -8px 22px rgba(122,138,156,.10);z-index:16;}
+  .nav .row{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+  .nav button{height:54px;border-radius:14px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:rgba(255,255,255,.55);box-shadow:inset 1px 2px 4px rgba(152,163,179,.20),inset -2px -3px 6px rgba(255,255,255,.95);color:rgba(13,35,65,.55);}
+  .nav button.a{background:linear-gradient(180deg,rgba(82,231,255,.34),rgba(82,231,255,.12));box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 0 14px rgba(82,231,255,.55);color:#52e7ff;}
+  .nav .lb{font:800 9px/1 "Inter",sans-serif;letter-spacing:0.20em;text-transform:uppercase;}
+  .nav button.a .lb{text-shadow:0 0 6px rgba(82,231,255,.55);}
+
+  /* Section divider with cyan rule */
+  .sec{display:flex;align-items:center;gap:10px;margin:6px 2px;}
+  .sec .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(82,231,255,.6),transparent);}
+  .sec .lb{font:900 9px/1 "JetBrains Mono",monospace;letter-spacing:0.30em;color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.5);text-transform:uppercase;}
+
+  /* Exercise card */
+  .ex{display:grid;grid-template-columns:96px 1fr;gap:12px;}
+  .ex .vid{position:relative;width:96px;height:96px;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,#1a3753 0%,#0d2341 100%);border:1px solid rgba(82,231,255,.55);box-shadow:0 0 18px rgba(82,231,255,.30) inset,0 6px 14px rgba(13,35,65,.25);display:grid;place-items:center;}
+  .ex .vid::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(82,231,255,.10) 0 1px,transparent 1px 4px);mix-blend-mode:screen;pointer-events:none;}
+  .ex .vid::after{content:"";position:absolute;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,#52e7ff,transparent);box-shadow:0 0 8px rgba(82,231,255,.95);animation:scan 2.4s linear infinite;}
+  @keyframes scan{0%{top:0;}100%{top:100%;}}
+  .ex .vid svg{width:32px;height:32px;color:#52e7ff;filter:drop-shadow(0 0 8px rgba(82,231,255,.8));position:relative;z-index:2;}
+  .ex .vid .vidlbl{position:absolute;left:6px;bottom:6px;font:800 9px/1 "Inter",sans-serif;letter-spacing:0.22em;color:#52e7ff;text-shadow:0 0 4px rgba(82,231,255,.7);z-index:2;}
+  .ex .vid .live{position:absolute;right:6px;top:6px;display:inline-flex;align-items:center;gap:4px;font:800 9px/1 "Inter",sans-serif;letter-spacing:0.18em;color:#52e7ff;z-index:2;}
+  .ex .vid .live i{display:inline-block;width:5px;height:5px;border-radius:50%;background:#52e7ff;box-shadow:0 0 6px rgba(82,231,255,.95);}
+  .ex .info{min-width:0;}
+  .ex .info .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+  .ex .chip{display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(193,212,232,.45);border-radius:99px;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.18em;color:#4A5568;text-transform:uppercase;}
+  .ex .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;text-align:center;}
+  .ex .stats .col + .col{border-left:1px solid rgba(193,212,232,.5);}
+  .ex .stats .v{font:900 16px/1 "Inter",sans-serif;color:#0d2341;}
+  .ex .stats .k{font:800 9px/1 "Inter",sans-serif;letter-spacing:0.20em;color:#5A7CA8;margin-top:3px;text-transform:uppercase;}
+
+  /* Meal card */
+  .meal{display:grid;grid-template-columns:54px 1fr auto auto;gap:10px;align-items:center;}
+  .meal .ic{width:42px;height:42px;border-radius:12px;background:rgba(82,231,255,.12);border:1px solid rgba(82,231,255,.45);display:grid;place-items:center;color:#52e7ff;}
+  .meal .t{font:800 11px/1 "Inter",sans-serif;letter-spacing:0.26em;color:#5A7CA8;}
+  .meal .n{margin-top:3px;font:800 13px/1.2 "Inter",sans-serif;color:#0d2341;}
+  .meal .kc{display:flex;flex-direction:column;align-items:flex-end;}
+  .meal .kc .v{font:900 16px/1 "Inter",sans-serif;color:#0d2341;}
+  .meal .kc .k{font:800 9px/1 "Inter",sans-serif;letter-spacing:0.20em;color:#5A7CA8;margin-top:3px;}
+
+  /* Macro grid */
+  .macro{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(193,212,232,.5);}
+  .macro .col + .col{border-left:1px solid rgba(193,212,232,.5);}
+  .macro .v{font:900 17px/1 "Inter",sans-serif;color:#0d2341;}
+  .macro .k{font:800 9px/1 "Inter",sans-serif;letter-spacing:0.20em;color:#5A7CA8;margin-top:3px;}
+
+  /* Segment toggle */
+  .seg{padding:4px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(245,250,255,.6));border:1px solid rgba(193,212,232,.7);box-shadow:inset 1px 2px 6px rgba(152,163,179,.18),inset -2px -3px 6px rgba(255,255,255,.95);}
+  .seg button{height:36px;border-radius:999px;border:none;cursor:pointer;background:transparent;color:#4A5568;font:800 11px/1 "Inter",sans-serif;letter-spacing:0.22em;text-transform:uppercase;}
+  .seg button.a{background:linear-gradient(180deg,#7df0ff,#1ec1de);color:#0d2341;box-shadow:0 0 12px rgba(82,231,255,.5),inset 0 1px 0 rgba(255,255,255,.85);}
+
+  /* Team chip */
+  .team{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(82,231,255,.14);border:1px solid rgba(82,231,255,.6);font:800 10px/1 "Inter",sans-serif;letter-spacing:0.22em;color:#0d2341;text-transform:uppercase;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 10px rgba(82,231,255,.18);}
+  .team b{color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.6);font-weight:900;}
+  .team svg{color:#52e7ff;}
+
+  /* Ranking row */
+  .rk{display:grid;grid-template-columns:34px 44px 1fr auto;gap:10px;align-items:center;padding:10px 4px;}
+  .rk + .rk{border-top:1px dashed rgba(193,212,232,.6);}
+  .rk .pos{font:900 16px/1 "Inter",sans-serif;color:#0d2341;text-align:center;}
+  .rk .pos.gold{color:#f4c447;text-shadow:0 0 8px rgba(244,196,71,.4);}
+  .rk .av{width:40px;height:40px;border-radius:12px;background:linear-gradient(160deg,rgba(82,231,255,.22),rgba(82,231,255,.06));border:1px solid rgba(82,231,255,.45);display:grid;place-items:center;font:900 14px/1 "Inter",sans-serif;color:#0d2341;}
+  .rk .nm{min-width:0;}
+  .rk .nm .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .rk .nm .nme{font:800 13.5px/1.1 "Inter",sans-serif;color:#0d2341;}
+  .rk .nm .du{margin-top:3px;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.20em;color:#5A7CA8;}
+  .rk .xp{text-align:right;}
+  .rk .xp .v{font:900 16px/1 "Inter",sans-serif;color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.45);}
+  .rk .xp .k{font:800 9px/1 "Inter",sans-serif;letter-spacing:0.20em;color:#5A7CA8;margin-top:3px;}
+
+
+  /* Force TIME chip onto its own row inside ranking name column */
+  .rk .nm .top{flex-wrap:wrap;}
+  .rk .nm .top .nme{flex-basis:100%;}
+  .rk .nm .top .team{margin-top:4px;}
+
+  /* CTA ghost */
+  .cta-ghost{height:50px;border-radius:999px;border:1px solid #52e7ff;background:rgba(255,255,255,.6);color:#0d2341;font:800 11px/1 "Inter",sans-serif;letter-spacing:0.26em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 14px rgba(82,231,255,.20);}
+
+  /* GUTO ONLINE button — premium pill plate */
+  .guto-online-btn{position:relative;width:100%;height:56px;padding:0 18px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:14px;border:1px solid #52e7ff;background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(214,243,255,.78) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 0 22px rgba(82,231,255,.32),0 10px 24px rgba(82,231,255,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-family:"Inter",sans-serif;color:#0d2341;transition:transform .18s ease,box-shadow .18s ease;}
+  .guto-online-btn:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 0 28px rgba(82,231,255,.55),0 14px 32px rgba(82,231,255,.25);}
+  .guto-online-btn:active{transform:translateY(1px);}
+  .guto-online-btn .gob-glyph{position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(180deg,#7df0ff 0%,#52e7ff 50%,#1ec1de 100%);display:grid;place-items:center;color:#0d2341;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 0 14px rgba(82,231,255,.65);}
+  .guto-online-btn .gob-pulse{position:absolute;inset:-4px;border-radius:50%;border:1.5px solid #52e7ff;opacity:.7;animation:gob-pulse 1.8s ease-out infinite;}
+  @keyframes gob-pulse{0%{transform:scale(1);opacity:.7;}70%{transform:scale(1.8);opacity:0;}100%{transform:scale(1.8);opacity:0;}}
+  .guto-online-btn .gob-copy{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;gap:4px;}
+  .guto-online-btn .gob-title{font:900 14px/1 "Inter",sans-serif;letter-spacing:.16em;color:#0d2341;}
+  .guto-online-btn .gob-sub{display:inline-flex;align-items:center;gap:6px;font:800 9px/1 "Inter",sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.45);}
+  .guto-online-btn .gob-dot{width:6px;height:6px;border-radius:50%;background:#52e7ff;box-shadow:0 0 8px rgba(82,231,255,1);animation:gob-dot 1.4s ease-in-out infinite;}
+  @keyframes gob-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+  .guto-online-btn .gob-arrow{color:#52e7ff;opacity:.7;flex-shrink:0;}
+
+  /* Individual hero card */
+  .me{padding:18px 18px 14px;}
+  .me .hero{display:flex;gap:14px;align-items:center;}
+  .me .av{width:74px;height:74px;border-radius:18px;background:linear-gradient(160deg,#fff 0%,#d6f7ff 50%,#7fcedf 100%);border:1px solid rgba(82,231,255,.7);display:grid;place-items:center;box-shadow:0 0 18px rgba(82,231,255,.55),inset 0 1px 0 rgba(255,255,255,.9);}
+  .me .av video{width:90%;height:90%;object-fit:contain;}
+  .me .h-info{flex:1;min-width:0;}
+  .me .h-info .nm{font:900 22px/1.05 "Inter",sans-serif;color:#0d2341;letter-spacing:-0.01em;}
+  .me .h-info .du{margin-top:4px;font:800 10px/1 "Inter",sans-serif;letter-spacing:0.22em;color:#5A7CA8;text-transform:uppercase;}
+  .me .h-info .row{margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .me .stats3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(193,212,232,.55);text-align:center;}
+  .me .stats3 .col + .col{border-left:1px solid rgba(193,212,232,.55);}
+  .me .stats3 .v{font:900 18px/1 "Inter",sans-serif;color:#0d2341;}
+  .me .stats3 .v.cy{color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.5);}
+  .me .stats3 .k{font:800 9px/1 "Inter",sans-serif;letter-spacing:0.20em;color:#5A7CA8;margin-top:3px;}
+
+  /* Trophy + month plate */
+  .month-card{display:flex;align-items:center;gap:12px;}
+  .month-card .tr{width:54px;height:54px;border-radius:14px;background:linear-gradient(160deg,#ffe89c,#f4c447);display:grid;place-items:center;box-shadow:0 6px 14px rgba(244,196,71,.45);font-size:26px;}
+  .month-card .info{flex:1;}
+  .month-card .info .lbl{font:800 10px/1 "Inter",sans-serif;letter-spacing:0.26em;color:#5A7CA8;text-transform:uppercase;}
+  .month-card .info .nm{margin-top:4px;font:900 18px/1.1 "Inter",sans-serif;color:#0d2341;}
+
+  /* Background lives in ./assets/fundo.jpg next to this file */
+  .phone .scr .bg{background-image:url('assets/fundo.jpg') !important;}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>GUTO · Todas as Telas</h1>
+    <p>Fluxo completo, do idioma à evolução. Onboarding + chat são montados em React (do design system); Treino, Dieta e Arena (Semana, Mês, Individual) usam o layout atualizado com vídeo de execução, dúvida por refeição e ranking de time.</p>
+    <span class="badge">19 telas · 1 fluxo</span>
+  </div>
+
+  <div class="section-head"><span class="lbl">Entrada</span><span class="line"></span></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_lang"  class="mount"></div></div><div class="label">01 · IDIOMA</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_login" class="mount"></div></div><div class="label">02 · LOGIN</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_pw"    class="mount"></div></div><div class="label">03 · CADASTRAR SENHA</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_terms" class="mount"></div></div><div class="label">04 · TERMOS</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_name"  class="mount"></div></div><div class="label">05 · NOME</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_calib" class="mount"></div></div><div class="label">06 · CALIBRAGEM</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_auth"  class="mount"></div></div><div class="label">07 · PACTO INICIAL</div></div>
+
+  <div class="section-head"><span class="lbl">App principal</span><span class="line"></span></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_chat"  class="mount"></div></div><div class="label">08 · CHAT GUTO</div></div>
+
+  
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;"><div class="phone" data-screen-label="09 TREINO">
+    <div class="scr">
+      <div class="bg"></div>
+      <div class="pillar l"></div><div class="pillar r"></div>
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span class="right">
+        <svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="6" width="3" height="5" rx=".6" fill="currentColor"/><rect x="5" y="4" width="3" height="7" rx=".6" fill="currentColor"/><rect x="10" y="2" width="3" height="9" rx=".6" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx=".6" fill="currentColor"/></svg>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity=".4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/></svg>
+      </span></div>
+
+      <div class="ph">
+        <button class="back" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="ttlwrap"><h1>FORÇA TOTAL</h1><span class="kicker">Treino · Sexta 08/05</span></div>
+        <button class="gear" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+
+      <div class="body">
+        <!-- GUTO ONLINE — treino ao vivo CTA (premium plate) -->
+        <button class="guto-online-btn" type="button">
+          <span class="gob-glyph">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20" fill="currentColor"/></svg>
+            <span class="gob-pulse"></span>
+          </span>
+          <span class="gob-copy">
+            <span class="gob-title">GUTO ONLINE</span>
+            <span class="gob-sub"><span class="gob-dot"></span>Iniciar treino ao vivo</span>
+          </span>
+          <svg class="gob-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+
+        <div class="sec"><div class="ln"></div><div class="lb">Aquecimento</div><div class="ln"></div></div>
+        <div class="plate">
+          <div class="ex">
+            <div class="vid">
+              <span class="live"><i></i>LIVE</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 4 20 12 6 20" fill="currentColor"/></svg>
+              <span class="vidlbl">EXECUÇÃO</span>
+            </div>
+            <div class="info">
+              <div class="row1">
+                <h3 class="ttl" style="text-align:left;">Caminhada na esteira</h3>
+                <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+              </div>
+              <span class="ex .chip" style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(193,212,232,.45);border-radius:99px;font:800 10px/1 'Inter',sans-serif;letter-spacing:.20em;color:#4A5568;text-transform:uppercase;">Aquecimento</span>
+              <div class="stats">
+                <div class="col"><div class="v">1</div><div class="k">SÉRIES</div></div>
+                <div class="col"><div class="v">6 min</div><div class="k">DURAÇÃO</div></div>
+                <div class="col"><div class="v">30s</div><div class="k">DESCANSO</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec"><div class="ln"></div><div class="lb">Parte principal</div><div class="ln"></div></div>
+        <div class="plate">
+          <div class="ex">
+            <div class="vid">
+              <span class="live"><i></i>LIVE</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 4 20 12 6 20" fill="currentColor"/></svg>
+              <span class="vidlbl">EXECUÇÃO</span>
+            </div>
+            <div class="info">
+              <div class="row1">
+                <h3 class="ttl" style="text-align:left;">Supino reto</h3>
+                <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+              </div>
+              <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(193,212,232,.45);border-radius:99px;font:800 10px/1 'Inter',sans-serif;letter-spacing:.20em;color:#4A5568;text-transform:uppercase;">Peito</span>
+              <div class="stats">
+                <div class="col"><div class="v">4</div><div class="k">SÉRIES</div></div>
+                <div class="col"><div class="v">8–10</div><div class="k">REPS</div></div>
+                <div class="col"><div class="v">75s</div><div class="k">DESCANSO</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plate">
+          <div class="ex">
+            <div class="vid">
+              <span class="live"><i></i>LIVE</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 4 20 12 6 20" fill="currentColor"/></svg>
+              <span class="vidlbl">EXECUÇÃO</span>
+            </div>
+            <div class="info">
+              <div class="row1">
+                <h3 class="ttl" style="text-align:left;">Remada baixa</h3>
+                <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+              </div>
+              <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(193,212,232,.45);border-radius:99px;font:800 10px/1 'Inter',sans-serif;letter-spacing:.20em;color:#4A5568;text-transform:uppercase;">Costas</span>
+              <div class="stats">
+                <div class="col"><div class="v">4</div><div class="k">SÉRIES</div></div>
+                <div class="col"><div class="v">10</div><div class="k">REPS</div></div>
+                <div class="col"><div class="v">75s</div><div class="k">DESCANSO</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="cta-ghost">✓ Validar treino</button>
+      </div>
+
+      <nav class="nav"><div class="row">
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span class="lb">GUTO</span></button>
+        <button class="a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg><span class="lb">TREINO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2M6 11v11M14 4v6a2 2 0 0 0 2 2h2v10M16 2v2"/></svg><span class="lb">DIETA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></svg><span class="lb">ARENA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><span class="lb">EVO.</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="lb">PERC.</span></button>
+      </div></nav>
+    </div>
+  </div><div class="label" style="position:relative;bottom:auto;margin-top:14px;">09 · TREINO DO DIA</div></div>
+
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;"><div class="phone" data-screen-label="10 GUTO ONLINE">
+    <div class="scr">
+      <div class="bg"></div>
+      <div class="pillar l"></div><div class="pillar r"></div>
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span>· · ·</span></div>
+
+      <div class="ph">
+        <button class="back" aria-label="Sair"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+        <div class="ttlwrap" style="gap:3px;padding:6px 12px 8px;">
+          <h1>GUTO ONLINE</h1>
+          <span class="kicker" style="display:inline-flex;align-items:center;gap:5px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#52e7ff;box-shadow:0 0 8px rgba(82,231,255,1);flex-shrink:0;animation:go-pulse 1.8s ease-in-out infinite;"></span>
+            <span style="color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.6);">AO VIVO</span>
+          </span>
+          <span class="kicker" style="opacity:.8;letter-spacing:.1em;color:#0d2341;">TREINO DE FORÇA TOTAL</span>
+        </div>
+        <button class="gear" aria-label="Áudio"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+      </div>
+
+      <!-- body: 3 zonas — info topo · avatar centro · ações + chat fundo -->
+      <div class="body" style="top:130px;bottom:172px;gap:8px;">
+
+        <!-- ZONA 1 — strip compacto: TEMPO | EXERCÍCIO | SÉRIE -->
+        <div class="plate" style="padding:7px 14px;flex-shrink:0;">
+          <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;align-items:center;gap:0;">
+            <div style="text-align:left;">
+              <div style="font:800 7.5px/1 'Inter',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#5A7CA8;">TEMPO</div>
+              <div style="font:900 17px/1 'Inter',sans-serif;color:#0d2341;margin-top:3px;">24:18</div>
+            </div>
+            <div style="width:1px;height:28px;background:rgba(82,231,255,.3);margin:0 10px;"></div>
+            <div style="text-align:center;">
+              <div style="font:800 7.5px/1 'Inter',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.4);">EXERCÍCIO</div>
+              <div style="font:900 11px/1.15 'Inter',sans-serif;color:#0d2341;margin-top:3px;text-transform:uppercase;letter-spacing:.02em;">Supino Reto</div>
+            </div>
+            <div style="width:1px;height:28px;background:rgba(82,231,255,.3);margin:0 10px;"></div>
+            <div style="text-align:right;">
+              <div style="font:800 7.5px/1 'Inter',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#5A7CA8;">SÉRIE</div>
+              <div style="font:900 17px/1 'Inter',sans-serif;color:#0d2341;margin-top:3px;">02<span style="font-size:11px;color:rgba(13,35,65,.4);">/04</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZONA 2 — avatar domina o centro (flex:1) -->
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative;">
+          <!-- halo -->
+          <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(82,231,255,.28) 0%,rgba(82,231,255,.08) 50%,transparent 72%);filter:blur(10px);pointer-events:none;"></div>
+          <!-- avatar -->
+          <video src="assets/guto-online.webm" autoplay loop muted playsinline style="position:relative;width:auto;height:155px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(82,231,255,.6)) drop-shadow(0 10px 16px rgba(13,35,65,.35));pointer-events:none;flex-shrink:0;"></video>
+          <!-- série progress dots centralizados -->
+          <div style="display:flex;gap:5px;width:96px;">
+            <span style="flex:1;height:4px;border-radius:99px;background:linear-gradient(90deg,#52e7ff,#1ec1de);box-shadow:0 0 6px rgba(82,231,255,.5);"></span>
+            <span style="flex:1;height:4px;border-radius:99px;background:rgba(82,231,255,.35);border:1px solid rgba(82,231,255,.65);"></span>
+            <span style="flex:1;height:4px;border-radius:99px;background:rgba(82,231,255,.15);border:1px solid rgba(82,231,255,.25);"></span>
+            <span style="flex:1;height:4px;border-radius:99px;background:rgba(82,231,255,.15);border:1px solid rgba(82,231,255,.25);"></span>
+          </div>
+          <!-- countdown pill -->
+          <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:99px;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(236,247,255,.78));border:1px solid #52e7ff;box-shadow:0 0 16px rgba(82,231,255,.3),inset 0 1px 0 rgba(255,255,255,.96);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span style="font:900 20px/1 'Inter',sans-serif;color:#52e7ff;text-shadow:0 0 12px rgba(82,231,255,.65);letter-spacing:.04em;">01:30</span>
+            <span style="font:700 8px/1 'Inter',sans-serif;color:rgba(13,35,65,.5);text-transform:uppercase;letter-spacing:.14em;">descanso</span>
+          </div>
+        </div>
+
+        <!-- ZONA 3 — ações -->
+        <!-- SÉRIE FEITA primário -->
+        <button style="flex-shrink:0;width:100%;height:46px;border-radius:99px;border:none;background:linear-gradient(180deg,#7df0ff,#52e7ff,#1ec1de);color:#0d2341;font:900 11px/1 'Inter',sans-serif;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 0 18px rgba(82,231,255,.5),0 8px 18px rgba(82,231,255,.28);display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          SÉRIE FEITA
+        </button>
+
+        <!-- 3 botões secundários numa linha -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;flex-shrink:0;">
+          <button style="height:38px;border-radius:99px;border:1px solid rgba(82,231,255,.5);background:rgba(255,255,255,.72);color:#0d2341;font:800 7.5px/1 'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            EX. FIN.
+          </button>
+          <button style="height:38px;border-radius:99px;border:1px solid rgba(245,158,11,.5);background:rgba(255,243,221,.72);color:#a05a00;font:800 8px/1 'Inter',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            PAUSAR
+          </button>
+          <button style="height:38px;border-radius:99px;border:1px solid rgba(82,231,255,.4);background:rgba(255,255,255,.6);color:#0d2341;font:800 7.5px/1 'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+            TROCA
+          </button>
+        </div>
+
+        <!-- chat divider -->
+        <div style="flex-shrink:0;display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(82,231,255,.35));"></div>
+          <span style="font:800 8px/1 'JetBrains Mono',monospace;letter-spacing:.24em;text-transform:uppercase;color:#52e7ff;text-shadow:0 0 6px rgba(82,231,255,.4);">CHAT</span>
+          <div style="flex:1;height:1px;background:linear-gradient(270deg,transparent,rgba(82,231,255,.35));"></div>
+        </div>
+
+        <!-- última mensagem do Guto -->
+        <div style="display:flex;align-items:flex-end;gap:7px;flex-shrink:0;">
+          <div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#52e7ff,#1ec1de);display:grid;place-items:center;flex-shrink:0;box-shadow:0 0 6px rgba(82,231,255,.5);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0d2341" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div style="flex:1;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(236,247,255,.82));border:1px solid rgba(82,231,255,.35);border-radius:14px 14px 14px 3px;padding:7px 11px;font:500 11px/1.4 'Inter',sans-serif;color:#0d2341;box-shadow:inset 0 1px 0 rgba(255,255,255,.96);">
+            Mandou bem no supino! Descansa e hidrata.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- chat input — fixo acima do nav -->
+      <div style="position:absolute;bottom:118px;left:18px;right:18px;z-index:6;">
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.96);border-radius:999px;padding:5px 5px 5px 14px;border:1px solid #52e7ff;box-shadow:0 0 12px rgba(82,231,255,.2),inset 0 1px 0 rgba(255,255,255,.95);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 0 1-14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          <span style="flex:1;font:500 12px/1 'Inter',sans-serif;color:rgba(13,35,65,.36);">Mensagem para Guto...</span>
+          <button style="width:34px;height:34px;border-radius:999px;border:none;background:linear-gradient(180deg,#52e7ff,#1ec1de);color:#0d2341;display:grid;place-items:center;cursor:pointer;box-shadow:0 0 10px rgba(82,231,255,.5);flex-shrink:0;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <style>@keyframes go-pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(82,231,255,1);}50%{opacity:.5;box-shadow:0 0 3px rgba(82,231,255,.4);}}</style>
+
+      <nav class="nav"><div class="row">
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span class="lb">GUTO</span></button>
+        <button class="a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg><span class="lb">TREINO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2M6 11v11M14 4v6a2 2 0 0 0 2 2h2v10M16 2v2"/></svg><span class="lb">DIETA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5 18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/></svg><span class="lb">ARENA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><span class="lb">EVO.</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="lb">PERC.</span></button>
+      </div></nav>
+    </div>
+  </div><div class="label" style="position:relative;bottom:auto;margin-top:14px;">10 · GUTO ONLINE</div></div>
+
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;"><div class="phone" data-screen-label="11 DIETA">
+    <div class="scr">
+      <div class="bg"></div>
+      <div class="pillar l"></div><div class="pillar r"></div>
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span class="right">
+        <svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="6" width="3" height="5" rx=".6" fill="currentColor"/><rect x="5" y="4" width="3" height="7" rx=".6" fill="currentColor"/><rect x="10" y="2" width="3" height="9" rx=".6" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx=".6" fill="currentColor"/></svg>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity=".4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/></svg>
+      </span></div>
+
+      <div class="ph">
+        <button class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="ttlwrap"><h1>DIETA DA SEMANA</h1><span class="kicker">08/05 — 14/05/2026</span></div>
+        <button class="gear" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+
+      <div class="body">
+        <div class="plate">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:baseline;gap:8px;"><span style="font:900 30px/1 'Inter',sans-serif;color:#0d2341;">1756</span><span class="sub">kcal/dia</span></div>
+            <span style="padding:6px 14px;border-radius:999px;border:1px solid #52e7ff;background:rgba(82,231,255,.12);font:800 10px/1 'Inter',sans-serif;letter-spacing:.24em;color:#0d2341;">EMAGRECER</span>
+          </div>
+          <div class="macro">
+            <div class="col"><div class="v">152g</div><div class="k">PROTEÍNA</div></div>
+            <div class="col"><div class="v">143g</div><div class="k">CARBO</div></div>
+            <div class="col"><div class="v">64g</div><div class="k">GORDURA</div></div>
+          </div>
+        </div>
+
+        <div class="plate">
+          <div class="meal">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg></div>
+            <div><div class="t">07:30</div><div class="n">Café da manhã</div></div>
+            <div class="kc"><div class="v">404</div><div class="k">kcal</div></div>
+            <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+          </div>
+        </div>
+
+        <div class="plate">
+          <div class="meal">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 0 0 8-8c0-5-3-9-8-9s-8 4-8 9a8 8 0 0 0 8 8z"/><path d="M12 11V3"/></svg></div>
+            <div><div class="t">10:30</div><div class="n">Lanche da manhã</div></div>
+            <div class="kc"><div class="v">211</div><div class="k">kcal</div></div>
+            <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+          </div>
+        </div>
+
+        <div class="plate">
+          <div class="meal">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2M6 11v11M14 4v6a2 2 0 0 0 2 2h2v10M16 2v2"/></svg></div>
+            <div><div class="t">13:00</div><div class="n">Almoço</div></div>
+            <div class="kc"><div class="v">527</div><div class="k">kcal</div></div>
+            <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+          </div>
+        </div>
+
+        <div class="plate">
+          <div class="meal">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9" y2="9"/><line x1="15" y1="9" x2="15" y2="9"/></svg></div>
+            <div><div class="t">16:30</div><div class="n">Lanche da tarde</div></div>
+            <div class="kc"><div class="v">193</div><div class="k">kcal</div></div>
+            <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+          </div>
+        </div>
+
+        <div class="plate">
+          <div class="meal">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+            <div><div class="t">20:00</div><div class="n">Jantar</div></div>
+            <div class="kc"><div class="v">421</div><div class="k">kcal</div></div>
+            <button class="help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg> Dúvida</button>
+          </div>
+        </div>
+</div>
+
+      <nav class="nav"><div class="row">
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span class="lb">GUTO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg><span class="lb">TREINO</span></button>
+        <button class="a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2M6 11v11M14 4v6a2 2 0 0 0 2 2h2v10M16 2v2"/></svg><span class="lb">DIETA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></svg><span class="lb">ARENA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><span class="lb">EVO.</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="lb">PERC.</span></button>
+      </div></nav>
+    </div>
+  </div><div class="label" style="position:relative;bottom:auto;margin-top:14px;">11 · DIETA DA SEMANA</div></div>
+
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;"><div class="phone" data-screen-label="12 ARENA SEMANA">
+    <div class="scr">
+      <div class="bg"></div>
+      <div class="pillar l"></div><div class="pillar r"></div>
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span class="right">
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity=".4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/></svg>
+      </span></div>
+
+      <div class="ph">
+        <button class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="ttlwrap"><h1>ARENA · SEMANA</h1><span class="kicker">Semana 19 · Maio</span></div>
+        <button class="gear" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+
+      <div class="body">
+        <div class="seg"><button class="a">SEMANA</button><button>MÊS</button><button>INDIVIDUAL</button></div>
+        <p style="text-align:center;font-weight:600;color:#0d2341;">TODO MUNDO TEM CHANCE DE VIRAR O JOGO.</p>
+        <div style="text-align:center;margin-top:-6px;"><span class="sub" style="color:#5A7CA8;">Reinicia segunda-feira</span></div>
+
+        <div class="plate" style="padding:10px 14px;display:flex;align-items:center;justify-content:center;gap:10px;">
+          <span class="sub" style="color:#5A7CA8;">TIME</span>
+          <span style="font:900 18px/1 'Inter',sans-serif;color:#52e7ff;text-shadow:0 0 8px rgba(82,231,255,.5);letter-spacing:0.04em;">ALPHA</span>
+          <span class="sub" style="color:#5A7CA8;">· LIDERANÇA SEMANAL</span>
+        </div>
+
+        <div class="plate glow" style="padding:14px 14px;">
+          <div class="rk">
+            <div class="pos gold">1</div>
+            <div class="av">W</div>
+            <div class="nm">
+              <div class="top"><span class="nme">WILLLLL</span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">2.480</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">2</div>
+            <div class="av">M</div>
+            <div class="nm">
+              <div class="top"><span class="nme">MARCELO</span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">2.105</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">3</div>
+            <div class="av">A</div>
+            <div class="nm">
+              <div class="top"><span class="nme">ANA</span></div>
+              <div class="du">DUPLA COM GUTO · TEEN</div>
+            </div>
+            <div class="xp"><div class="v">1.890</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">4</div>
+            <div class="av">R</div>
+            <div class="nm">
+              <div class="top"><span class="nme">RAFA</span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">1.640</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">5</div>
+            <div class="av">L</div>
+            <div class="nm">
+              <div class="top"><span class="nme">LUCAS</span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">1.320</div><div class="k">XP</div></div>
+          </div>
+        </div>
+        <button class="cta-ghost">+ Convidar dupla</button>
+      </div>
+
+      <nav class="nav"><div class="row">
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span class="lb">GUTO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg><span class="lb">TREINO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2M6 11v11M14 4v6a2 2 0 0 0 2 2h2v10"/></svg><span class="lb">DIETA</span></button>
+        <button class="a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></svg><span class="lb">ARENA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg><span class="lb">EVO.</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="lb">PERC.</span></button>
+      </div></nav>
+    </div>
+  </div><div class="label" style="position:relative;bottom:auto;margin-top:14px;">12 · ARENA · SEMANA</div></div>
+
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;"><div class="phone" data-screen-label="13 ARENA MES">
+    <div class="scr">
+      <div class="bg"></div>
+      <div class="pillar l"></div><div class="pillar r"></div>
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span class="right">
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity=".4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/></svg>
+      </span></div>
+
+      <div class="ph">
+        <button class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="ttlwrap"><h1>ARENA · MÊS</h1><span class="kicker">Maio 2026 · Hall do mês</span></div>
+        <button class="gear" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+
+      <div class="body">
+        <div class="seg"><button>SEMANA</button><button class="a">MÊS</button><button>INDIVIDUAL</button></div>
+
+        <div class="plate" style="padding:10px 14px;display:flex;align-items:center;justify-content:center;gap:10px;">
+          <span class="sub" style="color:#5A7CA8;">TIME</span>
+          <span style="font:900 18px/1 'Inter',sans-serif;color:#52e7ff;text-shadow:0 0 8px rgba(82,231,255,.5);letter-spacing:0.04em;">ALPHA</span>
+          <span class="sub" style="color:#5A7CA8;">· LIDERANÇA DO MÊS</span>
+        </div>
+
+        <div class="plate glow">
+          <div class="month-card">
+            <div class="tr">🏆</div>
+            <div class="info">
+              <div class="lbl">Líder do mês</div>
+              <div class="nm">WILLLLL <span style="color:#52e7ff;">+ GUTO</span></div>
+              <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="team" style="background:rgba(244,196,71,.16);border-color:rgba(244,196,71,.7);"><b style="color:#f4c447;text-shadow:0 0 6px rgba(244,196,71,.4);">12.480 XP</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plate" style="padding:10px 14px;">
+          <div class="rk">
+            <div class="pos">2</div>
+            <div class="av">M</div>
+            <div class="nm">
+              <div class="top"><span class="nme">MARCELO</span></div>
+              <div class="du">DUPLA COM GUTO · TEEN</div>
+            </div>
+            <div class="xp"><div class="v">11.105</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">3</div>
+            <div class="av">A</div>
+            <div class="nm">
+              <div class="top"><span class="nme">ANA</span></div>
+              <div class="du">DUPLA COM GUTO · TEEN</div>
+            </div>
+            <div class="xp"><div class="v">9.890</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">4</div>
+            <div class="av">R</div>
+            <div class="nm">
+              <div class="top"><span class="nme">RAFA</span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">8.640</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">5</div>
+            <div class="av">L</div>
+            <div class="nm">
+              <div class="top"><span class="nme">LUCAS</span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">7.320</div><div class="k">XP</div></div>
+          </div>
+        </div>
+
+        <button class="cta-ghost">📅 Histórico de meses</button>
+      </div>
+
+      <nav class="nav"><div class="row">
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span class="lb">GUTO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg><span class="lb">TREINO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2"/></svg><span class="lb">DIETA</span></button>
+        <button class="a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6"/></svg><span class="lb">ARENA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg><span class="lb">EVO.</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="lb">PERC.</span></button>
+      </div></nav>
+    </div>
+  </div><div class="label" style="position:relative;bottom:auto;margin-top:14px;">13 · ARENA · MÊS</div></div>
+
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;"><div class="phone" data-screen-label="14 ARENA INDIVIDUAL">
+    <div class="scr">
+      <div class="bg"></div>
+      <div class="pillar l"></div><div class="pillar r"></div>
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span class="right">
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity=".4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/></svg>
+      </span></div>
+
+      <div class="ph">
+        <button class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="ttlwrap"><h1>ARENA · INDIVIDUAL</h1><span class="kicker">Ranking pessoal</span></div>
+        <button class="gear" aria-label="Configurações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+
+      <div class="body">
+        <div class="seg"><button>SEMANA</button><button>MÊS</button><button class="a">INDIVIDUAL</button></div>
+
+        <div class="plate glow" style="padding:14px 14px;">
+          <div class="rk" style="grid-template-columns:34px 44px 1fr auto;">
+            <div class="pos gold">1</div>
+            <div class="av" style="background:linear-gradient(160deg,#ffe89c,#f4c447);border-color:#f4c447;color:#3a2a00;">W</div>
+            <div class="nm">
+              <div class="top"><span class="nme">WILLIAN</span><span class="team" style="background:rgba(244,196,71,.18);border-color:rgba(244,196,71,.7);"><b style="color:#f4c447;">TIME: ALPHA</b></span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v" style="color:#f4c447;text-shadow:0 0 6px rgba(244,196,71,.5);">2.480</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos" style="color:#c0c8d2;">2</div>
+            <div class="av" style="background:linear-gradient(160deg,#e6ecf2,#aab6c5);border-color:#aab6c5;">M</div>
+            <div class="nm">
+              <div class="top"><span class="nme">MARCELO</span><span class="team"><b>TIME: BRAVO</b></span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">2.105</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos" style="color:#c98a4a;">3</div>
+            <div class="av" style="background:linear-gradient(160deg,#f0c8a8,#b8865d);border-color:#b8865d;">A</div>
+            <div class="nm">
+              <div class="top"><span class="nme">ANA</span><span class="team"><b>TIME: CHARLIE</b></span></div>
+              <div class="du">DUPLA COM GUTO · TEEN</div>
+            </div>
+            <div class="xp"><div class="v">1.890</div><div class="k">XP</div></div>
+          </div>
+        </div>
+
+        <div class="plate" style="padding:10px 14px;">
+          <div class="rk">
+            <div class="pos">4</div>
+            <div class="av">R</div>
+            <div class="nm">
+              <div class="top"><span class="nme">RAFA</span><span class="team"><b>TIME: ALPHA</b></span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">1.640</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">5</div>
+            <div class="av">L</div>
+            <div class="nm">
+              <div class="top"><span class="nme">LUCAS</span><span class="team"><b>TIME: DELTA</b></span></div>
+              <div class="du">DUPLA COM GUTO · BABY</div>
+            </div>
+            <div class="xp"><div class="v">1.320</div><div class="k">XP</div></div>
+          </div>
+          <div class="rk">
+            <div class="pos">6</div>
+            <div class="av">P</div>
+            <div class="nm">
+              <div class="top"><span class="nme">PEDRO</span><span class="team"><b>TIME: BRAVO</b></span></div>
+              <div class="du">DUPLA COM GUTO · TEEN</div>
+            </div>
+            <div class="xp"><div class="v">1.180</div><div class="k">XP</div></div>
+          </div>
+        </div>
+
+        <button class="cta-ghost">↗ Ver tudo</button>
+      </div>
+
+      <nav class="nav"><div class="row">
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span class="lb">GUTO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg><span class="lb">TREINO</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V2"/></svg><span class="lb">DIETA</span></button>
+        <button class="a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6"/></svg><span class="lb">ARENA</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg><span class="lb">EVO.</span></button>
+        <button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="lb">PERC.</span></button>
+      </div></nav>
+    </div>
+  </div><div class="label" style="position:relative;bottom:auto;margin-top:14px;">14 · ARENA · INDIVIDUAL</div></div>
+<div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_perc" class="mount"></div></div><div class="label">14 · PERCURSO</div></div>
+  <div class="phone-rn"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_evo"  class="mount"></div></div><div class="label">15 · EVOLUÇÃO</div></div>
+
+</div>
+
+<script type="text/babel" src="select-components.jsx"></script>
+<script type="text/babel" src="screens-v2.jsx"></script>
+<script type="text/babel" src="screens-extra.jsx"></script>
+<script type="text/babel">
+const S = window;
+const mount = (id, El) => { const node = document.getElementById(id); if (node && El) ReactDOM.createRoot(node).render(<El />); };
+mount("m_lang",   S.LanguageScreen);
+mount("m_login",  S.LoginScreen);
+mount("m_pw",     S.CadastrarSenhaScreen);
+mount("m_terms",  S.TermsScreen);
+mount("m_name",   S.NameScreen);
+mount("m_calib",  S.CalibrationScreen);
+mount("m_auth",   S.AuthScreen);
+mount("m_chat",   S.ChatScreen);
+mount("m_perc",   S.PercursoScreen);
+mount("m_evo",    S.EvolutionsScreen);
+</script>
+</body>
+</html>

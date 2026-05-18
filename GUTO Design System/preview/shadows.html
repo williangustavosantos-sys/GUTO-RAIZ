@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Shadows</title>
+<style>
+  .card { padding: 22px; gap: 18px; }
+  .stage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 100%; }
+  .demo { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .surface {
+    width: 100%;
+    height: 110px;
+    background: rgba(255,255,255,0.82);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font: 900 9px/1 var(--guto-font-tech);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg3);
+  }
+  .a { box-shadow: inset 2px 2px 8px rgba(152,163,179,0.22), inset -6px -6px 12px rgba(255,255,255,0.94); }
+  .b { box-shadow: inset 4px 5px 14px rgba(124,136,152,0.26), inset -7px -7px 16px rgba(255,255,255,0.96); }
+  .c { box-shadow: 0 14px 30px rgba(122,138,156,0.18), 0 22px 46px rgba(91,109,132,0.10); }
+  .lbl { font: 900 9px/1 var(--guto-font-tech); letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg2); text-align: center; }
+  .lbl small { display:block; margin-top: 3px; font-weight: 600; opacity: 0.7; letter-spacing: 0.06em; }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="demo">
+    <div class="surface a">DEBOSS</div>
+    <div class="lbl">Inset · Pressed-in<small>--guto-deboss → inputs, slots</small></div>
+  </div>
+  <div class="demo">
+    <div class="surface b">DEBOSS · DEEP</div>
+    <div class="lbl">Inset · Deeper<small>--guto-deboss-deep → press state</small></div>
+  </div>
+  <div class="demo">
+    <div class="surface c">PLATE</div>
+    <div class="lbl">Outer · Lifted<small>--guto-shadow-plate → modal / hero</small></div>
+  </div>
+</div></div>
+</body></html>

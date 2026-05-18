@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GUTO · Premium UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100vh; font-family: "Inter", system-ui, sans-serif; background: #eaf0f7; -webkit-font-smoothing: antialiased; }
+  .stage { padding: 40px 20px 80px; display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 60px 36px; justify-items: center; }
+  .stage > .head { grid-column: 1 / -1; max-width: 880px; width: 100%; }
+  .head h1 { margin: 0 0 8px; font: 800 28px/1.1 "Inter Tight", sans-serif; letter-spacing: -0.01em; color: #2D3748; }
+  .head p  { margin: 0; font: 400 13px/1.5 "Inter", sans-serif; color: #4A5568; max-width: 760px; }
+  .head .badge { display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 99px; background: rgba(82,231,255,0.18); border: 1px solid rgba(82,231,255,0.55); color: #2D3748; font: 800 9px/1 "Inter", sans-serif; letter-spacing: 0.30em; text-transform: uppercase; }
+  .section-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; margin-top: 22px; max-width: 1400px; width: 100%; }
+  .section-head .line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(82,231,255,0.45), transparent); }
+  .section-head .lbl { font: 800 10px/1 "Inter", sans-serif; letter-spacing: 0.34em; text-transform: uppercase; color: #5A7CA8; white-space: nowrap; }
+  .phone { width: 380px; height: 780px; border-radius: 48px; padding: 12px; background: linear-gradient(180deg, #f6fbff 0%, #d6e1ec 12%, #93a4bc 29%, #eff6fd 44%, #91a4bd 58%, #d7e0ea 74%, #fdfefe 100%); box-shadow: 0 30px 60px rgba(91,109,132,0.22), 0 0 0 1px rgba(255,255,255,0.5) inset; position: relative; }
+  .scr { width: 100%; height: 100%; border-radius: 38px; overflow: hidden; position: relative; background: #FFFFFF; }
+  .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 110px; height: 30px; background: #0a0e16; border-radius: 18px; z-index: 9; }
+  .sb { position: absolute; top: 0; left: 0; right: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font: 700 13px/1 "Inter", sans-serif; color: #2D3748; z-index: 10; }
+  .label { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); font: 800 9px/1 "Inter", sans-serif; letter-spacing: 0.30em; text-transform: uppercase; color: rgba(45,55,72,0.5); white-space: nowrap; }
+  .mount { position: absolute; inset: 0; padding-top: 44px; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="stage">
+  <div class="head">
+    <h1>GUTO · Premium UI Kit</h1>
+    <p>Cápsula de vidro com pilares ciano, headers cromados, mascote real e tipografia centralizada. <strong>Onboarding + Chat</strong> aqui (14 telas). Treino, Dieta, Arena e Validação atualizados — ver <code>chat-principal/Telas App.html</code>.</p>
+    <span class="badge">14 telas · onboarding + chat</span>
+  </div>
+
+  <div class="section-head"><span class="lbl">Entrada</span><span class="line"></span></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_lang" class="mount"></div></div><div class="label">01 · IDIOMA</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_login" class="mount"></div></div><div class="label">02 · LOGIN</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_pw" class="mount"></div></div><div class="label">03 · CADASTRAR SENHA</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_terms" class="mount"></div></div><div class="label">04 · TERMOS</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_name" class="mount"></div></div><div class="label">05 · NOME</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_calib" class="mount"></div></div><div class="label">06 · CALIBRAGEM</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_auth" class="mount"></div></div><div class="label">07 · PACTO INICIAL</div></div>
+
+  <div class="section-head"><span class="lbl">App principal</span><span class="line"></span></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_chat" class="mount"></div></div><div class="label">08 · CHAT GUTO</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_perc" class="mount"></div></div><div class="label">09 · PERCURSO</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_evo" class="mount"></div></div><div class="label">10 · EVOLUÇÃO</div></div>
+
+  <div class="section-head"><span class="lbl">Estados &amp; backstage</span><span class="line"></span></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_invite" class="mount"></div></div><div class="label">11 · CONVITE</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_paused" class="mount"></div></div><div class="label">12 · ACESSO PAUSADO</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_admin" class="mount"></div></div><div class="label">13 · ADMIN LOGIN</div></div>
+  <div class="phone"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>· · ·</span></div><div id="m_coach" class="mount"></div></div><div class="label">14 · COACH</div></div>
+</div>
+<script type="text/babel" src="screens-v2.jsx"></script>
+<script type="text/babel" src="screens-extra.jsx"></script>
+<script type="text/babel">
+const S = window;
+const mount = (id, El) => ReactDOM.createRoot(document.getElementById(id)).render(<El />);
+mount("m_lang",   S.LanguageScreen);
+mount("m_login",  S.LoginScreen);
+mount("m_pw",     S.CadastrarSenhaScreen);
+mount("m_terms",  S.TermsScreen);
+mount("m_name",   S.NameScreen);
+mount("m_calib",  S.CalibrationScreen);
+mount("m_auth",   S.AuthScreen);
+mount("m_invite", S.InviteScreen);
+mount("m_chat",   S.ChatScreen);
+mount("m_perc",   S.PercursoScreen);
+mount("m_evo",    S.EvolutionsScreen);
+mount("m_paused", S.PausedScreen);
+mount("m_admin",  S.AdminLoginScreen);
+mount("m_coach",  S.CoachScreen);
+</script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GUTO · Online · Treino v2</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { min-height: 100dvh; background: radial-gradient(120% 80% at 50% 0%, #f4f8fc 0%, #d9e3ee 60%, #b9c8da 100%); -webkit-font-smoothing: antialiased; font-family: "Inter", system-ui, sans-serif; }
+  .stage { min-height: 100dvh; display: grid; place-items: center; padding: 28px 16px; }
+
+  /* ─── Phone ──────────────────────────── */
+  .phone {
+    position: relative;
+    width: min(420px, calc(100vw - 32px));
+    aspect-ratio: 393/852;
+    border-radius: 52px; padding: 12px;
+    background: var(--guto-chrome);
+    box-shadow: 0 50px 90px rgba(40,60,90,0.34), 0 18px 30px rgba(40,60,90,0.22), 0 0 0 1px rgba(255,255,255,0.55) inset;
+  }
+  .scr {
+    position: absolute; inset: 12px; border-radius: 42px; overflow: hidden;
+    background: #eef3f8;
+  }
+  .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 118px; height: 32px; border-radius: 18px; background: #0a0e16; z-index: 50; }
+  .sb { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 32px 8px; color: #0d2341; z-index: 40; font: 700 15px/1 "Inter", sans-serif; pointer-events: none; }
+  .sb .right { display: flex; gap: 6px; align-items: center; }
+
+  /* ─── Background ─────────────────────── */
+  .bg {
+    position: absolute; inset: 0;
+    background-image: url('assets/fundo.jpg');
+    background-size: cover; background-position: 50% 30%;
+    transform: scale(1.05);
+    filter: saturate(1.05) brightness(1.02);
+  }
+  .bg::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0) 45%, rgba(255,255,255,0.30) 75%, rgba(230,238,248,0.92) 100%),
+      radial-gradient(120% 60% at 50% 8%, rgba(82,231,255,0.12), transparent 60%);
+  }
+
+  /* ─── Scrollable content ─────────────── */
+  .content {
+    position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+    padding: 58px 16px 22px; z-index: 10;
+    display: flex; flex-direction: column; gap: 12px;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* ─── Glass card base ────────────────── */
+  .card {
+    position: relative;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.50);
+    border: 1px solid rgba(255,255,255,0.70);
+    backdrop-filter: blur(22px) saturate(1.3);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 14px 32px rgba(90,124,168,0.10);
+    padding: 14px 16px;
+  }
+
+  /* ─── Top bar ────────────────────────── */
+  .top-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+  }
+  .top-bar .logo-wrap {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.60);
+    border: 1px solid rgba(255,255,255,0.85);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 10px rgba(90,124,168,0.10);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .top-bar .logo-wrap img { height: 26px; filter: drop-shadow(0 0 6px rgba(82,231,255,0.3)); }
+  .top-bar .info { flex: 1; min-width: 0; }
+  .top-bar .info .title {
+    font: 900 14px/1.2 "JetBrains Mono", monospace;
+    letter-spacing: 0.06em; color: #0d2341;
+  }
+  .top-bar .info .sub {
+    font: 800 9px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: #52e7ff; margin-top: 3px;
+    text-shadow: 0 0 8px rgba(82,231,255,0.5);
+  }
+  .top-bar .close {
+    width: 38px; height: 38px; border-radius: 14px;
+    background: rgba(255,255,255,0.60);
+    border: 1px solid rgba(255,255,255,0.85);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+    color: #4A5568; display: grid; place-items: center; cursor: pointer;
+  }
+
+  /* ─── Timer card ─────────────────────── */
+  .timer-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px;
+  }
+  .timer-card .icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(180deg, rgba(82,231,255,0.18) 0%, rgba(82,231,255,0.06) 100%);
+    border: 1px solid rgba(82,231,255,0.45);
+    display: grid; place-items: center; flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(82,231,255,0.20);
+    color: #52e7ff;
+  }
+  .timer-card .lbl {
+    font: 900 9px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.30em; text-transform: uppercase;
+    color: #4A5568;
+  }
+  .timer-card .digits {
+    font: 900 40px/1 "JetBrains Mono", monospace;
+    letter-spacing: -0.02em; color: #0d2341;
+    margin-top: 4px;
+  }
+  .timer-card .digits .colon { color: rgba(82,231,255,0.85); }
+
+  /* ─── Holographic chamber ────────────── */
+  .chamber-wrap {
+    position: relative;
+    border-radius: 0;
+    background: none; border: none;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    box-shadow: none;
+    padding: 0;
+    margin: -8px -16px;
+    height: 240px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: visible;
+  }
+  .chamber {
+    position: relative; width: 280px; height: 220px;
+  }
+  /* Glass cylinder body */
+  .chamber .cylinder {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px; height: 180px;
+    border-radius: 20px;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.35) 0%,
+      rgba(220,240,255,0.20) 30%,
+      rgba(200,230,255,0.15) 70%,
+      rgba(180,220,245,0.30) 100%);
+    border: 1.5px solid rgba(255,255,255,0.55);
+    box-shadow:
+      inset 0 0 40px rgba(82,231,255,0.12),
+      inset 0 2px 0 rgba(255,255,255,0.85),
+      0 30px 50px rgba(90,124,168,0.18),
+      0 0 60px rgba(82,231,255,0.10);
+    overflow: hidden;
+  }
+  /* Glass reflections */
+  .chamber .cylinder::before {
+    content: ""; position: absolute;
+    left: 12%; top: 0; width: 30%; height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.45), transparent);
+    border-radius: 20px 0 0 20px;
+  }
+  .chamber .cylinder::after {
+    content: ""; position: absolute;
+    right: 18%; top: 0; width: 15%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  }
+  /* Top chrome rim */
+  .chamber .rim-top {
+    position: absolute; left: 50%; top: calc(50% - 92px);
+    transform: translateX(-50%);
+    width: 220px; height: 18px;
+    border-radius: 10px 10px 4px 4px;
+    background: linear-gradient(180deg, #f0f4f8 0%, #c8d1de 40%, #a0afc2 80%, #d6dfe9 100%);
+    box-shadow: 0 -2px 8px rgba(82,231,255,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
+    z-index: 2;
+  }
+  /* Cyan glow line at top */
+  .chamber .glow-top {
+    position: absolute; left: 50%; top: calc(50% - 76px);
+    transform: translateX(-50%);
+    width: 190px; height: 3px;
+    background: linear-gradient(90deg, transparent, #52e7ff, transparent);
+    box-shadow: 0 0 14px rgba(82,231,255,0.85), 0 0 30px rgba(82,231,255,0.45);
+    border-radius: 99px; z-index: 3;
+    animation: glow-pulse 2.8s ease-in-out infinite;
+  }
+  /* Bottom chrome rim */
+  .chamber .rim-bot {
+    position: absolute; left: 50%; top: calc(50% + 74px);
+    transform: translateX(-50%);
+    width: 220px; height: 18px;
+    border-radius: 4px 4px 10px 10px;
+    background: linear-gradient(180deg, #d6dfe9 0%, #a0afc2 30%, #c8d1de 70%, #e8ecf2 100%);
+    box-shadow: 0 4px 10px rgba(90,124,168,0.15), inset 0 -1px 0 rgba(255,255,255,0.9);
+    z-index: 2;
+  }
+  /* Cyan glow line at bottom */
+  .chamber .glow-bot {
+    position: absolute; left: 50%; top: calc(50% + 72px);
+    transform: translateX(-50%);
+    width: 190px; height: 3px;
+    background: linear-gradient(90deg, transparent, #52e7ff, transparent);
+    box-shadow: 0 0 14px rgba(82,231,255,0.85), 0 0 30px rgba(82,231,255,0.45);
+    border-radius: 99px; z-index: 3;
+    animation: glow-pulse 2.8s ease-in-out infinite 0.4s;
+  }
+  /* Platform base */
+  .chamber .platform {
+    position: absolute; left: 50%; bottom: 0;
+    transform: translateX(-50%);
+    width: 240px; height: 36px;
+    border-radius: 8px 8px 16px 16px;
+    background: linear-gradient(180deg, #d0d8e4 0%, #b8c4d6 40%, #e0e6ef 100%);
+    box-shadow: 0 6px 18px rgba(90,124,168,0.20), inset 0 1px 0 rgba(255,255,255,0.85);
+    z-index: 1;
+  }
+  .chamber .platform::before {
+    content: ""; position: absolute; left: 50%; top: 4px;
+    transform: translateX(-50%);
+    width: 200px; height: 4px;
+    background: linear-gradient(90deg, transparent 5%, rgba(82,231,255,0.75) 20%, #52e7ff 50%, rgba(82,231,255,0.75) 80%, transparent 95%);
+    box-shadow: 0 0 10px rgba(82,231,255,0.65);
+    border-radius: 99px;
+  }
+  /* Internal hologram glow */
+  .chamber .holo {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(82,231,255,0.20) 0%, rgba(82,231,255,0.06) 50%, transparent 70%);
+    box-shadow: 0 0 40px rgba(82,231,255,0.20);
+    animation: holo-breathe 3.2s ease-in-out infinite;
+    z-index: 1;
+  }
+  /* Internal scanline */
+  .chamber .h-scan {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px; height: 150px;
+    overflow: hidden; z-index: 2;
+    pointer-events: none;
+  }
+  .chamber .h-scan::before {
+    content: ""; position: absolute; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(82,231,255,0.75), transparent);
+    box-shadow: 0 0 8px rgba(82,231,255,0.8);
+    animation: h-scan-move 3s linear infinite;
+  }
+  @keyframes h-scan-move {
+    0%   { top: -10%; opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { top: 105%; opacity: 0; }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.65; }
+    50%      { opacity: 1; }
+  }
+  @keyframes holo-breathe {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
+  }
+  /* GUTO ONLINE label inside chamber */
+  .chamber .label-inside {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    font: 900 10px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(82,231,255,0.85);
+    text-shadow: 0 0 12px rgba(82,231,255,0.6);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .chamber .label-inside .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #52e7ff; box-shadow: 0 0 14px rgba(82,231,255,1);
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  /* ─── Voice bar ──────────────────────── */
+  .voice-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+  }
+  .voice-bar .wave {
+    display: flex; align-items: center; gap: 2px; height: 20px; flex-shrink: 0;
+    color: #52e7ff;
+  }
+  .voice-bar .wave span {
+    display: block; width: 3px; border-radius: 99px;
+    background: #52e7ff;
+    animation: wave 1.2s ease-in-out infinite;
+  }
+  .voice-bar .wave span:nth-child(1) { height: 30%; animation-delay: 0s; }
+  .voice-bar .wave span:nth-child(2) { height: 60%; animation-delay: 0.1s; }
+  .voice-bar .wave span:nth-child(3) { height: 90%; animation-delay: 0.2s; }
+  .voice-bar .wave span:nth-child(4) { height: 55%; animation-delay: 0.3s; }
+  .voice-bar .wave span:nth-child(5) { height: 75%; animation-delay: 0.4s; }
+  @keyframes wave { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+  .voice-bar .text {
+    flex: 1; min-width: 0;
+    font: 600 13.5px/1.3 "Inter", sans-serif;
+    color: #0d2341;
+  }
+  .voice-bar .status {
+    font: 800 9px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: #52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.5);
+    display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+  }
+  .voice-bar .status .dot { width: 5px; height: 5px; border-radius: 50%; background: #52e7ff; box-shadow: 0 0 8px rgba(82,231,255,1); animation: pulse-dot 1.6s ease-in-out infinite; }
+
+  /* ─── Exercise card ──────────────────── */
+  .exercise-card { padding: 16px 18px; }
+  .exercise-card .head {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .exercise-card .icon-ex {
+    width: 44px; height: 44px; border-radius: 14px;
+    background: rgba(82,231,255,0.12);
+    border: 1px solid rgba(82,231,255,0.35);
+    display: grid; place-items: center;
+    color: #52e7ff; flex-shrink: 0;
+  }
+  .exercise-card .head .info { flex: 1; }
+  .exercise-card .head h2 {
+    font: 900 15px/1.2 "JetBrains Mono", monospace;
+    letter-spacing: 0.04em; color: #0d2341; text-transform: uppercase;
+  }
+  .exercise-card .head .stats {
+    margin-top: 3px;
+    font: 700 12px/1 "JetBrains Mono", monospace;
+    color: #4A5568; letter-spacing: 0.06em;
+  }
+  .exercise-card .head .stats b { color: #0d2341; font-weight: 800; }
+
+  /* Series boxes */
+  .series-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    margin-top: 14px;
+  }
+  .series-box {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .series-box .lbl {
+    font: 900 8px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: #4A5568;
+  }
+  .series-box .check {
+    width: 100%; aspect-ratio: 1;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.60);
+    border: 1.5px solid rgba(193,204,218,0.86);
+    box-shadow: var(--guto-deboss);
+    display: grid; place-items: center;
+    color: transparent;
+  }
+  .series-box .check.done {
+    background: rgba(82,231,255,0.12);
+    border-color: rgba(82,231,255,0.55);
+    box-shadow: 0 0 12px rgba(82,231,255,0.20);
+    color: #52e7ff;
+  }
+  .series-box .check.active {
+    border-color: rgba(82,231,255,0.65);
+    box-shadow: 0 0 12px rgba(82,231,255,0.30), var(--guto-deboss);
+    animation: box-pulse 2s ease-in-out infinite;
+  }
+  @keyframes box-pulse {
+    0%, 100% { border-color: rgba(82,231,255,0.45); }
+    50%      { border-color: rgba(82,231,255,0.85); }
+  }
+
+  /* Rest + execution */
+  .ex-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 12px;
+    font: 700 11px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #4A5568;
+  }
+  .ex-footer .rest {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ex-footer .rest svg { color: #52e7ff; }
+  .ex-footer .ver {
+    display: flex; align-items: center; gap: 5px;
+    color: #0d2341; cursor: pointer;
+  }
+
+  /* ─── Audio + Interrupt row ─────────── */
+  .control-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .audio-toggle {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+  }
+  .audio-toggle .a-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.60);
+    border: 1px solid rgba(255,255,255,0.85);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+    display: grid; place-items: center; color: #4A5568; flex-shrink: 0;
+  }
+  .audio-toggle .a-info { flex: 1; min-width: 0; }
+  .audio-toggle .a-info .a-lbl { font: 700 11px/1.2 "Inter", sans-serif; color: #0d2341; }
+  .audio-toggle .a-info .a-sub { font: 800 9px/1 "JetBrains Mono", monospace; letter-spacing: 0.22em; color: #52e7ff; text-shadow: 0 0 6px rgba(82,231,255,0.4); text-transform: uppercase; margin-top: 2px; }
+  /* Toggle */
+  .toggle-track {
+    width: 44px; height: 24px; border-radius: 999px; position: relative; cursor: pointer; flex-shrink: 0;
+    background: linear-gradient(180deg, #7df0ff, #52e7ff);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 2px 6px rgba(82,231,255,0.35);
+  }
+  .toggle-track::after {
+    content: ""; position: absolute; right: 3px; top: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  /* Interrupt button */
+  .btn-interrupt {
+    border-radius: 22px;
+    background: rgba(255,230,230,0.50);
+    border: 1px solid rgba(220,130,130,0.40);
+    backdrop-filter: blur(14px);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 14px; cursor: pointer;
+    font: 800 11px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #c53030;
+  }
+  .btn-interrupt .stop-icon {
+    width: 20px; height: 20px; border-radius: 6px;
+    background: rgba(197,48,48,0.12);
+    border: 1px solid rgba(197,48,48,0.35);
+    display: grid; place-items: center;
+  }
+
+  /* ─── Chat input ─────────────────────── */
+  .chat-input-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 8px 8px 14px;
+  }
+  .chat-input-card .chat-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.60);
+    border: 1px solid rgba(255,255,255,0.85);
+    display: grid; place-items: center; color: #52e7ff; flex-shrink: 0;
+  }
+  .chat-input-card input {
+    flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+    font: 600 13px/1.2 "Inter", sans-serif; color: #0d2341; padding: 8px 4px;
+  }
+  .chat-input-card input::placeholder { color: rgba(13,35,65,0.38); }
+  .chat-input-card .send {
+    width: 38px; height: 38px; border-radius: 999px; border: none; cursor: pointer;
+    background: linear-gradient(180deg, #7df0ff, #52e7ff, #1ec1de);
+    color: #0d2341; display: grid; place-items: center; flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 4px 14px rgba(82,231,255,0.55);
+  }
+
+  /* ─── Big CTA: Série Feita ───────────── */
+  .btn-serie {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(130,240,255,0.30) 0%, rgba(82,231,255,0.18) 100%);
+    border: 1.5px solid rgba(82,231,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 0 22px rgba(82,231,255,0.25);
+    cursor: pointer;
+    font: 900 14px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: #0d2341;
+    backdrop-filter: blur(14px);
+    transition: all 200ms ease;
+  }
+  .btn-serie:hover {
+    background: linear-gradient(180deg, rgba(82,231,255,0.45) 0%, rgba(82,231,255,0.28) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 0 32px rgba(82,231,255,0.45);
+  }
+  .btn-serie .check-circle {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(180deg, #7df0ff, #52e7ff);
+    display: grid; place-items: center; color: #0d2341;
+    box-shadow: 0 0 10px rgba(82,231,255,0.55);
+  }
+
+  /* ─── Bottom action chips ────────────── */
+  .action-chips {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .a-chip {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 11px 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.40);
+    border: 1px solid rgba(255,255,255,0.65);
+    backdrop-filter: blur(14px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    font: 800 10px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.10em; color: #0d2341;
+    cursor: pointer;
+  }
+  .a-chip svg { flex-shrink: 0; }
+  .a-chip.danger { color: #c53030; border-color: rgba(220,130,130,0.35); background: rgba(255,230,230,0.35); }
+  .a-chip.danger svg { color: #c53030; }
+
+  /* ─── Registered footer ─────────────── */
+  .registered {
+    text-align: center;
+    padding: 6px 0 4px;
+    font: 700 10px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(74,85,104,0.55);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .registered a {
+    color: #52e7ff; text-decoration: none;
+    text-shadow: 0 0 6px rgba(82,231,255,0.4);
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50%     { transform: scale(0.6); opacity: 0.5; }
+  }
+
+  .caption { margin-top: 26px; text-align: center; color: #4A5568; font: 800 10px/1 "JetBrains Mono", monospace; letter-spacing: 0.30em; text-transform: uppercase; }
+  .caption span { color: #52e7ff; text-shadow: 0 0 8px rgba(82,231,255,0.55); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chamber .glow-top, .chamber .glow-bot, .chamber .holo, .chamber .h-scan::before,
+    .voice-bar .wave span, .series-box .check.active, .chamber .label-inside .dot,
+    .voice-bar .status .dot { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div>
+  <div class="phone" data-screen-label="GUTO ONLINE v2">
+    <div class="scr">
+      <div class="bg"></div>
+
+      <div class="notch"></div>
+      <div class="sb">
+        <span>9:41</span>
+        <span class="right">
+          <svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="6" width="3" height="5" rx="0.6" fill="currentColor"/><rect x="5" y="4" width="3" height="7" rx="0.6" fill="currentColor"/><rect x="10" y="2" width="3" height="9" rx="0.6" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx="0.6" fill="currentColor"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 3C10 3 11.8 3.8 13.2 5.1L14.2 4.1C12.5 2.5 10.4 1.5 8 1.5C5.6 1.5 3.5 2.5 1.8 4.1L2.8 5.1C4.2 3.8 6 3 8 3Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.4" fill="currentColor"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" stroke="currentColor" stroke-opacity="0.4" fill="none"/><rect x="2" y="2" width="19" height="8" rx="1.6" fill="currentColor"/><path d="M24 4V8C24.7 7.7 25.3 6.9 25.3 6C25.3 5.1 24.7 4.3 24 4Z" fill="currentColor" fill-opacity="0.5"/></svg>
+        </span>
+      </div>
+
+      <div class="content">
+        <!-- Top bar -->
+        <div class="card top-bar">
+          <div class="logo-wrap">
+            <img src="assets/logo.png" alt="GUTO">
+          </div>
+          <div class="info">
+            <div class="title">GUTO &amp; WILLIAN</div>
+            <div class="sub">Missão em andamento</div>
+          </div>
+          <button class="close" aria-label="Fechar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg>
+          </button>
+        </div>
+
+        <!-- Timer -->
+        <div class="card timer-card">
+          <div class="icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6M22 6l-3-3M10 2h4"/></svg>
+          </div>
+          <div>
+            <div class="lbl">TEMPO DE TREINO</div>
+            <div class="digits">00<span class="colon">:</span>18<span class="colon">:</span>42</div>
+          </div>
+        </div>
+
+        <!-- Holographic chamber — vídeo GUTO Online -->
+        <div class="chamber-wrap">
+          <div class="chamber">
+            <div class="rim-top"></div>
+            <div class="glow-top"></div>
+            <div class="cylinder">
+              <div class="holo"></div>
+              <!-- GUTO Online video inside the glass cylinder -->
+              <video
+                src="assets/guto-online.webm"
+                autoplay loop muted playsinline
+                style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;filter:drop-shadow(0 0 28px rgba(82,231,255,0.5)) drop-shadow(0 0 60px rgba(82,231,255,0.2));z-index:3;border-radius:20px;">
+              </video>
+            </div>
+            <div class="glow-bot"></div>
+            <div class="rim-bot"></div>
+            <div class="platform"></div>
+            <div class="label-inside">
+              <span class="dot"></span>
+              GUTO ONLINE
+            </div>
+          </div>
+        </div>
+
+        <!-- Voice bar -->
+        <div class="card voice-bar">
+          <div class="wave">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="text">Próxima série. Faz limpo.</div>
+          <div class="status"><span class="dot"></span>Ouvindo…</div>
+        </div>
+
+        <!-- Exercise card -->
+        <div class="card exercise-card">
+          <div class="head">
+            <div class="icon-ex">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6v12M3 9v6M18 6v12M21 9v6M6 12h12"/></svg>
+            </div>
+            <div class="info">
+              <h2>Agachamento Livre</h2>
+              <div class="stats"><b>12</b> reps &nbsp;·&nbsp; <b>40</b> kg</div>
+            </div>
+          </div>
+          <div class="series-row">
+            <div class="series-box">
+              <span class="lbl">Série 1</span>
+              <div class="check done">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/></svg>
+              </div>
+            </div>
+            <div class="series-box">
+              <span class="lbl">Série 2</span>
+              <div class="check done">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/></svg>
+              </div>
+            </div>
+            <div class="series-box">
+              <span class="lbl">Série 3</span>
+              <div class="check active"></div>
+            </div>
+            <div class="series-box">
+              <span class="lbl">Série 4</span>
+              <div class="check"></div>
+            </div>
+          </div>
+          <div class="ex-footer">
+            <span class="rest">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Descanso: 60s
+            </span>
+            <span class="ver">
+              Ver execução
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Audio + Interrupt -->
+        <div class="control-row">
+          <div class="card audio-toggle">
+            <div class="a-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+            </div>
+            <div class="a-info">
+              <div class="a-lbl">Áudio do GUTO</div>
+              <div class="a-sub">Guto falando</div>
+            </div>
+            <div class="toggle-track"></div>
+          </div>
+          <button class="btn-interrupt">
+            <span class="stop-icon">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+            </span>
+            Interromper
+          </button>
+        </div>
+
+        <!-- Chat input -->
+        <div class="card chat-input-card">
+          <div class="chat-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>
+          </div>
+          <input type="text" placeholder="Digite para o GUTO…">
+          <button class="send" aria-label="Enviar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </div>
+
+        <!-- Série Feita CTA -->
+        <button class="btn-serie">
+          <span class="check-circle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          Série Feita
+        </button>
+
+        <!-- Action chips -->
+        <div class="action-chips">
+          <button class="a-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 12.7a8 8 0 0 0-15.6-2m-.5-5v5h5"/><path d="M3.6 11.3a8 8 0 0 0 15.6 2m.5 5v-5h-5"/></svg>
+            Trocar
+          </button>
+          <button class="a-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2.4" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+            Pausar
+          </button>
+          <button class="a-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.3 2.5-3 2.5-5.5C21.5 4.8 18.2 2 14 2c-4.2 0-7.5 2.8-7.5 6.5 0 2.5 1 4.2 2.5 5.5"/><path d="M12 22c-4 0-7-2.5-7-5.5S8 11 12 11s7 2.5 7 5.5S16 22 12 22z"/></svg>
+            Dor
+          </button>
+          <button class="a-chip danger">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+            Parar
+          </button>
+        </div>
+
+        <!-- Registered -->
+        <div class="registered">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#52e7ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Registrado &nbsp;·&nbsp; <a href="#">desfazer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="caption">GUTO ONLINE v2 &nbsp;·&nbsp; <span>treino · live</span></div>
+  </div>
+</div>
+</body>
+</html>

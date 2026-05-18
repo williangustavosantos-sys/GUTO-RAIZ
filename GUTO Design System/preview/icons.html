@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Icons</title>
+<style>
+  .card { padding: 22px 24px; flex-direction: column; gap: 12px; align-items: stretch; }
+  .stage { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
+  .demo { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .demo svg { width: 28px; height: 28px; stroke-width: 2; color: #0d2341; }
+  .demo.active svg { color: #52e7ff; filter: drop-shadow(0 0 8px rgba(82,231,255,0.5)); stroke-width: 2.4; }
+  .lbl { font: 900 9px/1 var(--guto-font-tech); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg3); }
+  .meta {
+    font: 500 10px/1.4 var(--guto-font-tech);
+    color: var(--fg2);
+    text-align: center;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(13,35,65,0.10);
+  }
+  .meta b { color: var(--fg1); font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase; font-size: 9px; }
+</style>
+</head><body>
+<div class="card">
+  <div class="stage">
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg><div class="lbl">message</div></div>
+    <div class="demo active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg><div class="lbl">dumbbell</div></div>
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg><div class="lbl">utensils</div></div>
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><div class="lbl">trending</div></div>
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><div class="lbl">map-pin</div></div>
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><div class="lbl">zap</div></div>
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13a9 9 0 0 1 9 9"/><path d="M3 13a9 9 0 0 0 9 9"/><path d="M12 13V2"/><path d="M3 7a9 9 0 0 1 18 0"/><circle cx="12" cy="13" r="2"/></svg><div class="lbl">fingerprint</div></div>
+    <div class="demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><div class="lbl">send</div></div>
+  </div>
+  <div class="meta"><b>LUCIDE REACT</b> · stroke 2 default · 2.4 active · color follows text · cyan glow when on</div>
+</div>
+</body></html>

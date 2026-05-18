@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"><title>Buttons</title>
+<style>
+  .card { padding: 22px 24px; gap: 14px; flex-wrap: wrap; }
+  .stage { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; width: 100%; }
+  .btn-cta {
+    height: 50px;
+    padding: 0 28px;
+    border-radius: 999px;
+    background: #52e7ff;
+    color: #0d2341;
+    font: 900 11px/1 var(--guto-font-tech);
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    border: none;
+    box-shadow: 0 4px 20px rgba(82,231,255,0.30);
+    cursor: pointer;
+  }
+  .btn-ghost {
+    height: 50px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.18);
+    color: var(--fg2);
+    font: 900 11px/1 var(--guto-font-tech);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.74);
+    box-shadow: inset 2px 3px 8px rgba(121,136,156,0.13), inset -4px -5px 10px rgba(255,255,255,0.82), 0 10px 24px rgba(122,138,156,0.10);
+    backdrop-filter: blur(14px);
+  }
+  .btn-icon {
+    width: 50px; height: 50px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 50% 22%, rgba(255,255,255,0.8), transparent 58%), rgba(255,255,255,0.16);
+    color: #52e7ff;
+    border: none;
+    box-shadow: inset 2px 3px 8px rgba(121,136,156,0.16), inset -4px -5px 10px rgba(255,255,255,0.86), 0 0 0 1px rgba(82,231,255,0.34), 0 0 16px rgba(82,231,255,0.18);
+    display: grid; place-items: center;
+    font-size: 18px;
+  }
+  .lbl { font: 900 9px/1.2 var(--guto-font-tech); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg3); margin-top: 6px; text-align: center; }
+  .col { display: flex; flex-direction: column; align-items: center; }
+</style>
+</head><body>
+<div class="card"><div class="stage">
+  <div class="col"><button class="btn-cta">ENTRAR</button><div class="lbl">CTA · primary</div></div>
+  <div class="col"><button class="btn-ghost">VOLTAR</button><div class="lbl">Ghost · frost</div></div>
+  <div class="col"><button class="btn-icon">▶</button><div class="lbl">Icon · cyan ring</div></div>
+  <div class="col"><button class="btn-cta" disabled style="opacity:0.5; box-shadow:none;">ENTRAR</button><div class="lbl">Disabled</div></div>
+  <div class="col"><button class="btn-cta" style="transform:scale(0.96); box-shadow:0 0 0 2px #52e7ff, 0 0 24px rgba(82,231,255,0.5);">ENTRAR</button><div class="lbl">Pressed</div></div>
+</div></div>
+</body></html>
