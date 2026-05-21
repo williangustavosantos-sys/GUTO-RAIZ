@@ -5,4 +5,7 @@ scratch/
 scratch-test*.js
 stress_results.json
 node_modules
+.env
+.env.*
+.env.local
 .cursor/*.log
