@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GUTO · Sala de Controle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #F0F2F5; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: #0F172A;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  ::-webkit-scrollbar       { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #C8CDD6; border-radius: 99px; border: 2px solid #F0F2F5; }
+  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+  button { font-family: inherit; }
+  input, select, textarea { font-family: inherit; outline: none; }
+
+  input::placeholder { color: #94A3B8; }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #0891B2 !important;
+    box-shadow: 0 0 0 3px rgba(8,145,178,0.12) !important;
+  }
+
+  button { transition: filter 140ms ease, transform 80ms ease; }
+  button:not(:disabled):hover { filter: brightness(0.97); }
+  button:not(:disabled):active { transform: scale(0.985); }
+
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popIn  {
+    from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  /* Ensure animated elements stay at their final state */
+  [style*="slideInRight"] { animation-fill-mode: forwards; }
+  [style*="fadeIn"]        { animation-fill-mode: forwards; }
+  [style*="popIn"]         { animation-fill-mode: forwards; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+  integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+  integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+  integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+  crossorigin="anonymous"></script>
+
+<script type="text/babel">
+  window.PanelCtx = React.createContext(null);
+</script>
+
+<script type="text/babel" src="panel-data.jsx"></script>
+<script type="text/babel" src="sala-data.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+
+<!-- Light theme rebuild -->
+<script type="text/babel" src="light-shell.jsx"></script>
+<script type="text/babel" src="light-screens.jsx"></script>
+<script type="text/babel" src="light-drawers.jsx"></script>
+
+<script type="text/babel">
+const { useState: useApp, useCallback: useCb, useEffect: useEf } = React;
+
+function App() {
+  const [activeScreen,    setActiveScreen]    = useApp("hoje");
+  const [collapsed,       setCollapsed]       = useApp(false);
+  const [selectedStudent, setSelectedStudent] = useApp(null);
+  const [detailTab,       setDetailTab]       = useApp("resumo");
+  const [empresa,         setEmpresa]         = useApp(null);
+  const [showCreate,      setShowCreate]      = useApp(null);
+
+  const openStudent  = useCb((s, tab="resumo") => { setSelectedStudent(s); setDetailTab(tab); }, []);
+  const closeStudent = useCb(() => setSelectedStudent(null), []);
+  const openEmpresa  = useCb((e) => setEmpresa(e), []);
+  const closeEmpresa = useCb(() => setEmpresa(null), []);
+
+  useEf(() => {
+    const onKey = (ev) => {
+      if (ev.key !== "Escape") return;
+      if (showCreate)           setShowCreate(null);
+      else if (selectedStudent) closeStudent();
+      else if (empresa)         closeEmpresa();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showCreate, selectedStudent, empresa, closeStudent, closeEmpresa]);
+
+  const ctx = {
+    activeScreen, setActiveScreen,
+    selectedStudent, openStudent, closeStudent,
+    detailTab, setDetailTab,
+    empresa, openEmpresa, closeEmpresa,
+    showCreate, setShowCreate,
+  };
+
+  return (
+    <window.PanelCtx.Provider value={ctx}>
+      <div style={{ display:"flex", height:"100vh", overflow:"hidden", background: T.bg }}>
+        <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(v => !v)} navGroups={SUPER_NAV}/>
+        <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
+          <Header/>
+          <main style={{ flex:1, overflowY:"auto" }}>
+            <ActiveScreen/>
+          </main>
+        </div>
+
+        {empresa          && <EmpresaDrawer/>}
+        {selectedStudent && <StudentDrawer/>}
+        {showCreate       && <CreateModal/>}
+      </div>
+    </window.PanelCtx.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

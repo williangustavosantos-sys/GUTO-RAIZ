@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GUTO · Coach Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #F0F2F5; }
+  body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: #0F172A; -webkit-font-smoothing: antialiased; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #C8CDD6; border-radius: 99px; border: 2px solid #F0F2F5; }
+  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+  button { font-family: inherit; transition: filter 140ms ease, transform 80ms ease; }
+  button:not(:disabled):hover { filter: brightness(0.97); }
+  button:not(:disabled):active { transform: scale(0.985); }
+  input, select { font-family: inherit; outline: none; }
+  input::placeholder { color: #94A3B8; }
+  input:focus, select:focus { border-color: #0891B2 !important;
+    box-shadow: 0 0 0 3px rgba(8,145,178,0.12) !important; }
+  @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popIn {
+    from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+  integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+  integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+  integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+  crossorigin="anonymous"></script>
+
+<script type="text/babel">
+  window.PanelCtx = React.createContext(null);
+</script>
+
+<script type="text/babel" src="panel-data.jsx"></script>
+<script type="text/babel" src="sala-data.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="light-shell.jsx"></script>
+<script type="text/babel" src="coach-screens.jsx"></script>
+<script type="text/babel" src="light-drawers.jsx"></script>
+
+<script type="text/babel">
+const { useState: useApp, useCallback: useCb, useEffect: useEf } = React;
+
+function CoachApp() {
+  const coach = getMyCoach();
+  const [activeScreen,    setActiveScreen]    = useApp("inicio");
+  const [collapsed,       setCollapsed]       = useApp(false);
+  const [selectedStudent, setSelectedStudent] = useApp(null);
+  const [detailTab,       setDetailTab]       = useApp("resumo");
+  const [showCreate,      setShowCreate]      = useApp(null);
+
+  const openStudent  = useCb((s, tab="resumo") => { setSelectedStudent(s); setDetailTab(tab); }, []);
+  const closeStudent = useCb(() => setSelectedStudent(null), []);
+
+  useEf(() => {
+    const onKey = (ev) => {
+      if (ev.key !== "Escape") return;
+      if (showCreate)           setShowCreate(null);
+      else if (selectedStudent) closeStudent();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showCreate, selectedStudent, closeStudent]);
+
+  const ctx = {
+    activeScreen, setActiveScreen,
+    selectedStudent, openStudent, closeStudent,
+    detailTab, setDetailTab,
+    empresa: null, openEmpresa: ()=>{}, closeEmpresa: ()=>{},
+    showCreate, setShowCreate,
+  };
+
+  return (
+    <window.PanelCtx.Provider value={ctx}>
+      <div style={{ display:"flex", height:"100vh", overflow:"hidden", background:T.bg }}>
+        <Sidebar
+          collapsed={collapsed}
+          onToggle={() => setCollapsed(v => !v)}
+          navGroups={COACH_NAV}
+        />
+        <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
+          <header style={{
+            height:62, flexShrink:0,
+            display:"flex", alignItems:"center", justifyContent:"space-between",
+            padding:"0 28px",
+            background:T.surface,
+            borderBottom:`1px solid ${T.border}`,
+            boxShadow:"0 1px 0 rgba(15,23,42,0.04)",
+            position:"sticky", top:0, zIndex:20, gap:24,
+          }}>
+            <div style={{ minWidth:0 }}>
+              <div style={{ display:"flex", alignItems:"baseline", gap:10 }}>
+                <div style={{ fontFamily:T.ui, fontSize:18, fontWeight:600, color:T.fg,
+                  letterSpacing:"-0.015em", lineHeight:1.1 }}>
+                  {t(`screen.${
+                    activeScreen==="inicio"?"hoje":
+                    activeScreen==="meus_alunos"?"meus_alunos":
+                    activeScreen}.t`)}
+                </div>
+                <div style={{ fontFamily:T.ui, fontSize:13, color:T.fg4 }}>
+                  {t("app.coach_painel")} · {coach.name}
+                </div>
+              </div>
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
+              <LangSwitcher/>
+              <div style={{ width:1, height:20, background:T.border, margin:"0 4px" }}/>
+              <Pill tone="ok" dot style={{ fontSize:12 }}>{t("misc.sys_online")}</Pill>
+              <a href="Login.html" style={{
+                height:32, padding:"0 12px", borderRadius:8, cursor:"pointer",
+                background:"transparent", border:`1px solid ${T.border}`,
+                color:T.fg3, fontFamily:T.ui, fontSize:12.5, fontWeight:500,
+                display:"inline-flex", alignItems:"center", gap:6, textDecoration:"none",
+              }}>← {t("login.btn")}</a>
+            </div>
+          </header>
+          <main style={{ flex:1, overflowY:"auto" }}>
+            <CPActiveScreen/>
+          </main>
+        </div>
+
+        {selectedStudent && <StudentDrawer/>}
+      </div>
+    </window.PanelCtx.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<CoachApp/>);
+</script>
+</body>
+</html>
