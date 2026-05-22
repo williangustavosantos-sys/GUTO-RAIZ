@@ -82,7 +82,7 @@ A calibragem é a etapa de configuração profunda do "corpo" e "ambiente" do us
 6. **Altura** e **Peso** (essenciais para cálculo de dieta e evolução corporal).
 7. **País** e **Cidade** (fornecem o contexto geográfico para clima, feriados, fusos e alimentação local).
 8. **Dores, Patologias ou Limitações** (dados cruciais de segurança; ex: joelho operado, hérnia, dores articulares).
-9. **Restrições Alimentares ou Intolerâncias** (dados médicos alimentares; ex: intolerância a lactose, veganismo, alergia a glúten).
+9. **Campo Único "NÃO COMO"** (dados alimentares em um único campo; ex: intolerância a lactose, veganismo, alergia a glúten).
 
 ### Regras Críticas
 - **Conexão Real no Backend**: a calibragem não é um formulário de cadastro cosmético. Ela precisa persistir na memória operacional do backend imediatamente. 

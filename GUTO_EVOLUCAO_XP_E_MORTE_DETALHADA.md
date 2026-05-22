@@ -126,13 +126,13 @@ Isso impede que modificações locais de código no frontend ou tentativas de by
 
 ---
 
-## O Processo de Ressurreição e Novo Acesso
+## Novo Acesso Após a Morte
 
-O GUTO **nunca** revive de forma automática por ações isoladas de treino do usuário.
+O GUTO **não revive dentro do app atual**. Quando o XP chega a zero, aquele acesso entra em estado terminal e o celular fica bloqueado.
 - O aluno está impedido de reviver o GUTO realizando treinos "por fora" ou enviando fotos de validação, pois os botões estão fisicamente travados e as rotas de API bloqueadas no backend.
-- **Caminho Comercial:** O usuário deve clicar no botão de suporte, que o direciona para contato externo com o Admin ou Coach responsável.
-- **Ação no Painel Desktop:** O administrador realiza o faturamento do novo ciclo de licença e, no painel, clica em "Liberar Novo Acesso". 
-- **O Reset:** O backend atualiza o status de volta para `alive`, zera o histórico de inatividades, concede o novo saldo de `100 XP` de partida e reinstaura o aluno de volta ao stage `/consent` ou `/` (Chat), preservando sua calibragem física e histórico de conquistas no Percurso como herança.
+- **Caminho Comercial:** O usuário precisa entrar em contato com o Admin/Coach do GUTO para comprar um novo acesso.
+- **Ação no Painel Desktop:** qualquer liberação futura é uma decisão administrativa e comercial fora do app do aluno. O app não deve mostrar botão de reviver, compra automática ou promessa de restauração imediata.
+- **Regra Técnica Atual:** enquanto não houver novo acesso liberado pelo Admin, o backend continua negando chat, treinos, dieta, GUTO Online e rotas protegidas. O avatar permanece apagado e as páginas do app continuam bloqueadas.
 
 ---
 
@@ -143,4 +143,4 @@ O GUTO **nunca** revive de forma automática por ações isoladas de treino do u
 - **Bypass de Rotas:** Permitir que o aluno pule a tela de blackout alterando estados locais de cache do frontend. O backend **deve** negar todas as chamadas de API feitas por contas inativas.
 - **Exclusão de Conquistas:** Apagar o histórico de treinos antigos do Percurso do usuário caso a conta morra. O Percurso do GUTO morto deve permanecer em modo de *somente leitura* como prova do legado.
 - **Cobrança Humilhante:** A IA usar cópias que ataquem ou ridicularizem o esforço de disciplina do usuário após a morte da conta. O tom deve ser direto, leal e centrado no restabelecimento do vínculo.
-- **Reviver Automático:** O sistema reativar contas mortas de forma invisível ou permitir que o aluno drible a trava comercial sem a devida liberação do Coach/Admin no painel de governança desktop.
+- **Reviver Automático:** o sistema reativar contas mortas de forma invisível, conceder novo XP automaticamente ou permitir que o aluno drible a trava comercial sem novo acesso comprado e liberado pelo Admin/Coach.

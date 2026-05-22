@@ -75,7 +75,9 @@ A resposta do GUTO não pode ser só texto. Ela precisa ser um contrato estrutur
 
 ## Calibragem E Memória
 
-A calibragem inicial é uma das partes mais importantes do sistema. Ela coleta idade, sexo biológico, nível de treino, objetivo, local preferido, altura, peso, país, cidade, patologia ou limitação, restrição alimentar, intolerância, idioma e histórico recente.
+A calibragem inicial é uma das partes mais importantes do sistema. Ela coleta idade, sexo biológico, nível de treino, objetivo, local preferido, altura, peso, país, cidade, patologia ou limitação e o campo único `NÃO COMO`, onde entram restrições alimentares, intolerâncias, alergias e escolhas alimentares relevantes.
+
+O idioma é definido antes da calibragem e acompanha todo o app. Histórico recente não é perguntado como campo inicial: ele nasce do uso real do GUTO, por meio de treinos concluídos, feedbacks, adaptações, faltas, dieta e eventos registrados no backend.
 
 Esses dados precisam ser salvos no backend como memória real. O GUTO não deve perguntar de novo algo que já sabe. Se sabe que o usuário tem joelho sensível, o treino precisa respeitar isso. Se sabe que o usuário mora na Itália mas fala português, o texto continua em português, mas a dieta e contexto local devem considerar Itália.
 
@@ -115,7 +117,7 @@ Arena, Evoluir, Percurso e memória precisam mostrar o mesmo estado. Se o XP apa
 
 ## Dieta
 
-A dieta não deve ser um formulário separado que pergunta tudo de novo. Ela deve usar a memória já salva: peso, altura, objetivo, país, restrições, intolerâncias e idioma.
+A dieta não deve ser um formulário separado que pergunta tudo de novo. Ela deve usar a memória já salva: peso, altura, objetivo, país, idioma e o campo único `NÃO COMO`.
 
 A dieta precisa respeitar restrições alimentares de verdade. Se o usuário é intolerante a lactose, alimento com lactose não pode aparecer. Se o usuário escreveu "nessun dolore", isso significa ausência de dor física em italiano, não restrição alimentar. Esse tipo de diferença é exatamente por que o GUTO precisa de interpretação semântica, não palavra-chave.
 

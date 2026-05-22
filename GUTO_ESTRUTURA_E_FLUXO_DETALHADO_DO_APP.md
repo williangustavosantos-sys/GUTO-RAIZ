@@ -134,7 +134,7 @@ A calibragem é a principal fundação de dados que molda o comportamento lógic
    - **Efeito cascata posterior:** Altera a biblioteca de movimentos. Se "home" for o escolhido, exercícios com halteres e máquinas são excluídos da aba **Missão** e substituídos por exercícios de peso corporal.
 7. **Campo "Dores, Patologias ou Limitações"** (Input de texto livre ou tags)
    - **Efeito cascata posterior:** Se o usuário declara "dor no joelho", o backend ativa uma tag de segurança na conta. Exercícios de alto estresse patelar (como agachamento profundo sem suporte ou saltos) são removidos do catálogo de treinos gerados para a aba **Missão**. O GUTO Online herda esse estado e monitora queixas de dor articular em tempo real.
-8. **Campo "Restrições Alimentares ou Intolerâncias"** (Input de texto ou tags de restrição)
+8. **Campo Único "NÃO COMO"** (Input de texto para restrições, intolerâncias, alergias e escolhas alimentares)
    - **Efeito cascata posterior:** Se o usuário seleciona ou escreve "intolerância a lactose", qualquer alimento derivado de leite com lactose é eliminado do plano calórico da aba **Dieta**. Se o usuário escrever frases livres que indiquem ausência de dor como "nessun dolore" (em italiano), o interpretador semântico do backend sabe ignorar isso, evitando registrar diagnósticos errados sobre a nutrição.
 9. **Campos "País" e "Cidade"** (Dropdowns ou texto)
    - **Efeito cascata posterior:** Define a nacionalidade física do plano. Se o aluno mora na Itália (`country: "IT"`), mesmo usando o app em português, as sugestões nutricionais da aba **Dieta** usarão itens típicos do comércio italiano, e a **Proatividade** usará clima e eventos de Roma ou Milão.

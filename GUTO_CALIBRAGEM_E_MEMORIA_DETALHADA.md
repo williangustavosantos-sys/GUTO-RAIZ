@@ -39,8 +39,8 @@ NÃO COMO ───────────────> foodRestrictions (Campo
 ### Campos Excluídos da Calibragem do App (Do Not Include)
 - **Sexo "Prefiro não informar":** Desabilitado. O sistema nutricional e metabólico do backend exige obrigatoriamente a base biológica binária (`male` ou `female`) para cálculo metabólico de macronutrientes.
 - **Campos separados de Intolerância Alimentar:** Intolerâncias, alergias e preferências éticas (veganismo) são mesclados de forma simplificada no campo único **"NÃO COMO"**.
-- **Telefone:** Informação puramente opcional de controle comercial do Admin no painel desktop, não fazendo parte das etapas do onboarding móvel.
-- **Histórico recente de atividade física:** Simplificado na escolha do campo `trainingLevel` (ex: "Voltando agora" mapeia `returning`).
+- **Telefone:** Informação opcional de controle comercial do Admin/Coach no painel desktop. Não faz parte da calibragem, das configurações do aluno nem de alterações via Chat no app do usuário.
+- **Histórico recente de atividade física:** Não é perguntado como campo inicial. O app começa com o nível declarado em `trainingLevel`; o histórico real passa a ser construído depois pelo backend com treinos concluídos, feedbacks, adaptações e faltas.
 
 ---
 
