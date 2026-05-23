@@ -16,13 +16,39 @@ Se os dados de calibragem falharem ou forem dessincronizados, todo o ecossistema
 
 ---
 
-## Campos Ativos na Calibragem do App
+## Fluxo Correto Antes da Calibragem
 
-A calibragem do aplicativo consolida exatamente as seguintes variáveis:
+A calibragem não começa na primeira tela do aplicativo. O fluxo inicial correto é:
 
 ```txt
-idioma ─────────────────> selectedLanguage (pt-BR, en-US, it-IT)
-nome ───────────────────> name (Soberano, confirma a identidade da dupla)
+Vídeo / Intro
+  └── Idioma
+        └── Login / Convite
+              └── Nome soberano da dupla
+                    └── Tela de Calibragem física, alimentar e geográfica
+                          └── Pacto
+                                └── Sistema principal
+```
+
+Idioma e nome entram na memória inicial do GUTO, mas **não são campos da tela de calibragem física/alimentar**. Essa separação é obrigatória para evitar que agentes ou implementações futuras tentem colocar idioma e nome dentro da mesma aba/formulário da calibragem.
+
+### Campos de Contexto Inicial Fora da Tela de Calibragem
+
+```txt
+idioma ─────> selectedLanguage (pt-BR, en-US, it-IT)
+nome ───────> name (Soberano, confirma a identidade da dupla GUTO & [Nome])
+```
+
+- **Idioma:** É escolhido na segunda página do app, logo depois da experiência inicial/vídeo. Ele define o idioma de toda a experiência: onboarding, botões, chat, treino, dieta, arena, configurações, erros e voz quando disponível.
+- **Nome:** É definido depois do login/convite, na etapa de nome soberano. Ele confirma a identidade da dupla e não pode ser sobrescrito automaticamente por e-mail, convite, nome do coach ou cadastro administrativo.
+
+---
+
+## Campos Ativos na Tela de Calibragem do App
+
+A tela de calibragem do aplicativo consolida exatamente as seguintes variáveis:
+
+```txt
 idade ──────────────────> userAge (Inteiro, 14 a 99 anos)
 sexo ───────────────────> biologicalSex (Mapeado rigidamente para "male" ou "female")
 nível de treino ────────> trainingLevel & trainingStatus (beginner, returning, consistent, advanced)
@@ -37,10 +63,69 @@ NÃO COMO ───────────────> foodRestrictions (Campo
 ```
 
 ### Campos Excluídos da Calibragem do App (Do Not Include)
+- **Idioma:** Não entra na tela de calibragem. Ele é definido antes, na página de idioma, e apenas acompanha a memória.
+- **Nome:** Não entra na tela de calibragem. Ele é definido antes, após login/convite, na página de nome soberano.
 - **Sexo "Prefiro não informar":** Desabilitado. O sistema nutricional e metabólico do backend exige obrigatoriamente a base biológica binária (`male` ou `female`) para cálculo metabólico de macronutrientes.
 - **Campos separados de Intolerância Alimentar:** Intolerâncias, alergias e preferências éticas (veganismo) são mesclados de forma simplificada no campo único **"NÃO COMO"**.
-- **Telefone:** Informação opcional de controle comercial do Admin/Coach no painel desktop. Não faz parte da calibragem, das configurações do aluno nem de alterações via Chat no app do usuário.
+- **Telefone:** Informação essencial para cadastro comercial de empresa/responsável e controle operacional do Admin/Coach no painel. Não faz parte da calibragem do aluno, das configurações do aluno, da memória `GutoMemory` do aluno nem de alterações via Chat no app do usuário.
 - **Histórico recente de atividade física:** Não é perguntado como campo inicial. O app começa com o nível declarado em `trainingLevel`; o histórico real passa a ser construído depois pelo backend com treinos concluídos, feedbacks, adaptações e faltas.
+
+---
+
+## Fonte Única de Verdade da Calibragem
+
+`GutoMemory` no backend é a fonte única de verdade da calibragem operacional do aluno.
+
+Não pode existir uma calibragem paralela no aplicativo, outra no Chat, outra no painel e outra nos módulos de treino ou dieta. Todos os fluxos abaixo precisam ler e escrever na mesma memória persistida:
+
+```txt
+Idioma inicial ──────────┐
+Nome soberano ───────────┤
+Calibragem inicial ──────┤
+Configurações do app ────┤
+Chat do GUTO ────────────┼──> GutoMemory do aluno ───> Chat, Treino, Dieta, GUTO Online, Arena e Painel
+Painel Admin/Coach ──────┘
+```
+
+Qualquer tela ou serviço que renderize dados de calibragem deve partir da memória atual persistida no backend. Estados locais do frontend são apenas rascunhos temporários antes da gravação.
+
+### Regras de Sincronismo Obrigatório
+
+- **Idioma vem antes:** O idioma é definido logo depois da experiência inicial/vídeo e antes da etapa de nome/calibragem.
+- **Nome vem depois do login:** O nome soberano da dupla é definido após login/convite e antes da tela de calibragem.
+- **Calibragem cria a ficha física/alimentar:** A primeira calibragem física, alimentar e geográfica nasce depois do nome soberano.
+- **Configurações alteram:** O aluno pode atualizar os mesmos campos de calibragem nas configurações do app. Após salvar, o painel Admin/Coach precisa mostrar o novo valor.
+- **Chat altera com controle:** O Chat pode solicitar alteração de campos permitidos, mas dados sensíveis ou ambíguos exigem confirmação. O GUTO só pode dizer "anotado" se a gravação no backend for concluída com sucesso.
+- **Painel corrige com validação:** Admin/Coach pode visualizar e corrigir calibragem do aluno pelo painel, mas apenas por campos controlados e validados. O painel nunca edita `GutoMemory` como JSON cru.
+- **App reflete o painel:** Se Coach/Admin altera peso, objetivo, local, dor, cidade ou "NÃO COMO" no painel, o app do aluno precisa refletir essa alteração na próxima leitura/sincronização.
+- **Painel reflete o app:** Se o aluno altera dados nas configurações ou pelo Chat, o painel precisa exibir o dado atualizado.
+- **Último dado salvo vence:** Quando houver conflito, o valor persistido mais recente no backend vence. A auditoria precisa guardar origem, operador e campos alterados.
+
+### Origem de Alteração
+
+Toda mutação de calibragem precisa registrar a origem operacional:
+
+```txt
+source = onboarding
+source = app_settings
+source = chat
+source = coach_panel
+source = admin_panel
+```
+
+Para alterações via painel, o backend também deve registrar:
+
+```txt
+operatorId   = id do Admin ou Coach
+operatorRole = super_admin | admin | coach
+teamId       = empresa/time do aluno
+coachId      = coach vinculado ao aluno
+fieldsChanged = lista dos campos alterados
+before       = snapshot dos valores anteriores
+after        = snapshot dos novos valores
+```
+
+Implementações legadas que editem calibragem por patch genérico devem ser tratadas como transitórias. O contrato correto é um endpoint validado de calibragem, com payload tipado, ranges oficiais e auditoria de antes/depois.
 
 ---
 
@@ -96,7 +181,7 @@ NÃO COMO ───────────────> foodRestrictions (Campo
 ### 10. País (`country`) e Cidade (`city`)
 - **Impacto:** Localização física do usuário.
 - **Destino técnico:** `memory.country` e `memory.city`.
-- **Aplicação:** Desacoplamento de Idioma. Se o idioma for português mas o país for Itália, a Dieta sugere ingredientes locais italianos e a Proatividade contextualiza feriados e previsão do tempo de Roma ou Milão.
+- **Aplicação:** Desacoplamento de Idioma. Se o idioma for português mas o país for Itália, a Dieta sugere ingredientes locais italianos e a Proatividade contextualiza feriados e previsão do tempo de Roma ou Milão. Serviços externos de clima ou contexto local são auxiliares: se falharem, não podem bloquear o aplicativo.
 
 ### 11. Campo Único "NÃO COMO" (`foodRestrictions`)
 - **Impacto:** Agrupador de todas as restrições, intolerâncias e alergias do aluno.
@@ -108,38 +193,74 @@ NÃO COMO ───────────────> foodRestrictions (Campo
 
 ## Engenharia de Alterações e Sincronismo
 
-Toda alteração de dados após o onboarding (seja por Configurações ou pelo Chat) deve persistir imediatamente no backend. Não é permitido simular mudanças no frontend sem gravação de banco de dados comprovada.
+Toda alteração de dados após o onboarding deve persistir imediatamente no backend. Isso vale para Configurações do app, Chat do GUTO e Painel Admin/Coach. Não é permitido simular mudanças no frontend sem gravação de banco de dados comprovada.
 
 ```txt
               [ Fluxo de Alteração de Dados ]
   
-  Opção A: CONFIGURAÇÕES                  Opção B: CHAT DO GUTO
-  ┌────────────────────────┐              ┌────────────────────────┐
-  │ Usuário edita campo    │              │ Usuário escreve no chat│
-  │ (ex: Peso de 82➔78 kg) │              │ ("Estou com 78 kg")    │
-  └───────────┬────────────┘              └───────────┬────────────┘
-              │                                       │
-              ▼                                       ▼
-  ┌────────────────────────┐              ┌────────────────────────┐
-  │ Validação de ranges    │              │ Análise de Intenção e  │
-  │ (30 - 300 kg) no Front │              │ confirmação se ambíguo │
-  └───────────┬────────────┘              └───────────┬────────────┘
-              │                                       │
-              └───────────────────┬───────────────────┘
-                                  │
-                                  ▼
-                     ┌────────────────────────┐
-                     │ POST /guto/memory      │
-                     │ (Gravação no Backend)  │
-                     └────────────┬───────────┘
-                                  │
-                                  ▼
-                     ┌────────────────────────┐
-                     │ Memória Atualizada!    │
-                     │ Próximo treino/dieta   │
-                     │ herda o peso de 78 kg. │
-                     └────────────────────────┘
+  CONFIGURAÇÕES DO APP          CHAT DO GUTO                 PAINEL ADMIN/COACH
+  ┌────────────────────┐        ┌────────────────────┐       ┌────────────────────┐
+  │ Aluno edita campo  │        │ Aluno informa dado │       │ Operador corrige   │
+  │ nas configurações  │        │ em linguagem livre │       │ campo validado     │
+  └─────────┬──────────┘        └─────────┬──────────┘       └─────────┬──────────┘
+            │                             │                            │
+            ▼                             ▼                            ▼
+  ┌────────────────────┐        ┌────────────────────┐       ┌────────────────────┐
+  │ Validação de tipo  │        │ Intenção, contexto │       │ Permissão por role │
+  │ e ranges oficiais  │        │ e confirmação      │       │ teamId e coachId   │
+  └─────────┬──────────┘        └─────────┬──────────┘       └─────────┬──────────┘
+            │                             │                            │
+            └───────────────┬─────────────┴──────────────┬─────────────┘
+                            │                            │
+                            ▼                            ▼
+                 ┌────────────────────┐       ┌────────────────────┐
+                 │ Grava GutoMemory   │       │ Registra auditoria │
+                 │ no backend         │       │ before/after       │
+                 └─────────┬──────────┘       └─────────┬──────────┘
+                           │                            │
+                           └────────────┬───────────────┘
+                                        ▼
+                          ┌────────────────────────────┐
+                          │ Próximo Chat, Treino,      │
+                          │ Dieta, Painel e App leem   │
+                          │ a mesma memória atualizada │
+                          └────────────────────────────┘
 ```
+
+### Campos Permitidos Por Canal
+
+| Campo | Onboarding | Configurações App | Chat | Painel Admin/Coach |
+| --- | --- | --- | --- | --- |
+| Idioma | Sim | Sim | Sim, com confirmação | Visualização e suporte operacional |
+| Nome soberano | Sim | Sim | Sim, com confirmação | Não sobrescreve nome confirmado pelo aluno |
+| Idade | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| Sexo biológico | Sim | Sim | Não alterar casualmente por chat | Sim, campo validado |
+| Nível de treino | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| Objetivo | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| Local de treino | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| Dor/patologia/limitação | Sim | Sim | Sim, se claro; pergunta se ambíguo | Sim, campo validado |
+| Altura | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| Peso | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| País | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| Cidade | Sim | Sim | Sim, com confirmação | Sim, campo validado |
+| NÃO COMO | Sim | Sim | Sim, se claro; pergunta se ambíguo | Sim, campo único validado |
+| Telefone | Não | Não | Não | Somente cadastro comercial de empresa/responsável, fora de `GutoMemory` |
+
+### Impacto Direto em Treino e Dieta
+
+Treino e dieta são consumidores da calibragem, não formulários independentes.
+
+- **Treino usa:** idade, nível, objetivo, local de treino, dor/patologia/limitação, histórico de treino validado e bloqueios do Coach.
+- **Dieta usa:** idade, sexo biológico, altura, peso, objetivo, país, cidade, idioma e campo único "NÃO COMO".
+- **GUTO Online usa:** plano oficial atual, local, limitação física, idioma e contexto de segurança.
+- **Painel usa:** os mesmos campos para exibir ficha biológica, risco operacional, filas de revisão e decisões do Coach.
+
+Quando um campo de calibragem muda, os planos derivados precisam respeitar o novo valor:
+
+- Se `weightKg`, `heightCm`, `userAge`, `biologicalSex` ou `trainingGoal` mudarem, a próxima dieta deve ser recalculada ou marcada para revisão.
+- Se `preferredTrainingLocation`, `trainingLevel`, `trainingGoal` ou `trainingPathology` mudarem, o próximo treino deve ser recalculado ou marcado para revisão.
+- Se `foodRestrictions` mudar, qualquer dieta atual com alimento proibido precisa ser marcada como inválida ou pendente de revisão.
+- Se houver treino ou dieta com `lockedByCoach: true`, o GUTO não pode sobrescrever automaticamente o plano. Ele pode sinalizar que a calibragem mudou e pedir revisão/liberação do Coach.
 
 ---
 
@@ -177,3 +298,8 @@ Exemplo de persistência de um usuário calibrado com sucesso:
 - **Duplicidade de Perguntas:** Fazer o GUTO questionar no Chat dados que já estão calibrados e salvos na memória operacional.
 - **Mudar sem Salvar:** O GUTO responder no chat confirmando uma mudança física ("Anotado, Will!") se a requisição de gravação de memória falhar ou não for realizada no backend de fato.
 - **Mapear Errado na Dieta:** Ignorar as restrições declaradas do campo "NÃO COMO" na montagem ou na oferta de ingredientes alternativos de substituição de refeições.
+- **Memórias Paralelas:** Criar um estado separado de calibragem no painel, no Chat, no treino ou na dieta que não escreva no `GutoMemory` persistido.
+- **Painel Editando JSON Cru:** Permitir que Admin ou Coach edite a calibragem como texto JSON livre, sem campos controlados, validação e auditoria.
+- **Alteração Invisível:** Coach/Admin alterar calibragem no painel e o app do aluno continuar mostrando valor antigo depois da sincronização.
+- **Telefone no Aluno:** Salvar telefone dentro da calibragem ou memória do aluno. Telefone pertence a cadastro comercial de empresa/responsável, nunca ao `GutoMemory` do aluno.
+- **Sobrescrever Plano Travado:** Recalcular treino ou dieta automaticamente por mudança de calibragem quando o plano atual estiver bloqueado por Coach (`lockedByCoach: true`) sem revisão/liberação.

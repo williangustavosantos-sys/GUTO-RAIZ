@@ -24,6 +24,109 @@ O Painel do GUTO resolve a escala: o Coach planeja e opera a retaguarda, enquant
 
 ---
 
+## Estado Atual da Implementação e Ponto de Pausa
+
+Este documento continua sendo a fonte de verdade do painel, mas a implementação do painel foi pausada temporariamente para priorizar a correção do aplicativo do aluno, começando por calibragem, memória, chat, treino e dieta.
+
+Enquanto essa frente do app não estiver alinhada com `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`, nenhum agente deve avançar novas fases do painel.
+
+### O Que Já Foi Implementado no Frontend
+
+Na pausa atual, o frontend do painel já possui:
+
+- Login administrativo redesenhado em `/admin/login`, com escolha visual de papel e seletor de idioma PT/IT/EN.
+- Shell responsivo compartilhado do painel, com sidebar, header, idioma, badge de dados mock e comportamento para desktop, iPad/tablet e celular.
+- Rota `/admin` com Home do Super Admin.
+- Home do Super Admin estruturada por empresas, não por lista global de alunos.
+- KPIs da Home: empresas cadastradas, empresas ativas, coaches ativos, alunos ativos, alunos em atenção, alunos críticos e pendências.
+- Tabela principal de empresas com status, plano, coaches usados/limite, alunos usados/limite, atenção, críticos, pendências e última atividade.
+- Setup Wizard visual para estado vazio.
+- Rota `/admin/teams/:teamId` com Detalhe da Empresa em modo somente leitura.
+- Detalhe da Empresa com resumo, plano, limites, risco operacional, coaches, alunos, pendências, Arena Semanal, Arena Mensal e logs.
+- Modal informativo read-only do botão `+ Nova empresa`, mostrando os campos e regras futuras de cadastro sem criar nada no backend.
+- Rota `/empresa` criada como stub visual.
+- `/coach` antigo preservado, ainda não migrado para o novo shell definitivo.
+
+### O Que Está Congelado Por Enquanto
+
+Não continuar, por enquanto:
+
+- Detalhe do Coach (`/admin/teams/:teamId/coaches/:coachId`).
+- Detalhe do Aluno (`/admin/students/:userId`).
+- Abas reais do aluno no painel.
+- Criação real de empresa, coach ou aluno.
+- Endpoints novos no backend do painel.
+- Troca de mocks por dados reais.
+- Edição real de calibragem via painel.
+- Ações de pausar, reativar, renovar, resetar senha, arquivar ou reviver aluno.
+- Refator do Coach Portal.
+- Empresa Portal completo.
+
+### Motivo da Pausa
+
+O painel depende da verdade operacional do app. Antes de avançar o painel, é necessário garantir que:
+
+- Calibragem e `GutoMemory` sejam fonte única de verdade.
+- Configurações do app, Chat e futuro Painel Admin/Coach alterem a mesma memória.
+- Treino e dieta consumam corretamente os dados da calibragem.
+- O Chat não prometa alterações que não foram persistidas.
+- O backend tenha caminho seguro para auditoria de alterações sensíveis.
+
+### Próximos Passos Quando O Painel For Retomado
+
+Quando a frente do app voltar para um estado confiável, retomar o painel nesta ordem:
+
+1. **Revalidar o estado atual**
+   - Abrir `/admin/login`, `/admin`, `/admin/teams/:teamId`, `/empresa`, `/coach` e `/login`.
+   - Confirmar que o app do aluno continua intacto.
+   - Confirmar responsividade em desktop, iPad/tablet e celular.
+
+2. **Fase 2c.3 — Detalhe do Coach, somente leitura**
+   - Criar `/admin/teams/:teamId/coaches/:coachId`.
+   - Mostrar dados do coach, carteira agregada, alunos do coach, fila de treino, fila de dieta e logs.
+   - Não criar Arena própria do coach. O coach vê Arena Semanal/Mensal da empresa.
+
+3. **Fase 2c.4 — Detalhe do Aluno, somente leitura**
+   - Criar `/admin/students/:userId`.
+   - Mostrar abas: Resumo, Calibragem, Treino, Dieta, Arena, Histórico e Acesso.
+   - Calibragem em modo leitura por campos legíveis.
+   - Treino e dieta em modo leitura.
+   - Botões sensíveis desabilitados até backend validado.
+
+4. **Especificar criação real de Empresa**
+   - O botão `+ Nova empresa` deve sair do modal informativo e virar criação real apenas quando houver backend pronto.
+   - Campos mínimos futuros: nome da empresa, status inicial, plano, responsável, e-mail do responsável, telefone do responsável, país, cidade e limites customizados quando o plano for Custom.
+   - Telefone é essencial para empresa/responsável, mas continua proibido na calibragem e memória do aluno.
+
+5. **Backend agregado do painel**
+   - Criar endpoints agregados `/admin/panel/*`.
+   - Aplicar escopo por `teamId` e `coachId` no backend, nunca confiar apenas no frontend.
+   - Implementar paginação cursor-based.
+   - Implementar auditoria com `teamId`, `operatorId`, `before`, `after` e `fieldsChanged`.
+   - Implementar endpoint validado para calibragem do aluno, sem JSON cru.
+
+6. **Trocar mocks por dados reais**
+   - `lib/panel/data-source.ts` deve deixar de retornar mocks e passar a buscar os endpoints reais.
+   - `NEXT_PUBLIC_USE_MOCKS=false` não pode deixar nenhum mock vazar para operação.
+
+7. **Completar Empresa Portal e Coach Portal**
+   - `/empresa` usa o mesmo shell e dados escopados ao `teamId`.
+   - `/coach` usa o mesmo shell e escopo do coach, sem Arena própria por coach.
+
+### Regras Para Qualquer Agente Que Retomar O Painel
+
+- Não mexer no app do aluno ao retomar painel, salvo se a tarefa for explicitamente de integração validada.
+- Não criar aluno sem `teamId` e `coachId`.
+- Não criar coach fora de uma empresa.
+- Não carregar todos os alunos no frontend para calcular KPI.
+- Não editar XP, streak ou estágio do avatar manualmente.
+- Não editar calibragem como JSON cru.
+- Não prescrever alimento bloqueado pelo campo **NÃO COMO**.
+- Não avançar backend real antes de ter contrato de endpoint e validação claros.
+- Não remover o badge/controle de mocks enquanto os dados ainda forem sintéticos.
+
+---
+
 ## Modelo Comercial e Operacional: Uma Plataforma, Várias Empresas
 
 O GUTO é sempre o mesmo sistema. Não existe uma cópia separada do app, do backend ou da personalidade do GUTO para cada cliente.
