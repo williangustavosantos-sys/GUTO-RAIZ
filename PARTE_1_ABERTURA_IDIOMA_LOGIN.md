@@ -28,6 +28,16 @@ Se a Parte 1 quebra, o GUTO mente desde o primeiro segundo: idioma errado, memó
 
 Nenhum passo pode ser pulado. Ninguém entra no app principal sem ter passado por todos.
 
+### Escopo Para A Próxima Auditoria Com Jules
+
+Este é o próximo documento a ser usado na auditoria do app após a consolidação da calibragem. O Jules deve tratar esta Parte 1 como o escopo da etapa atual:
+
+- Auditar somente abertura, idioma, login, convite, bloqueio de acesso, stage router e preservação da memória correta.
+- Não mexer no painel admin/coach nesta etapa.
+- Não alterar treino, dieta, XP, arena, GUTO Online ou proatividade nesta etapa.
+- Não redefinir os campos da tela de calibragem. A fonte de verdade da calibragem é `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`.
+- Entregar primeiro relatório de divergências entre documento e código antes de fazer qualquer alteração.
+
 ---
 
 ## 1) Vídeo De Abertura
@@ -67,7 +77,8 @@ Esta escolha é lei. Tudo daqui em diante fala esse idioma, incluindo a voz do G
 - Usuário toca um. A cápsula ganha um glow e o app rota para a próxima porta:
   - Se tem convite pendente no localStorage → `invite_claim` (mesmo idioma).
   - Se não tem sessão e nem convite → `/login?lang={idioma}`.
-  - Se já está logado (re-seleção via settings) → volta para `naming`.
+  - Se está no onboarding e ainda não concluiu nome/calibragem/pacto → segue o stage router.
+  - Se já está no sistema e troca idioma pelas configurações → persiste o idioma e retorna ao sistema/configurações; não força `naming` quando o nome já foi confirmado.
 
 ### Em código
 - Tela: `guto-app-v0/components/guto/screens/language-screen.tsx`.
@@ -79,6 +90,7 @@ Esta escolha é lei. Tudo daqui em diante fala esse idioma, incluindo a voz do G
 
 ### Regra
 - País ≠ Idioma. Um brasileiro morando na Itália pode usar pt-BR e ter contexto alimentar italiano. `country` é campo separado.
+- Idioma não é campo da tela de calibragem. Ele é escolhido antes do login/onboarding e depois pode ser alterado em configurações.
 - Toda nova rota deve consultar `resolveGutoLanguage()` para renderizar em qualquer idioma — incluindo `/login`, `/convite/[token]` e `/acesso-pausado`.
 
 ---
@@ -190,7 +202,7 @@ A página `/login` (e `/acesso-pausado`) usa o hook compartilhado `hooks/use-gut
 - Deixar entrar sem acesso válido.
 - Misturar memória de outro usuário (storage por `userId` resolve).
 - Aceitar `userId` do frontend como autoridade — só o JWT vale.
-- Pular consent obrigatório, naming, calibração ou pacto.
+- Pular consent obrigatório, naming, calibragem ou pacto.
 - Substituir nome confirmado por `presetName` do convite.
 - Deixar usuário com `GUTO_DECEASED` entrar no app normal.
 - Mostrar UI em idioma diferente do escolhido.

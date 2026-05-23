@@ -1,6 +1,6 @@
 # Página de Login do App GUTO — Roteiro Detalhado de Engenharia e Fluxo
 
-> Documento canônico de especificação da Página de Login e do Controle de Acesso do GUTO.
+> Documento complementar da Página de Login e do Controle de Acesso do GUTO. Em caso de conflito, a ordem soberana está em `PARTE_1_ABERTURA_IDIOMA_LOGIN.md`.
 
 ---
 
@@ -80,11 +80,11 @@ Existem quatro portas de entrada possíveis para a autenticação no sistema:
 - **E-mail ou Usuário:** Input de texto limpo (não case-sensitive para e-mails).
 - **Senha:** Input ocultado com botão de alternância visual (olho).
 - **Botão "ENTRAR":** Executa a requisição POST e exibe spinner de carregamento.
-- **Botão "Esqueci minha senha":** Direciona para o fluxo de recuperação.
+- **Botão "Esqueci minha senha":** só deve aparecer quando o backend de recuperação existir. Até lá, a UI não pode fingir envio de e-mail.
 
 ### Interface do Claim de Convite (`/convite/[token]`)
 - **Texto explicativo:** "Você foi convidado para o GUTO por [Nome do Coach/Time]" (no idioma selecionado).
-- **Campo "Nome Sugerido":** Input pré-preenchido com o `presetName`, permitindo alteração.
+- **Nome Sugerido:** pode ser exibido como contexto/rascunho vindo do `presetName`, mas não oficializa a identidade. O nome oficial da dupla só nasce no stage `naming`.
 - **Campo "Criar Senha":** Requisito mínimo de 6 caracteres.
 - **Campo "Confirmar Senha":** Validação visual de correspondência em tempo real.
 - **Botão "ATIVAR MEU GUTO":** Realiza o POST de claim e autologa o aluno.
@@ -103,7 +103,7 @@ Existem quatro portas de entrada possíveis para a autenticação no sistema:
 
 ```txt
 1. Usuário envia as credenciais (E-mail/Senha)
-2. Frontend envia POST /auth/login (ou POST /invites/{token}/claim)
+2. Frontend envia POST /auth/user/login (ou POST /auth/invite/:token/claim)
 3. Backend valida as credenciais no banco de dados via hash bcrypt
 4. Backend verifica o status de faturamento, inatividade e equipe do usuário
 5. Backend responde com JWT assinado contendo dados básicos e expiração segura
@@ -111,7 +111,7 @@ Existem quatro portas de entrada possíveis para a autenticação no sistema:
 7. Frontend executa GET /guto/memory com o cabeçalho Authorization: Bearer {token}
 8. O Stage Router do app analisa a resposta e decide o stage:
    ├── Se status no banco = "paused"         ──> Rota /acesso-pausado
-   ├── Se status no banco = "dead"           ──> Rota /guto-morto
+   ├── Se status no banco = "dead"           ──> Rota /acesso-pausado?reason=dead
    ├── Se consentHealthFitness = false       ──> stage = "consent"
    ├── Se namingConfirmado = false           ──> stage = "naming"
    ├── Se calibragemIncompleta = true        ──> stage = "calibration"
@@ -144,8 +144,8 @@ Se o token do convite for inválido, já tiver sido usado, ou pertencer a um tim
 > *"Este convite não é mais válido ou já foi utilizado. Peça um novo link de acesso ao seu coach."* (Renderizado no idioma ativo).
 
 ### Recuperação de Senha
-- O botão "Esqueci minha senha" abre um campo de e-mail.
-- O backend envia um token temporário. Se o fluxo ainda não estiver fisicamente implementado no backend, a interface deve exibir de forma honesta uma mensagem orientando o usuário a solicitar um reset direto ao seu treinador, **nunca** simulando um envio falso que confunda o aluno.
+- Fluxo futuro. Só pode aparecer na interface quando existir endpoint real de recuperação.
+- Enquanto o backend não tiver esse endpoint, a interface deve exibir de forma honesta uma orientação para solicitar reset ao coach/admin, **nunca** simulando envio de e-mail ou token.
 
 ---
 

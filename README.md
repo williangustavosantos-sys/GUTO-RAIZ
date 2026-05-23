@@ -7,6 +7,7 @@
 - [O Que É O GUTO](#o-que-é-o-guto)
 - [Por Que O GUTO É Diferente](#por-que-o-guto-é-diferente)
 - [Objetivo Do Produto](#objetivo-do-produto)
+- [Como Agentes Devem Trabalhar Neste Projeto](#como-agentes-devem-trabalhar-neste-projeto)
 - [Sistema Interno Necessário](#sistema-interno-necessário)
 - [Calibragem E Memória](#calibragem-e-memória)
 - [Chat Do GUTO](#chat-do-guto)
@@ -18,6 +19,7 @@
 - [Painel Admin E Coach](#painel-admin-e-coach)
 - [Idioma](#idioma)
 - [O Que Faz O GUTO Parecer Vivo](#o-que-faz-o-guto-parecer-vivo)
+- [Documentos Detalhados Por Área](#documentos-detalhados-por-área)
 - [Frase Final](#frase-final)
 
 ---
@@ -50,6 +52,19 @@ O produto está pronto quando um usuário novo consegue entrar, escolher idioma,
 
 A sensação final desejada é: "o GUTO sabe quem eu sou, sabe o que eu preciso fazer hoje e percebe quando eu sumo."
 
+## Como Agentes Devem Trabalhar Neste Projeto
+
+Todo agente, humano ou IA, deve começar pelo `README.md` da raiz antes de tocar qualquer código. Depois disso, deve abrir o documento detalhado da área que será auditada ou alterada. O GUTO não deve ser modificado por palpite geral: cada mudança precisa respeitar a fase, o fluxo e o contrato já documentados.
+
+Regras operacionais:
+
+- Antes de implementar, comparar o pedido com os documentos da raiz e com o código atual.
+- Se o pedido for auditoria, entregar primeiro relatório de divergências, riscos e correções mínimas.
+- Não misturar áreas: uma tarefa de calibragem não deve virar alteração de painel, XP, arena, treino, dieta ou prompt do cérebro sem autorização explícita.
+- Não criar dado falso parecendo real. Mocks só podem existir quando estiverem marcados como fase visual/demo.
+- Não dizer que algo está pronto sem rodar validação compatível com o escopo.
+- Não ler, copiar ou expor segredos de `.env`.
+
 ## Sistema Interno Necessário
 
 Para o GUTO funcionar, tudo precisa estar integrado. Um campo preenchido na calibragem não pode morrer naquela tela. Ele precisa virar memória operacional e chegar no chat, treino, dieta, GUTO Online, validação, proatividade, arena e painel coach.
@@ -78,6 +93,8 @@ A resposta do GUTO não pode ser só texto. Ela precisa ser um contrato estrutur
 A calibragem inicial é uma das partes mais importantes do sistema. Ela coleta idade, sexo biológico, nível de treino, objetivo, local preferido, altura, peso, país, cidade, patologia ou limitação e o campo único `NÃO COMO`, onde entram restrições alimentares, intolerâncias, alergias e escolhas alimentares relevantes.
 
 O idioma é definido antes da calibragem e acompanha todo o app. Histórico recente não é perguntado como campo inicial: ele nasce do uso real do GUTO, por meio de treinos concluídos, feedbacks, adaptações, faltas, dieta e eventos registrados no backend.
+
+Telefone não faz parte da calibragem do aluno, não entra em `GutoMemory`, não é editado pelo chat e não deve aparecer nas configurações do aluno. Telefone pode existir apenas em cadastro comercial/administrativo, como empresa, responsável, billing ou contato operacional do painel.
 
 Esses dados precisam ser salvos no backend como memória real. O GUTO não deve perguntar de novo algo que já sabe. Se sabe que o usuário tem joelho sensível, o treino precisa respeitar isso. Se sabe que o usuário mora na Itália mas fala português, o texto continua em português, mas a dieta e contexto local devem considerar Itália.
 
@@ -147,6 +164,8 @@ O painel admin transforma o GUTO em plataforma B2B2C.
 
 Existem papéis como super admin, admin, coach e aluno. O aluno vive o GUTO no celular. O coach opera por trás: acompanha progresso, vê calibragem, edita treino, monta dieta, gera convite, vê histórico, identifica risco de abandono e acompanha ranking.
 
+Empresa/time é a unidade comercial principal. Toda empresa possui coaches, todo coach pertence a uma empresa e todo aluno pertence a uma empresa e a um coach. Mesmo alunos vendidos direto pela internet entram em uma Team interna do GUTO, com nome a definir. Não existe aluno operacional sem `teamId` e sem `coachId`.
+
 O coach não substitui o GUTO. Ele melhora a operação por trás. Para o aluno, a presença continua sendo o GUTO.
 
 O painel precisa ter isolamento forte por time e coach. Um coach não pode ver aluno de outro time. Admin vê seu escopo. Super admin vê tudo. XP e streak não devem ser editados livremente pelo coach, porque são parte da confiança do sistema.
@@ -174,6 +193,25 @@ O coach pode ajustar por trás.
 O usuário sente continuidade.
 
 Se qualquer parte decide sozinha, o produto quebra. Se onboarding salva joelho operado mas treino ignora, o GUTO perde confiança. Se o chat diz "anotei" mas não salvou, o GUTO mente. Se o idioma muda mas a UI continua em português, quebra a promessa. Se o coach altera treino e o aluno não vê, quebra operação.
+
+## Documentos Detalhados Por Área
+
+Depois deste README, use o documento específico da área antes de alterar código:
+
+| Área | Documento |
+|---|---|
+| Fluxo geral do app | `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` |
+| Abertura, idioma, login e convite | `PARTE_1_ABERTURA_IDIOMA_LOGIN.md` |
+| Consentimento, nome, calibragem e pacto | `PARTE_2_CONSENTIMENTO_NOME_CALIBRAGEM_PACTO.md` |
+| Calibragem e memória | `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` |
+| Chat, treino e dieta no sistema principal | `PARTE_3_SISTEMA_PRINCIPAL_CHAT_TREINO_DIETA.md` |
+| Treino e missão | `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` |
+| Dieta integrada | `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` |
+| GUTO Online, validação e proatividade | `PARTE_4_GUTO_ONLINE_VALIDACAO_E_PROATIVIDADE.md` |
+| Arena e gamificação | `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` |
+| XP, evolução e morte do GUTO | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
+| Painel admin/coach | `GUTO_PAINEL_ADMIN_E_COACH_DETALHADA.md` |
+| Proatividade e ciclo semanal | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` |
 
 ## Frase Final
 
