@@ -1,6 +1,6 @@
 # Painel Admin e Coach do GUTO — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação do Painel B2B2C Desktop, Gestão de Alunos, Isolamento de Equipes (Team Isolation) e Segurança Operacional.
+> Documento canônico de especificação do Painel B2B2C Web, Gestão de Alunos, Isolamento de Equipes (Team Isolation) e Segurança Operacional.
 
 ---
 
@@ -8,7 +8,7 @@
 
 O Painel Admin e Coach do GUTO é o cérebro empresarial e operacional da plataforma. Ele é um portal web de navegador, com prioridade para desktop, mas precisa funcionar com leitura e ação segura também em iPad/tablet e celular quando o operador estiver fora da mesa.
 
-Enquanto o aplicativo móvel do aluno é o templo da experiência emocional, o painel desktop é a **central de governança comercial**.
+Enquanto o aplicativo móvel do aluno é o templo da experiência emocional, o painel web é a **central de governança comercial**.
 
 O painel não concorre ou substitui o GUTO. Ele o alimenta. 
 - O profissional de educação física define as diretrizes, edita os treinos, prescreve as dietas e acompanha as métricas.
@@ -355,17 +355,17 @@ O coach pode operar sua carteira de alunos, mas não define o escopo da Arena. A
 O cadastro de novos alunos no painel estabelece uma ponte automatizada com o aplicativo celular:
 
 ```txt
-1. Coach preenche E-mail e Nome Sugerido no Painel Desktop
+1. Coach/Admin preenche e-mail e nome sugerido no Painel Web
 2. Backend cria o perfil estudantil com status "invited" e teamId/coachId amarrados
 3. Backend gera um token exclusivo de convite
 4. O link de onboarding é enviado (/convite/[token])
 5. O Aluno abre o link no celular
 6. O sistema executa o fluxo (idioma ➔ senha ➔ termos ➔ nome ➔ calibragem ➔ pacto)
 7. Aluno ativa a conta no celular
-8. Painel Desktop atualiza o status do aluno para "active" em tempo real
+8. Painel Web atualiza o status do aluno para "active" em tempo real
 ```
 
-- *Aviso de Soberania:* O nome digitado e confirmado pelo aluno na Página de Naming é lei. Ele sobrescreve na hora o nome provisório (presetName) registrado pelo Coach no convite inicial.
+- *Aviso de Soberania:* O nome digitado e confirmado pelo aluno na etapa de nome soberano é lei. Ele sobrescreve na hora o nome provisório (presetName) registrado pelo Coach/Admin no convite inicial.
 
 Regra estrutural:
 
@@ -386,7 +386,7 @@ Ao clicar no registro de um aluno na lista consolidada, o treinador abre a ficha
 Exibe gráficos rápidos de consistência, o estágio do avatar (`Baby`, `Teen`, `Adult`, `Elite`), dias de streak ativo, total de XP, data do último treino validado e o sinalizador gráfico de **Risco de Abandono**:
 - **Verde (Risco Baixo):** Treinou e interagiu nas últimas 48 horas.
 - **Amarelo (Atenção):** Sem validações ou chat de 3 a 5 dias.
-- **Vermelho (Risco Alto):** Mais de 5 dias sumido. Alerta o treinador para intervenção manual rápida.
+- **Vermelho (Risco Alto):** 6 ou mais dias sem validação/chat/sinal. Alerta o treinador para intervenção manual rápida.
 
 ### B. Aba Calibragem (Ficha Biológica)
 Exibe as variáveis preenchidas no onboarding: idade, sexo homem/mulher, nível, objetivo, local de treino, dor/patologia/limitação, altura, peso, país, cidade e campo único **NÃO COMO** (`foodRestrictions`).
@@ -527,7 +527,7 @@ Campos proibidos na Arena: peso, altura, idade, patologia, restrição alimentar
 
 ## A Camada Emocional: "O Que o Usuário Não Vê"
 
-Embora o painel desktop seja uma interface fria de tabelas corporativas, o GUTO atua como um tradutor de tom emocional na ponta móvel.
+Embora o painel web seja uma interface operacional de tabelas corporativas, o GUTO atua como um tradutor de tom emocional na ponta móvel.
 - Quando o Coach edita o supino reto para 4 séries de 10 reps e adiciona uma observação no painel, o aplicativo móvel **não** exibe uma mensagem estéril de sistema como: *"Seu administrador atualizou seu registro de treino."*
 - A aba Missão é atualizada silenciosamente e, na próxima interação no Chat, o GUTO assume a fala de melhor amigo de forma natural:
   > *"Will, teu treinador deu uma mexida na nossa missão de supino para hoje. Ele quer consistência e postura, então reduzi a carga sugerida e coloquei 4 séries limpas de 10. Eu te guio, vamos fazer bem feito."*
@@ -537,9 +537,9 @@ Embora o painel desktop seja uma interface fria de tabelas corporativas, o GUTO 
 ## O Que Não Pode Acontecer (Restrições Críticas)
 
 - **Vazamento de Dados (Leak de Equipes):** Coaches ou admins de um time visualizarem, buscarem ou realizarem mutações em dados pertencentes a alunos de outras equipes. **P0 Crítico de Compliance**.
-- **Quebrar a Soberania do Nome:** O painel desktop sobrescrever o Nome Soberano do aluno confirmado na Página de Naming pelo nome registrado no cadastro inicial do convite.
+- **Quebrar a Soberania do Nome:** O painel sobrescrever o Nome Soberano do aluno confirmado na etapa de nome soberano pelo nome registrado no cadastro inicial do convite.
 - **Burla de Contas Mortas:** O painel permitir que o Coach crie treinos e force a volta ao sistema de alunos que estão marcados com o status de `dead` (GUTO morto), sem passar pela liberação financeira e reativação comercial formal do faturamento.
 - **Edição Direta de XP e Streak:** Disponibilizar botões ou campos de inputs para o Coach alterar manualmente o saldo de XP, streak ou nível de evolução do avatar do aluno. Essas métricas são frutos de mérito real e consistência física documentada no Percurso.
-- **Bypass de Termos:** Gerar convites que iniciem o aluno no aplicativo de forma direta no Sistema Principal, pulando as etapas obrigatórias de Consentimento Legal e de Saúde e a Calibragem inicial no celular.
+- **Bypass de Termos:** Gerar convites que iniciem o aluno no aplicativo de forma direta no Sistema Principal, pulando as etapas obrigatórias de consentimento legal/saúde e a calibragem inicial no celular.
 - **Prescrever Alimentos Proibidos:** O painel permitir a gravação de planos dietéticos contendo ingredientes explicitamente marcados como alergias graves do aluno no campo "NÃO COMO" de calibragem.
 - **Acesso de Alunos:** Alunos conseguirem de alguma forma ignorar as travas do router e logarem nos portais administrativos de retaguarda.

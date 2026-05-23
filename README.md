@@ -134,7 +134,7 @@ Arena, Evoluir, Percurso e memória precisam mostrar o mesmo estado. Se o XP apa
 
 ## Dieta
 
-A dieta não deve ser um formulário separado que pergunta tudo de novo. Ela deve usar a memória já salva: peso, altura, objetivo, país, idioma e o campo único `NÃO COMO`.
+A dieta não deve ser um formulário separado que pergunta tudo de novo. Ela deve usar a memória já salva: idade, sexo biológico, peso, altura, objetivo, país, cidade e o campo único `NÃO COMO`. O idioma define texto e voz; país/cidade definem disponibilidade alimentar.
 
 A dieta precisa respeitar restrições alimentares de verdade. Se o usuário é intolerante a lactose, alimento com lactose não pode aparecer. Se o usuário escreveu "nessun dolore", isso significa ausência de dor física em italiano, não restrição alimentar. Esse tipo de diferença é exatamente por que o GUTO precisa de interpretação semântica, não palavra-chave.
 

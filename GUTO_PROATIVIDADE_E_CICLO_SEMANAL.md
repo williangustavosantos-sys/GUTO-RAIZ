@@ -66,6 +66,8 @@ Se o usuário sumiu e só abriu o aplicativo na quarta-feira, o GUTO detecta que
 
 Para manter o banco de dados limpo e os prompts focados, o extrator semântico do backend aplica um filtro de relevância sobre as conversas.
 
+A proatividade cria contexto operacional temporário. Ela não deve transformar automaticamente uma semana atípica em calibragem permanente.
+
 ### Salva na Memória Proativa (Impacto Direto)
 - *"Quarta vou viajar para Roma."* (Afeta clima, local de treino e tempo de Missão).
 - *"Sexta tenho um compromisso o dia inteiro."* (Gera sugestão de treino matutino mais curto).
@@ -78,6 +80,8 @@ Para manter o banco de dados limpo e os prompts focados, o extrator semântico d
 - *"Hoje o café da manhã estava maravilhoso."*
 
 **Regra de Ouro:** Só vira memória proativa o evento que altera treino, dieta, cobrança, rotina, segurança ou consistência de presença.
+
+Mesmo nesses casos, se a ação afetar calibragem, treino ou dieta permanente, o GUTO deve confirmar antes de salvar em memória operacional.
 
 ---
 
@@ -148,6 +152,11 @@ Uma vez confirmada a memória (ex: "Viagem para Roma na quarta"), o backend enri
 - **Na Quinta-feira (Na Dieta):**
   > *"Como você está em trânsito/Roma, selecionei refeições práticas e fáceis de encontrar em mercados locais de lá para você não perder os macros."*
 
+Regras de aplicação:
+- Viagem ou cidade temporária pode adaptar treino/dieta da semana, mas não troca `country`/`city` permanente da calibragem sem confirmação explícita.
+- Dieta em viagem respeita o local informado para o evento e o campo **NÃO COMO**.
+- Se treino ou dieta estiverem com `lockedByCoach: true`, a proatividade não sobrescreve o plano. Ela cria sinal de revisão ou sugere comportamento seguro.
+
 ---
 
 ## Validação Pós-Evento (O Fechamento)
@@ -174,3 +183,5 @@ No início do ciclo seguinte, o GUTO repassa as memórias pendentes de validaç�
 - **Incoerência com Cancelamentos:** O GUTO perguntar sobre eventos que o usuário cancelou de forma explícita na quarta-feira.
 - **Cobrança Cega:** Cobrar presença ou penalizar o streak de um aluno em viagem se ele declarou e confirmou previamente que estaria em trânsito aéreo e sem acesso a aparelhos.
 - **Duplicar Memórias em Correções:** Criar um novo evento no banco em vez de atualizar as datas (`dateParsed`, `updatedAt`) do evento existente caso o usuário faça correções de dia de viagem.
+- **Alterar Calibragem Sem Pedido Claro:** transformar contexto temporário em país, cidade, local de treino, dor ou restrição permanente sem confirmação.
+- **Sobrescrever Plano Do Coach:** mudar treino ou dieta bloqueados pelo coach com base em contexto proativo sem liberação.

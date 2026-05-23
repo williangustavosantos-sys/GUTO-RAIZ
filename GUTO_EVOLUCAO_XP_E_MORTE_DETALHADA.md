@@ -22,6 +22,7 @@ No modelo atual do sistema, a morte do GUTO é um evento terminal dentro daquele
 O XP (Experiência) é a **força de vida operacional do GUTO**.
 - O sistema recompensa estritamente a **presença validada** e o ato de comparecer, ignorando contagens de intensidade de cargas ou metas puramente estéticas.
 - O XP inicial concedido no Pacto (buffer de boas-vindas) é puramente psicológico, não ativando dias seguidos de consistência (streak) nem marcando presença de treinos reais no Percurso.
+- O mesmo evento validado alimenta Arena Semanal da empresa, Arena Mensal da empresa, Arena Geral, Percurso, Avatar e Painel. Não pode existir cálculo paralelo por tela.
 
 ---
 
@@ -93,7 +94,7 @@ Quando o saldo de XP atinge o zero absoluto no backend, as variáveis de control
 O sistema aplica uma tela de blackout total em toda a interface do aplicativo móvel, bloqueando os recursos principais:
 
 - **Chat do GUTO:** Bloqueado contra novas mensagens. Qualquer entrada de texto do usuário é desabilitada. O chat exibe apenas a copy final em destaque:
-  > *"O GUTO apagou. Este acesso terminou. Para continuar, entre em contato com o administrador do GUTO."* (No idioma calibrado).
+  > *"O GUTO apagou. Este acesso terminou. Para continuar, entre em contato com o administrador do GUTO."* (No idioma escolhido pelo aluno).
 - **Aba Missão:** O card do treino do dia some, exibindo o status de treino bloqueado pela morte do companheiro.
 - **Aba Dieta:** O plano de refeições é ocultado, impossibilitando novas consultas.
 - **Aba Arena:** O usuário é marcado com a sinalização `[DEAD]` no ranking do seu grupo e fica tecnicamente impedido de pontuar na semana ou no mês.
@@ -131,7 +132,7 @@ Isso impede que modificações locais de código no frontend ou tentativas de by
 O GUTO **não revive dentro do app atual**. Quando o XP chega a zero, aquele acesso entra em estado terminal e o celular fica bloqueado.
 - O aluno está impedido de reviver o GUTO realizando treinos "por fora" ou enviando fotos de validação, pois os botões estão fisicamente travados e as rotas de API bloqueadas no backend.
 - **Caminho Comercial:** O usuário precisa entrar em contato com o Admin/Coach do GUTO para comprar um novo acesso.
-- **Ação no Painel Desktop:** qualquer liberação futura é uma decisão administrativa e comercial fora do app do aluno. O app não deve mostrar botão de reviver, compra automática ou promessa de restauração imediata.
+- **Ação no Painel Admin/Coach:** qualquer liberação futura é uma decisão administrativa e comercial fora do app do aluno. O app não deve mostrar botão de reviver, compra automática ou promessa de restauração imediata.
 - **Regra Técnica Atual:** enquanto não houver novo acesso liberado pelo Admin, o backend continua negando chat, treinos, dieta, GUTO Online e rotas protegidas. O avatar permanece apagado e as páginas do app continuam bloqueadas.
 
 ---

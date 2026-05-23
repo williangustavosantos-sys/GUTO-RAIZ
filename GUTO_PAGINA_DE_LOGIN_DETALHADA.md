@@ -30,7 +30,7 @@ O login deve resolver de forma sequencial e sem margem para erro quatro objetivo
 Existem quatro portas de entrada possíveis para a autenticação no sistema:
 
 ### A. Convite de Admin, Empresa ou Coach (Fluxo B2B2C Principal)
-- O Coach ou Admin cadastra o aluno no painel desktop.
+- O Coach ou Admin cadastra o aluno no painel web.
 - O sistema backend gera um token único associado ao e-mail do aluno e cria um link de onboarding (`/convite/[token]`).
 - O aluno abre o link, que salva o token em `localStorage["guto-pending-invite-token"]` e abre a tela de criação de senha.
 - O payload de herança do convite carrega as seguintes variáveis para o backend:
@@ -161,7 +161,7 @@ Se o token do convite for inválido, já tiver sido usado, ou pertencer a um tim
 
 ## 9. Relação com a Memória e Painel Admin
 
-- **Painel Desktop como Autoridade:** Se o Coach pressionar o botão "Pausar Aluno" no painel desktop, o status é alterado no banco de dados. Na próxima chamada de API feita pelo celular do aluno (ou no próximo login), o token é recusado ou o Stage Router redireciona o aluno na hora para a tela de acesso pausado.
+- **Painel Web como Autoridade:** Se o Coach pressionar o botão "Pausar Aluno" no painel web, o status é alterado no banco de dados. Na próxima chamada de API feita pelo celular do aluno (ou no próximo login), o token é recusado ou o Stage Router redireciona o aluno na hora para a tela de acesso pausado.
 - **Sincronia do Faturamento (Billing):** Webhooks de pagamento integrados ao Stripe atualizam o status de assinatura do aluno no banco de dados. O login consulta esse status a cada inicialização para validar se o usuário permanece ativo.
 
 ---

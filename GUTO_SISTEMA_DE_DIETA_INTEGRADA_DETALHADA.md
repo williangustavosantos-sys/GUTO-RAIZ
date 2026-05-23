@@ -217,7 +217,7 @@ A IA responde de forma precisa:
 
 ## Sobresposição do Treinador (Coach Priority)
 
-As edições manuais feitas pelo treinador no painel administrativo desktop possuem soberania absoluta sobre a geração automática da IA:
+As edições manuais feitas pelo treinador no painel admin/coach possuem soberania absoluta sobre a geração automática da IA:
 
 1. **Dieta Manual do Coach:** Se o Coach desenhou o menu calórico semanal do aluno, o backend trava a chave `lockedByCoach: true`.
 2. **Comportamento da IA:** O GUTO impede alterações automáticas no cardápio, atuando apenas como esclarecedor de dúvidas e sugerindo substituições simples de ingredientes de equivalência idêntica sem modificar as calorias macro travadas pelo treinador.

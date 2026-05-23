@@ -251,7 +251,7 @@ Toda alteração de dados após o onboarding deve persistir imediatamente no bac
 Treino e dieta são consumidores da calibragem, não formulários independentes.
 
 - **Treino usa:** idade, nível, objetivo, local de treino, dor/patologia/limitação, histórico de treino validado e bloqueios do Coach.
-- **Dieta usa:** idade, sexo biológico, altura, peso, objetivo, país, cidade, idioma e campo único "NÃO COMO".
+- **Dieta usa:** idade, sexo biológico, altura, peso, objetivo, país, cidade e campo único "NÃO COMO". O idioma entra apenas para traduzir textos, voz e rótulos; ele não escolhe alimentos.
 - **GUTO Online usa:** plano oficial atual, local, limitação física, idioma e contexto de segurança.
 - **Painel usa:** os mesmos campos para exibir ficha biológica, risco operacional, filas de revisão e decisões do Coach.
 

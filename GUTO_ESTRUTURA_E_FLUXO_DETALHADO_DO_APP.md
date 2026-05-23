@@ -4,6 +4,19 @@
 
 ---
 
+## Como Usar Este Documento
+
+Este arquivo é o mapa geral página por página. Antes de qualquer agente alterar código, ele deve:
+
+1. Ler o `README.md` da raiz.
+2. Ler este documento para entender o fluxo completo.
+3. Ler o documento específico da área afetada.
+4. Comparar documentação com código atual e entregar relatório antes de editar.
+
+Este documento não substitui os documentos especializados. Em detalhes de calibragem, dieta, arena, painel, login ou GUTO Online, a fonte específica da área prevalece.
+
+---
+
 ## Índice de Fluxo
 
 - [Página 1: Vídeo de Abertura / Intro](#página-1-vídeo-de-abertura--intro)
@@ -69,9 +82,14 @@ Assegura o controle de identidade e herança segura de dados.
 
 ### Botões e Interações
 1. **Botão "ENTRAR" (CTA de Envio)**
-   - **O que faz:** Realiza um POST para `/auth/login` passando `{ emailOrId, password }`.
+   - **O que faz:** Realiza um POST para `/auth/user/login` passando `{ emailOrId, password }`.
    - **Destino da informação:** O backend autentica as credenciais, verifica as permissões e responde com o JWT, que é gravado no `localStorage["guto-auth-token"]`.
-   - **Efeito cascata posterior:** O backend associa a sessão do usuário à sua respectiva memória e time. Se o aluno pertencer ao Time Alfa, o Coach Beta do painel desktop não terá acesso técnico ou visual aos dados deste aluno. Se a conta estiver bloqueada ou pausada, o interceptor do frontend detecta o status no login e redireciona imediatamente para a tela `/acesso-pausado`.
+   - **Efeito cascata posterior:** O backend associa a sessão do usuário à sua respectiva memória e time. Se o aluno pertencer ao Time Alfa, o Coach Beta do painel web não terá acesso técnico ou visual aos dados deste aluno. Se a conta estiver bloqueada ou pausada, o interceptor do frontend detecta o status no login e redireciona imediatamente para a tela `/acesso-pausado`.
+
+2. **Claim de Convite (`/convite/[token]`)**
+   - **O que faz:** Captura o token de convite, permite criação de senha e chama `/auth/invite/:token/claim`.
+   - **Destino da informação:** O usuário recebe sessão própria, mas o nome vindo do convite continua sendo apenas sugestão.
+   - **Efeito cascata posterior:** O app segue para consentimento, nome soberano, calibragem, pacto e sistema. O convite nunca oficializa o nome da dupla.
 
 ---
 
@@ -108,13 +126,13 @@ Define a marca central da relação do usuário com seu companheiro digital.
 
 ---
 
-## Página 6: Calibragem Inicial (Corpo, Treino, Alergias e Localização)
+## Página 6: Calibragem Inicial (Corpo, Treino, NÃO COMO e Localização)
 
 A calibragem é a principal fundação de dados que molda o comportamento lógico, físico e dietético do ecossistema.
 
 ```txt
    [ Entrada da Calibragem ]
-   ├── Sexo, Idade, Peso, Altura ─────────> Dieta (Cálculo de calorias e macros)
+   ├── Sexo biológico, Idade, Peso, Altura ─> Dieta (Cálculo de calorias e macros)
    ├── Nível de Treino & Objetivo ─────────> Missão (Geração de intensidade e volume do treino)
    ├── Local de Treino ───────────────────> Missão & GUTO Online (Estrutura de aparelhos ou peso livre)
    ├── Dores e Limitações Físicas ────────> Missão & GUTO Online (Gera banimento de exercícios de alto impacto)
@@ -123,14 +141,14 @@ A calibragem é a principal fundação de dados que molda o comportamento lógic
 ```
 
 ### Campos e Inputs
-1. **Campo "Sexo Biológico"** (Feminino, Masculino, Prefiro não dizer)
+1. **Campo "Sexo Biológico"** (Feminino, Masculino)
 2. **Campo "Idade"** (Número)
 3. **Campos "Peso" e "Altura"** (Números decimais)
    - **Efeito cascata posterior:** O backend recebe esses dados e calcula a meta calórica e a proporção de macronutrientes do aluno. Se o peso é alterado futuramente nas configurações, a aba **Dieta** recalcula instantaneamente o plano de refeições correspondente.
-4. **Campo "Nível de Treino"** (beginner, intermediate, advanced)
+4. **Campo "Nível de Treino"** (`beginner`, `returning`, `consistent`, `advanced`)
 5. **Campo "Objetivo"** (consistência, hipertrofia, emagrecimento, etc.)
    - **Efeito cascata posterior:** Altera o volume de séries, repetições e a seleção de exercícios que aparecerão na aba **Missão**.
-6. **Campo "Local Preferido de Treino"** (gym, home)
+6. **Campo "Local Preferido de Treino"** (`gym`, `home`, `park`, `mixed`)
    - **Efeito cascata posterior:** Altera a biblioteca de movimentos. Se "home" for o escolhido, exercícios com halteres e máquinas são excluídos da aba **Missão** e substituídos por exercícios de peso corporal.
 7. **Campo "Dores, Patologias ou Limitações"** (Input de texto livre ou tags)
    - **Efeito cascata posterior:** Se o usuário declara "dor no joelho", o backend ativa uma tag de segurança na conta. Exercícios de alto estresse patelar (como agachamento profundo sem suporte ou saltos) são removidos do catálogo de treinos gerados para a aba **Missão**. O GUTO Online herda esse estado e monitora queixas de dor articular em tempo real.
@@ -139,9 +157,19 @@ A calibragem é a principal fundação de dados que molda o comportamento lógic
 9. **Campos "País" e "Cidade"** (Dropdowns ou texto)
    - **Efeito cascata posterior:** Define a nacionalidade física do plano. Se o aluno mora na Itália (`country: "IT"`), mesmo usando o app em português, as sugestões nutricionais da aba **Dieta** usarão itens típicos do comércio italiano, e a **Proatividade** usará clima e eventos de Roma ou Milão.
 
+### O Que Não É Campo Da Calibragem
+
+- Idioma: escolhido antes do login/onboarding e alterável depois nas configurações.
+- Nome da dupla: confirmado na tela de Naming.
+- Telefone: proibido em `GutoMemory`, calibragem, settings do aluno e chat. Telefone pertence apenas a cadastro comercial/admin quando necessário.
+- Histórico recente: nasce do uso real do app.
+- Intolerância separada: não existe campo separado; tudo entra no campo único **NÃO COMO** (`foodRestrictions`).
+
 ### Botões e Interações
 1. **Botão "Salvar Calibragem"**
-   - **O que faz:** Consolida todos os dados em um payload JSON e realiza um POST para `/guto/memory/calibration`, gravando os dados diretamente como memória real de segurança no backend.
+   - **O que faz:** Consolida os dados controlados e persiste no backend como memória real do aluno.
+   - **Destino da informação:** No app atual, a gravação acontece via `/guto/memory`. Qualquer endpoint futuro dedicado à calibragem precisa manter validação rígida por campo e nunca aceitar JSON cru.
+   - **Efeito cascata posterior:** Chat, treino, dieta, GUTO Online, proatividade, arena e painel passam a ler a mesma memória.
 
 ---
 
@@ -199,6 +227,9 @@ Visualização das refeições prescritas, balanceamento e orientações.
 1. **Botão "Opções de Substituição"**
    - **O que faz:** Permite que o usuário peça alternativas saudáveis para um prato específico do cardápio.
    - **Destino da informação:** Consulta o motor de dieta do backend respeitando as intolerâncias e restrições calibradas do usuário. Alimentos proibidos pela calibragem inicial estão fisicamente travados contra substituições.
+   - **Regra de país/idioma:** O idioma define o texto; país e cidade definem alimento. Um usuário morando na Itália com app em português deve ver instruções em português, mas alimentos coerentes com o mercado italiano.
+   - **Regra matemática:** As refeições precisam bater com os macros e calorias definidos pelo backend. Se a soma do cardápio não fecha, a dieta não pode ser marcada como pronta.
+   - **Persistência:** O frontend não inventa dieta. Ele lê plano persistido pelo backend ou informa que a dieta precisa ser gerada/revisada.
 
 ---
 
@@ -252,6 +283,9 @@ Exibe a posição de consistência da dupla perante as demais duplas ativas do e
 1. **Filtros de Período (Semanal, Mensal, Global)**
    - **O que faz:** Altera o agrupamento e visualização das pontuações acumuladas das duplas.
    - **Efeito cascata posterior:** Utiliza os dados de XP validados fisicamente pelo backend. A identidade exibida no ranking é sempre a dupla (`GUTO & Nome do Aluno`). Impedido de exibir dados inconsistentes em relação ao XP individual do aluno.
+   - **Arena Semanal e Mensal:** Escopadas por empresa/time (`teamId`). O aluno vê a Arena da própria empresa; o coach também vê a Arena da empresa, não uma arena só dos seus alunos.
+   - **Arena Geral:** Global, com todas as duplas do app. Ao lado da dupla, precisa aparecer o nome da empresa/time para contextualizar a origem.
+   - **Super Admin:** Pode visualizar todas as Arenas e auditar recortes por empresa.
 
 ---
 
@@ -281,20 +315,48 @@ O diário histórico visual que preserva os registros da jornada.
 
 A central desktop voltada para o gerenciamento de alunos, times e planejamento de treinos/dietas.
 
+Hierarquia obrigatória:
+
+```txt
+Super Admin
+└── Empresas / Teams
+    └── Coaches
+        └── Alunos
+```
+
+Empresa/time é a unidade comercial principal. Toda empresa possui plano, limites de coaches, limites de alunos, responsáveis comerciais e status de acesso. Todo coach pertence a uma empresa. Todo aluno pertence a uma empresa e a um coach. Alunos vendidos direto pela internet entram em uma Team interna do GUTO, com nome a definir.
+
 ### Campos e Inputs
-1. **Campos de Cadastro de Aluno** (E-mail, Equipe, Nome Preset)
-2. **Painel de Prescrição Nutricional** (Editores de Calorias, Proteínas, Carboidratos, Gorduras e Cardápio)
-3. **Painel de Planejamento de Exercícios** (Prescritor de séries, cargas, repetições, restrição de aparelhos)
+1. **Campos de Cadastro de Empresa** (nome, plano, responsável, e-mail do responsável, telefone do responsável, país, cidade e limites customizados quando aplicável)
+   - Telefone aqui é permitido por ser dado comercial/admin, não memória do aluno.
+2. **Campos de Cadastro de Coach** (nome, e-mail, empresa/time, status)
+3. **Campos de Cadastro de Aluno** (nome, e-mail, empresa/time, coach, status de convite/acesso)
+   - Aluno não pode existir sem `teamId` e `coachId`.
+4. **Painel de Prescrição Nutricional** (Editores de Calorias, Proteínas, Carboidratos, Gorduras e Cardápio)
+5. **Painel de Planejamento de Exercícios** (Prescritor de séries, cargas, repetições, restrição de aparelhos)
 
 ### Botões e Interações
 1. **Botão "Gerar Link de Convite"**
    - **O que faz:** Cria um token temporário e gera a rota de onboarding para o aluno (`/convite/[token]`).
 2. **Botão "Bloquear Treino Manual (Override)"**
    - **O que faz:** Sobrescreve a inteligência geradora padrão de treinos do GUTO, travando o treino selecionado pelo Coach como a missão do dia oficial. Altera o `lastWorkoutPlan` no celular do aluno na mesma hora.
-3. **Botão "Pausar/Arquivar Aluno"**
+3. **Botão "Bloquear Dieta Manual (Override)"**
+   - **O que faz:** Trava a dieta desenhada pelo Coach com `lockedByCoach: true`. O GUTO não pode sobrescrever automaticamente, apenas sinalizar mudanças de calibragem que exigem revisão.
+4. **Botão "Pausar/Arquivar Aluno"**
    - **O que faz:** Atualiza o status de acesso do aluno no banco de dados para `paused` ou `expired`.
-   - **Efeito cascata posterior:** Se o aluno tentar abrir o aplicativo ou estiver com ele aberto, o interceptor de requisições detecta o bloqueio e trava a interface na tela `/acesso-pausado` no idioma calibrado do aluno.
-4. **Indicador Visual de Risco de Abandono (Alerta de Inatividade)**
+   - **Efeito cascata posterior:** Se o aluno tentar abrir o aplicativo ou estiver com ele aberto, o interceptor de requisições detecta o bloqueio e trava a interface na tela `/acesso-pausado` no idioma escolhido pelo aluno.
+5. **Indicador Visual de Risco de Abandono (Alerta de Inatividade)**
    - **O que faz:** Destaca alunos com longos períodos sem validação de treinos ou sem conversar no Chat. Fornece ao Coach a métrica ativa para suporte direto de retenção de clientes.
-5. **Travamento de Segurança (XP e Streak)**
+6. **Travamento de Segurança (XP e Streak)**
    - **Não editável:** O painel do Coach não possui botões ou campos para editar manualmente o XP, Streak ou nível do avatar do aluno. Isso preserva o mérito real e a integridade da progressão esportiva no ecossistema do GUTO.
+
+### Travas Soberanas Do Painel
+
+- Não criar empresa sem plano/limite.
+- Não criar coach fora de empresa.
+- Não criar aluno sem empresa e coach.
+- Não editar `GutoMemory` como JSON cru.
+- Não gravar dieta com alimento proibido pelo campo **NÃO COMO**.
+- Não sobrescrever treino/dieta travados por coach sem liberação.
+- Não editar XP, streak ou avatar manualmente.
+- Não carregar todos os alunos no frontend para calcular métrica global; o backend deve entregar agregados e listas paginadas.

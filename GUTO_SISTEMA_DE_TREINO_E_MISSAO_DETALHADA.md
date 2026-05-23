@@ -48,6 +48,8 @@ O "cérebro" (backend) é a única fonte de verdade para a montagem e persistên
   └── Idioma definido? ────────➔ (Se não: herda fallback selectedLanguage)
 ```
 
+O idioma é usado para texto, voz e instruções. Ele não altera a escolha biomecânica do treino. A escolha de exercícios vem de local de treino, objetivo, nível, dores/limitações, histórico e bloqueios do coach.
+
 ---
 
 ## Semântica de Patologias e Gestão de Riscos
@@ -71,7 +73,7 @@ Se o usuário preencher algo ambíguo que a IA não classifique com segurança (
 
 A geração do treino do dia segue uma hierarquia de origens para garantir o alinhamento comercial B2B2C:
 
-1. **Plano Manual Prescrito pelo Coach:** Se o Coach montou e travou o treino do dia para o aluno no painel desktop, este treino é a verdade absoluta. O GUTO Online e a Missão herdam esse plano e o GUTO fala: *"Teu coach travou esse treino fechado para hoje, Will. Eu vou te guiar e adapto se você relatar dor no caminho."*
+1. **Plano Manual Prescrito pelo Coach:** Se o Coach montou e travou o treino do dia para o aluno no painel, este treino é a verdade absoluta. O GUTO Online e a Missão herdam esse plano e o GUTO fala: *"Teu coach travou esse treino fechado para hoje, Will. Eu vou te guiar. Se aparecer dor, eu paro a sessão e marco revisão, sem trocar o plano sozinho."*
 2. **Plano de Sugestão Adaptativo do GUTO:** Gerado de forma autônoma pelo backend baseado nas regras de calibragem e histórico.
 3. **Fallback de Segurança:** Acionado em falhas graves de rede ou processamento, entregando uma rotina segura de mobilidade de corpo inteiro.
 
@@ -147,10 +149,14 @@ O backend utiliza o histórico recente (`completedWorkoutDates`, `workoutFeedbac
 
 - **Por Nível:**
   - `beginner` ➔ Menos séries, movimentos uniarticulares simples, descansos de 90s, sem técnicas avançadas de falha.
+  - `returning` ➔ Retorno progressivo, volume moderado e foco em segurança articular.
+  - `consistent` ➔ Rotina consolidada, progressão regular e distribuição equilibrada.
   - `advanced` ➔ Séries com rest-pause, técnicas de exaustão e volume muscular complexo.
 - **Por Local:**
   - `home` ➔ Treino calistênico e de mobilidade de peso corporal.
   - `gym` ➔ Treino estruturado em polias, barras olímpicas e maquinários pesados.
+  - `park` ➔ Corrida leve, mobilidade, calistenia e exercícios usando ambiente externo.
+  - `mixed` ➔ Alterna academia, casa e ambiente externo conforme disponibilidade confirmada.
 - **Por Objetivo:**
   - `fat_loss` ➔ Circuitos de maior densidade cardíaca com menos tempo de intervalo.
   - `muscle_gain` ➔ Maior foco em tempo sob tensão, controle de carga excêntrica e hipertrofia.
@@ -184,6 +190,12 @@ Se o usuário confirmar a troca no chat (ex: *"Muda para barra"*), o backend exe
 - Substitui o item em `lastWorkoutPlan`.
 - Salva o novo payload consolidado no backend.
 - Retorna o `memoryPatch` para o frontend, atualizando visualmente o card da aba Missão no celular do usuário na mesma hora.
+
+Se o treino estiver com `lockedByCoach: true`, o fluxo muda:
+- O backend não substitui o exercício automaticamente.
+- O GUTO registra o pedido e o motivo.
+- O painel mostra uma pendência/revisão para o Coach.
+- A resposta ao aluno deve ser honesta: o plano está travado pelo coach e precisa de validação antes da troca.
 
 ---
 

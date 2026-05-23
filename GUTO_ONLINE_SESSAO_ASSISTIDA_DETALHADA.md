@@ -48,6 +48,8 @@ O GUTO Online nasce a partir da aba **Missão**. Ele exige que a conta do aluno 
 ```
 Se o plano estiver vazio, o botão "Iniciar Treino" permanece bloqueado, forçando o fluxo de geração adaptativo no Chat do GUTO.
 
+O plano usado na sessão é sempre o plano oficial persistido no backend. Se o coach travou o treino com `lockedByCoach: true`, o GUTO Online guia a execução desse plano, mas não troca a estrutura automaticamente.
+
 ---
 
 ## Interface Touch-First (Mobile-First de Esforço)
@@ -102,15 +104,20 @@ A sessão transita de forma síncrona pelas fases controladas pelo motor lógico
 Se o usuário relata dor a qualquer momento da sessão:
 - O cronômetro e o treino são **pausados imediatamente**.
 - A interface exibe botões de nível de dor: **Leve / Moderada / Forte**.
-- **Tratamento de Dor Forte:** O GUTO diz *"Parou. Dor articular aguda não se negocia. Não insista."*, removendo o exercício do plano e pulando para o próximo bloco muscular seguro ou encerrando a sessão.
-- **Tratamento de Dor Leve:** O GUTO oferece uma alternativa biomecânica de menor impacto e atualiza a série.
+- **Tratamento de Dor Forte:** O GUTO diz *"Parou. Dor articular aguda não se negocia. Não insista."* e encerra ou suspende o bloco por segurança.
+- **Tratamento de Dor Leve:** O GUTO pode oferecer alternativa biomecânica de menor impacto somente se o plano não estiver bloqueado pelo coach.
+- **Se `lockedByCoach: true`:** o GUTO não remove nem troca exercício automaticamente. Ele pausa, registra a dor, orienta segurança e marca revisão para o coach.
 
 ### 8. Substitution (Troca de Exercício)
-Acionado por dores, falta de aparelho ou falha local. O backend escolhe uma alternativa direta do catálogo oficial de exercícios que tenha o mesmo grupo muscular alvo e possua vídeo de execução validado. A troca altera a Missão em tempo real.
+Acionado por dores, falta de aparelho ou falha local quando o plano permite adaptação. O backend escolhe uma alternativa direta do catálogo oficial de exercícios que tenha o mesmo grupo muscular alvo e possua vídeo de execução validado. A troca altera a Missão em tempo real.
+
+Se o plano estiver bloqueado pelo coach, a substituição vira pendência de revisão. O GUTO pode sugerir pausar, encerrar, reduzir intensidade segura ou falar com o coach, mas não altera o plano oficial sozinho.
 
 ### 9. Fatigue Adjustment (Ajuste de Fadiga)
 Se o aluno relatar cansaço extremo (energia baixa), o GUTO Online ajusta as variáveis em execução: reduz o volume de séries (ex: de 4 para 3), aumenta o tempo de descanso entre os exercícios ou elimina o circuito finalizador.
 > *"Cansado, mas presente. Reduzi o volume de séries para você fechar a missão limpo. O que vale hoje é o comparecimento."*
+
+Se o treino estiver bloqueado pelo coach, ajustes de fadiga não podem mudar o plano salvo. O GUTO pode conduzir a sessão com pausas seguras, sugerir encerramento responsável e gerar sinal para revisão.
 
 ### 10. Paused (Pausa Segura)
 A sessão entra em suspensão física. O tempo total decorrido é pausado, aguardando clique em "Continuar" ou "Encerrar Treino".
@@ -163,5 +170,6 @@ Cada transição de estado gera um evento estruturado disparado ao backend para 
 - **Esquecer o Progresso:** O app fechar por receber uma chamada de voz e, ao reabrir 30 segundos depois, resetar o treino para o início do aquecimento, forçando o aluno a refazer tudo.
 - **Permitir Treino com Dor Aguda:** Continuar cobrando execuções se o usuário relatar dor de nível forte na checagem.
 - **Falsificação de Validação:** Encerrar o GUTO Online e marcar de forma silenciosa o treino como concluído na Arena ou Percurso sem passar pelo portão de prova fotográfica da Validação (Página 12).
-- **Falar Idioma Incompatível:** Ignorar o idioma calibrado do usuário (selectedLanguage) durante os alertas de voz e áudios de transição de séries do GUTO Online.
+- **Falar Idioma Incompatível:** Ignorar o idioma escolhido pelo usuário (`selectedLanguage`) durante os alertas de voz e áudios de transição de séries do GUTO Online.
 - **Sincronia Quebrada de Trocas:** Trocar um exercício por outro no GUTO Online e não sincronizar essa alteração na visualização estática da aba Missão. O plano de treino é um recurso unificado.
+- **Desrespeitar Plano Travado:** Alterar exercício, volume ou estrutura de treino bloqueado pelo coach sem revisão/autorização.
