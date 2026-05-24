@@ -4,6 +4,8 @@ Data da auditoria: 2026-05-16
 Referência absoluta: `GUTO_SANTO_GRAAL_V3_1_IMPECAVEL.md`  
 Escopo: leitura local de frontend, backend, documentação, rotas, componentes, hooks, serviços, memória, idioma, assets, testes e captura visual com Playwright.
 
+> Atualização 2026-05-24: este documento permanece como auditoria histórica do estado encontrado na época, mas alguns pontos já avançaram. Em especial, a frente de dieta recebeu uma correção validada em branch separada no backend (`codex/diet-invalidation`, PR `https://github.com/williangustavosantos-sys/CEREBROGUTO/pull/8`) e os comandos `npm run typecheck`, `npm run test:guto` e o teste dedicado `tests/guto-diet-invalidation.test.ts` passaram no ambiente local. Use `docs/GUTO_PLANO_EXECUCAO_PARA_TESTES.md` como plano atualizado de execução.
+
 ## 1. Sumário Executivo
 
 O GUTO atual tem uma base real de produto: onboarding, login, consentimento, calibragem, hub, chat, treino, GUTO Online, dieta, percurso, evolução, arena, configurações e painel admin/coach existem no código e aparecem na tela. Visualmente, o app já tem identidade própria: cápsula branca, cyan, botões touch-first e presença forte do avatar.
