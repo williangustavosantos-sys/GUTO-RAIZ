@@ -212,6 +212,7 @@ Depois deste README, use o documento específico da área antes de alterar códi
 | XP, evolução e morte do GUTO | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
 | Painel admin/coach | `GUTO_PAINEL_ADMIN_E_COACH_DETALHADA.md` |
 | Proatividade e ciclo semanal | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` |
+| Plano de execução para testes | `docs/GUTO_PLANO_EXECUCAO_PARA_TESTES.md` |
 
 ## Frase Final
 
