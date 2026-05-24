@@ -17,22 +17,36 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase A da dieta: invalidação automática de dieta quando campos nutricionais da calibragem mudam.
+Fase 1.4 da calibragem: travas oficiais de idade, altura e peso na memória do aluno.
 
 Branch/PR:
 
 - Repositório: `CEREBROGUTO`
-- Branch: `codex/diet-invalidation`
-- PR: `https://github.com/williangustavosantos-sys/CEREBROGUTO/pull/8`
+- Branch: `codex/calibration-range-guards`
+- PR: `https://github.com/williangustavosantos-sys/CEREBROGUTO/pull/11`
 
 Validações executadas:
 
-- `npx tsx --test tests/guto-diet-invalidation.test.ts`
+- `npx tsx --test tests/guto-biological-sex.test.ts tests/guto-team-isolation.test.ts`
 - `npm run typecheck`
 - `npm run test:guto`
 - `git diff --check`
 
-Observação: essa fase ainda não resolve restrições alimentares semânticas nem remove `phone` da memória do aluno. Esses pontos continuam nas próximas fases.
+Comportamento validado:
+
+- `userAge` só aceita 14-99.
+- `heightCm` só aceita 100-250 cm.
+- `weightKg` só aceita 30-300 kg.
+- Leituras legadas com valores fora do range não vazam pela resposta de `/guto/memory`.
+- `POST /guto/memory`, `memoryPatch` do chat e patch admin/coach ignoram números fora do range.
+- Valores válidos são normalizados sem afetar dieta, treino, XP, arena ou painel.
+
+### Histórico Validado Recente
+
+1. `CEREBROGUTO` PR #8 — dieta vai para `needs_clarification` quando campos nutricionais da calibragem mudam, preservando `lockedByCoach`.
+2. `CEREBROGUTO` PR #9 — `phone` removido da `GutoMemory` do aluno e suprimido em leitura de memória legada.
+3. `CEREBROGUTO` PR #10 — `biologicalSex` restrito a `male | female`, sem `prefer_not_to_say`.
+4. `CEREBROGUTO` PR #11 — ranges oficiais de idade, altura e peso aplicados na memória pública, chat e painel.
 
 ---
 
@@ -71,11 +85,25 @@ Documentos obrigatórios:
 
 Objetivo: tornar `GutoMemory` a fonte única de verdade.
 
+Status atual:
+
+- Feito: `phone` não existe mais como campo de `GutoMemory`.
+- Feito: `biologicalSex` só aceita `male | female`.
+- Feito: idade, altura e peso respeitam os ranges oficiais.
+- Feito: mudanças nutricionais da calibragem invalidam a dieta quando ela não está travada pelo coach.
+- Falta validar no app: idioma e nome ficam antes da calibragem, não dentro dela.
+- Falta validar no app: settings alteram os mesmos campos de memória usados por chat, treino, dieta e painel.
+- Falta validar no chat: GUTO só diz que salvou depois da persistência realmente acontecer.
+- Falta fase futura do painel: endpoint dedicado de calibragem validada, sem JSON cru.
+
 Corrigir/verificar:
 
 - `phone` não pode existir em `GutoMemory`, endpoint `/guto/memory`, settings do aluno ou chat.
 - Telefone só pode existir em contexto comercial/administrativo: empresa, responsável, billing ou contato operacional.
 - `biologicalSex` só aceita `male | female`.
+- `userAge` só aceita 14-99.
+- `heightCm` só aceita 100-250 cm.
+- `weightKg` só aceita 30-300 kg.
 - Idioma é definido antes da calibragem e não é campo da tela de calibragem.
 - Nome da dupla é definido antes da calibragem e não pode ser sobrescrito por e-mail, convite, coach ou fallback.
 - Settings do app, chat e painel futuro precisam alterar os mesmos campos da memória.
