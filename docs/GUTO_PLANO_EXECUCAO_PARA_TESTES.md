@@ -17,29 +17,31 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.4 da calibragem: travas oficiais de idade, altura e peso na memória do aluno.
+Fase 1.5 da calibragem: contrato do app do aluno alinhado com a regra de telefone proibido na memória.
 
 Branch/PR:
 
-- Repositório: `CEREBROGUTO`
-- Branch: `codex/calibration-range-guards`
-- PR: `https://github.com/williangustavosantos-sys/CEREBROGUTO/pull/11`
+- Repositório: `CORPOGUTO`
+- Branch: `codex/student-memory-phone-contract`
+- Base: `fix/hard-stabilization-p0`
+- PR: `https://github.com/williangustavosantos-sys/CORPOGUTO/pull/11`
 
 Validações executadas:
 
-- `npx tsx --test tests/guto-biological-sex.test.ts tests/guto-team-isolation.test.ts`
-- `npm run typecheck`
-- `npm run test:guto`
+- `rg` contra `phone` no contrato do aluno
+- `npx tsc --noEmit`
+- `npx eslint lib/api/guto.ts lib/profile-update-detector.ts`
 - `git diff --check`
+- CI `validate` do GitHub
+- Vercel Preview
 
 Comportamento validado:
 
-- `userAge` só aceita 14-99.
-- `heightCm` só aceita 100-250 cm.
-- `weightKg` só aceita 30-300 kg.
-- Leituras legadas com valores fora do range não vazam pela resposta de `/guto/memory`.
-- `POST /guto/memory`, `memoryPatch` do chat e patch admin/coach ignoram números fora do range.
-- Valores válidos são normalizados sem afetar dieta, treino, XP, arena ou painel.
+- `phone` saiu do tipo `GutoMemory` no app do aluno.
+- `phone` saiu do payload `saveGutoMemory`.
+- O detector de atualização de perfil não trata mais telefone como campo editável pelo chat.
+- Pedido de telefone pelo chat fica bloqueado como ação não permitida.
+- Telefone administrativo/comercial segue intacto no painel/admin.
 
 ### Histórico Validado Recente
 
@@ -47,6 +49,7 @@ Comportamento validado:
 2. `CEREBROGUTO` PR #9 — `phone` removido da `GutoMemory` do aluno e suprimido em leitura de memória legada.
 3. `CEREBROGUTO` PR #10 — `biologicalSex` restrito a `male | female`, sem `prefer_not_to_say`.
 4. `CEREBROGUTO` PR #11 — ranges oficiais de idade, altura e peso aplicados na memória pública, chat e painel.
+5. `CORPOGUTO` PR #11 — contrato do app remove `phone` da memória do aluno e bloqueia atualização de telefone pelo chat.
 
 ---
 
@@ -88,6 +91,7 @@ Objetivo: tornar `GutoMemory` a fonte única de verdade.
 Status atual:
 
 - Feito: `phone` não existe mais como campo de `GutoMemory`.
+- Feito: app do aluno não tipa nem envia `phone` em `saveGutoMemory`.
 - Feito: `biologicalSex` só aceita `male | female`.
 - Feito: idade, altura e peso respeitam os ranges oficiais.
 - Feito: mudanças nutricionais da calibragem invalidam a dieta quando ela não está travada pelo coach.
