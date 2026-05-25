@@ -17,13 +17,13 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 2.3 da dieta integrada: `NÃO COMO` com peixe/frutos do mar agora bloqueia dieta com peixe, atum, salmão, camarão e equivalentes comuns em PT/EN/IT.
+Fase 2.4 da dieta integrada: `NÃO COMO` com ovo agora bloqueia dieta com ovo, ovos, egg, uovo/uova, frittata e omelete.
 
 Branch/PR:
 
 - Repositório: `CEREBROGUTO`
-- Branch: `codex/diet-fish-restriction`
-- PR: `#15` — mergeado em `main`.
+- Branch: `codex/diet-egg-restriction`
+- PR: `#16` — mergeado em `main`.
 
 Validações executadas:
 
@@ -34,9 +34,9 @@ Validações executadas:
 
 Comportamento validado:
 
-- O resolvedor local reconhece `não como peixe`, `sem peixe`, `fish`, `pesce`, `frutos do mar`, `shrimp`, `seafood`, `shellfish`, `gamberi` e equivalentes como restrição alimentar clara.
-- A validação final da dieta recusa refeições com peixe/frutos do mar quando essa restrição está presente.
-- Caso coberto por teste: aluno na Itália, app em português, `foodRestrictions = "não como peixe"` e modelo devolvendo `Tonno/Pesce` => geração recusada e `dietGenerationStatus = "failed"`.
+- O resolvedor local reconhece `não como ovo`, `sem ovo`, `egg`, `uovo/uova` e equivalentes como restrição alimentar clara.
+- A validação final da dieta recusa refeições com ovo quando essa restrição está presente.
+- Caso coberto por teste: aluno na Itália, app em português, `foodRestrictions = "não como ovo"` e modelo devolvendo `Uova` => geração recusada e `dietGenerationStatus = "failed"`.
 - Calibragem, painel admin, XP, arena, treino e app do aluno não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
@@ -55,6 +55,7 @@ Comportamento validado:
 12. `CEREBROGUTO` PR #14 — rota administrativa de aluno propaga calibragem para dieta, `countryCode` e `trainingStatus`.
 13. `CORPOGUTO` PR #14 — aba de dieta bloqueia plano inválido em vez de gerar/reconciliar dieta local no frontend.
 14. `CEREBROGUTO` PR #15 — dieta bloqueia peixe/frutos do mar quando o aluno declara `NÃO COMO` com peixe/frutos do mar.
+15. `CEREBROGUTO` PR #16 — dieta bloqueia ovo quando o aluno declara `NÃO COMO` com ovo.
 
 ---
 
@@ -159,6 +160,7 @@ Status atual:
 - Feito: caso coberto por teste: app em português + aluno na Itália + modelo devolvendo `Tapioca` => geração recusada.
 - Feito: frontend não inventa nem reconcilia dieta local quando o plano do backend é inválido; a aba bloqueia e pede nova geração.
 - Feito: `NÃO COMO` com peixe/frutos do mar bloqueia planos com peixe, atum, salmão, camarão e equivalentes comuns em PT/EN/IT.
+- Feito: `NÃO COMO` com ovo bloqueia planos com ovo, ovos, egg, uovo/uova, frittata e omelete.
 - Falta: validação semântica mais ampla das restrições alimentares complexas fora das famílias já cobertas, sem depender só de palavras fixas.
 - Falta: mensagem de erro mais orientada ao aluno quando a dieta falha por alimento incompatível com o país.
 - Falta: checagem semântica/final de coerência alimentar para alergias genéricas e disponibilidade local.
