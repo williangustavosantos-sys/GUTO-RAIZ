@@ -17,21 +17,17 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.9 da calibragem/memória: propagação correta de país, cidade e código do país entre app, backend, chat e consumidores futuros.
+Fase 1.10 da calibragem/memória: propagação correta de alterações feitas por Admin/Coach no caminho técnico atual do painel.
 
 Branch/PR:
 
-- Repositório: `CORPOGUTO`
-- Branch: `codex/calibration-countrycode-settings`
-- PR: `#13` — mergeado em `fix/hard-stabilization-p0`.
 - Repositório: `CEREBROGUTO`
-- Branch: `codex/calibration-countrycode-propagation`
-- PR: `#13` — mergeado em `main`.
+- Branch: `codex/admin-calibration-propagation`
+- PR: `#14` — mergeado em `main`.
 
 Validações executadas:
 
-- `CORPOGUTO`: `npx tsc --noEmit`
-- `CORPOGUTO`: `npx eslint components/guto/guto-app.tsx`
+- `CEREBROGUTO`: `npx tsx --test tests/guto-team-isolation.test.ts`
 - `CEREBROGUTO`: `npx tsx --test tests/guto-diet-invalidation.test.ts`
 - `CEREBROGUTO`: `npm run typecheck`
 - `CEREBROGUTO`: `npm run test:guto`
@@ -39,12 +35,12 @@ Validações executadas:
 
 Comportamento validado:
 
-- A tela de ajustes do app não salva residência como sucesso se não conseguir resolver o país para um `countryCode` válido.
-- Quando o aluno altera país/cidade nas configurações, o app envia `country`, `countryCode` e `city` juntos para a memória.
-- Quando o chat ou `/guto/memory` muda `country` sem um novo `countryCode` válido, o backend limpa o `countryCode` antigo para evitar dado técnico obsoleto.
-- Isso impede cenário perigoso como: aluno muda de Brasil para Itália, mas o backend continua usando `BR` por herança antiga.
-- Dieta, treino, proatividade e painel futuro passam a ler uma memória mais coerente para residência/localização.
-- O app do aluno, XP, arena, painel admin e regras de dieta existentes não foram reescritos nesta etapa.
+- O patch administrativo atual de aluno (`/admin/students/:userId`) agora rastreia campos reais de calibragem alterados por Admin/Coach.
+- Se Admin/Coach altera campo nutricional, a dieta do aluno vai para `needs_clarification`, salvo quando estiver protegida por `lockedByCoach`.
+- Se Admin/Coach muda `country` sem enviar novo `countryCode`, o backend limpa o código técnico antigo para evitar país obsoleto na dieta/proatividade.
+- Quando Admin/Coach altera `trainingLevel`, o backend também sincroniza `trainingStatus` para manter treino e painel no mesmo estado operacional.
+- Isso prepara o caminho do painel Admin/Coach sem criar endpoint novo e sem editar calibragem como JSON cru.
+- App do aluno, XP, arena, criação de empresa e UI do painel não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -59,6 +55,7 @@ Comportamento validado:
 9. `CEREBROGUTO` PR #12 — dieta bloqueia alimentos brasileiros difíceis de achar quando o aluno mora fora do Brasil, mesmo se o app estiver em português.
 10. `CORPOGUTO` PR #13 — ajustes do app enviam `countryCode` junto com país/cidade e bloqueiam falso “salvo” quando o país é inválido.
 11. `CEREBROGUTO` PR #13 — backend limpa `countryCode` antigo quando país muda sem novo código válido, inclusive via chat/memory patch.
+12. `CEREBROGUTO` PR #14 — rota administrativa de aluno propaga calibragem para dieta, `countryCode` e `trainingStatus`.
 
 ---
 
@@ -109,6 +106,7 @@ Status atual:
 - Feito: idioma e nome ficam antes da calibragem, não dentro dela.
 - Feito: settings alteram residência com `country`, `countryCode` e `city` juntos, usando os mesmos campos de memória usados por treino, dieta e painel futuro.
 - Feito: chat/backend não mantêm `countryCode` antigo quando o país muda sem código novo válido.
+- Feito: caminho atual Admin/Coach (`/admin/students/:userId`) invalida dieta quando calibragem nutricional muda, limpa `countryCode` obsoleto e mantém `trainingStatus` alinhado ao nível.
 - Próximo bloco antes de sair da calibragem: auditar campo por campo se cada dado da calibragem alimenta corretamente treino, dieta, proatividade e painel futuro.
 - Falta fase futura do painel: endpoint dedicado de calibragem validada, sem JSON cru.
 
