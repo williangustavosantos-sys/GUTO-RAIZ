@@ -17,27 +17,34 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 2.1 da dieta integrada: validação geográfica pós-geração para impedir alimentos brasileiros difíceis de achar quando o aluno mora fora do Brasil.
+Fase 1.9 da calibragem/memória: propagação correta de país, cidade e código do país entre app, backend, chat e consumidores futuros.
 
 Branch/PR:
 
+- Repositório: `CORPOGUTO`
+- Branch: `codex/calibration-countrycode-settings`
+- PR: `#13` — mergeado em `fix/hard-stabilization-p0`.
 - Repositório: `CEREBROGUTO`
-- Branch: `codex/diet-geography-validation`
-- PR: `#12` — mergeado em `main`.
+- Branch: `codex/calibration-countrycode-propagation`
+- PR: `#13` — mergeado em `main`.
 
 Validações executadas:
 
-- `npx tsx --test tests/guto-diet-generation.test.ts`
-- `npm run typecheck`
-- `npm run test:guto`
+- `CORPOGUTO`: `npx tsc --noEmit`
+- `CORPOGUTO`: `npx eslint components/guto/guto-app.tsx`
+- `CEREBROGUTO`: `npx tsx --test tests/guto-diet-invalidation.test.ts`
+- `CEREBROGUTO`: `npm run typecheck`
+- `CEREBROGUTO`: `npm run test:guto`
 - `git diff --check`
 
 Comportamento validado:
 
-- A geração da dieta agora valida alimentos contra `country`/`countryCode`, não contra o idioma do app.
-- Aluno com app em português, morando na Itália (`countryCode=IT`), não pode receber `tapioca` como alimento normal da dieta.
-- Se o modelo insistir em alimento brasileiro bloqueado por 3 tentativas, a geração falha e a memória fica com `dietGenerationStatus = "failed"`.
-- O cálculo de macros, prompt amplo, painel admin, app do aluno, XP e arena não foram alterados nesta etapa.
+- A tela de ajustes do app não salva residência como sucesso se não conseguir resolver o país para um `countryCode` válido.
+- Quando o aluno altera país/cidade nas configurações, o app envia `country`, `countryCode` e `city` juntos para a memória.
+- Quando o chat ou `/guto/memory` muda `country` sem um novo `countryCode` válido, o backend limpa o `countryCode` antigo para evitar dado técnico obsoleto.
+- Isso impede cenário perigoso como: aluno muda de Brasil para Itália, mas o backend continua usando `BR` por herança antiga.
+- Dieta, treino, proatividade e painel futuro passam a ler uma memória mais coerente para residência/localização.
+- O app do aluno, XP, arena, painel admin e regras de dieta existentes não foram reescritos nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -50,6 +57,8 @@ Comportamento validado:
 7. Validação local `CEREBROGUTO` — chat/backend gravam `memoryPatch` antes de devolver resposta ao app.
 8. Validação local `CORPOGUTO` — idioma e nome ficam fora da calibragem e antes dela no fluxo do app.
 9. `CEREBROGUTO` PR #12 — dieta bloqueia alimentos brasileiros difíceis de achar quando o aluno mora fora do Brasil, mesmo se o app estiver em português.
+10. `CORPOGUTO` PR #13 — ajustes do app enviam `countryCode` junto com país/cidade e bloqueiam falso “salvo” quando o país é inválido.
+11. `CEREBROGUTO` PR #13 — backend limpa `countryCode` antigo quando país muda sem novo código válido, inclusive via chat/memory patch.
 
 ---
 
@@ -98,7 +107,9 @@ Status atual:
 - Feito: app do aluno só fecha ajustes/calibragem e mostra “salvo” depois de persistência confirmada.
 - Feito: chat/backend aplicam e gravam `memoryPatch` antes de devolver resposta ao app.
 - Feito: idioma e nome ficam antes da calibragem, não dentro dela.
-- Feito parcialmente: settings alteram os mesmos campos de memória usados por treino, dieta e painel futuro.
+- Feito: settings alteram residência com `country`, `countryCode` e `city` juntos, usando os mesmos campos de memória usados por treino, dieta e painel futuro.
+- Feito: chat/backend não mantêm `countryCode` antigo quando o país muda sem código novo válido.
+- Próximo bloco antes de sair da calibragem: auditar campo por campo se cada dado da calibragem alimenta corretamente treino, dieta, proatividade e painel futuro.
 - Falta fase futura do painel: endpoint dedicado de calibragem validada, sem JSON cru.
 
 Corrigir/verificar:
@@ -114,6 +125,7 @@ Corrigir/verificar:
 - Settings do app, chat e painel futuro precisam alterar os mesmos campos da memória.
 - Se uma alteração não persistir, o GUTO não pode responder como se tivesse salvo.
 - Alterações em calibragem precisam refletir em treino, dieta, painel e app.
+- País/cidade precisam refletir em alimentos e contexto local; idioma só controla texto.
 
 Testes mínimos:
 
@@ -145,6 +157,7 @@ Status atual:
 - Feito: mudanças nutricionais da calibragem colocam a dieta em `needs_clarification` quando ela não está travada pelo coach.
 - Feito: dieta travada por `lockedByCoach` é preservada quando a calibragem muda, com auditoria da divergência.
 - Feito: país/cidade já entram no prompt de geração.
+- Feito: `countryCode` não fica obsoleto quando o aluno troca país nas configurações ou pelo chat.
 - Feito: backend valida pós-geração que alimentos brasileiros difíceis de achar não sejam usados fora do Brasil sem o país permitir.
 - Feito: caso coberto por teste: app em português + aluno na Itália + modelo devolvendo `Tapioca` => geração recusada.
 - Falta: validação semântica mais ampla das restrições alimentares complexas, sem depender só de palavras fixas.
