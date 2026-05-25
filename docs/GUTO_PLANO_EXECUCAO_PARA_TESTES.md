@@ -1,7 +1,7 @@
 # GUTO — Plano De Execução Para Chegar Em Testes
 
 Status: plano operacional canônico para retomada.
-Data de atualização: 2026-05-24.
+Data de atualização: 2026-05-25.
 
 Este documento organiza a execução do projeto para sair do estado de construção guiada por agentes e chegar em testes reais com segurança.
 
@@ -17,31 +17,29 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.5 da calibragem: contrato do app do aluno alinhado com a regra de telefone proibido na memória.
+Fase 1.6 da calibragem: ajustes/calibragem do app só mostram “salvo” depois de confirmação do backend.
 
 Branch/PR:
 
 - Repositório: `CORPOGUTO`
-- Branch: `codex/student-memory-phone-contract`
+- Branch: `codex/settings-persist-before-saved`
 - Base: `fix/hard-stabilization-p0`
-- PR: `https://github.com/williangustavosantos-sys/CORPOGUTO/pull/11`
+- PR: `https://github.com/williangustavosantos-sys/CORPOGUTO/pull/12`
 
 Validações executadas:
 
-- `rg` contra `phone` no contrato do aluno
 - `npx tsc --noEmit`
-- `npx eslint lib/api/guto.ts lib/profile-update-detector.ts`
+- `npx eslint components/guto/guto-app.tsx`
 - `git diff --check`
 - CI `validate` do GitHub
 - Vercel Preview
 
 Comportamento validado:
 
-- `phone` saiu do tipo `GutoMemory` no app do aluno.
-- `phone` saiu do payload `saveGutoMemory`.
-- O detector de atualização de perfil não trata mais telefone como campo editável pelo chat.
-- Pedido de telefone pelo chat fica bloqueado como ação não permitida.
-- Telefone administrativo/comercial segue intacto no painel/admin.
+- Tela de calibragem inicial não avança para o pacto se a memória não persistir.
+- Ajustes de idioma, nome, perfil, objetivo, local, limitação, peso/altura, país/cidade, `NÃO COMO` e dados completos aguardam confirmação do backend.
+- Se a gravação falhar, a tela fica aberta e mostra erro curto em PT/EN/IT.
+- Toast “Configurações salvas” só aparece depois de persistência bem-sucedida.
 
 ### Histórico Validado Recente
 
@@ -50,6 +48,7 @@ Comportamento validado:
 3. `CEREBROGUTO` PR #10 — `biologicalSex` restrito a `male | female`, sem `prefer_not_to_say`.
 4. `CEREBROGUTO` PR #11 — ranges oficiais de idade, altura e peso aplicados na memória pública, chat e painel.
 5. `CORPOGUTO` PR #11 — contrato do app remove `phone` da memória do aluno e bloqueia atualização de telefone pelo chat.
+6. `CORPOGUTO` PR #12 — ajustes/calibragem do app aguardam persistência antes de mostrar salvo ou avançar tela.
 
 ---
 
@@ -95,8 +94,9 @@ Status atual:
 - Feito: `biologicalSex` só aceita `male | female`.
 - Feito: idade, altura e peso respeitam os ranges oficiais.
 - Feito: mudanças nutricionais da calibragem invalidam a dieta quando ela não está travada pelo coach.
+- Feito: app do aluno só fecha ajustes/calibragem e mostra “salvo” depois de persistência confirmada.
 - Falta validar no app: idioma e nome ficam antes da calibragem, não dentro dela.
-- Falta validar no app: settings alteram os mesmos campos de memória usados por chat, treino, dieta e painel.
+- Feito parcialmente: settings alteram os mesmos campos de memória usados por treino, dieta e painel futuro.
 - Falta validar no chat: GUTO só diz que salvou depois da persistência realmente acontecer.
 - Falta fase futura do painel: endpoint dedicado de calibragem validada, sem JSON cru.
 
