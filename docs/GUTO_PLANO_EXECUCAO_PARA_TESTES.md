@@ -17,30 +17,29 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 2.6 da dieta integrada: a aba de dieta do app agora consome o motivo estruturado da falha e mostra mensagem específica.
+Fase 1.1 da calibragem/memória: `persistMemory` agora desfaz a atualização local se o backend não confirmar a gravação.
 
 Branch/PR:
 
 - Repositório: `CORPOGUTO`
-- Branch: `codex/diet-failure-reason-copy`
-- PR: `#15` — mergeado em `fix/hard-stabilization-p0`.
+- Branch: `codex/memory-persistence-honesty`
+- PR: `#16` — mergeado em `fix/hard-stabilization-p0`.
 
 Validações executadas:
 
 - `CORPOGUTO`: `npx tsc --noEmit`
-- `CORPOGUTO`: `npx eslint components/guto/tabs/diet-tab.tsx`
+- `CORPOGUTO`: `npx eslint components/guto/guto-app.tsx`
 - GitHub `validate` passou.
 - Vercel preview passou.
 - `git diff --check`
 
 Comportamento validado:
 
-- A aba de dieta lê `reason` da resposta de erro do backend.
-- `food_restriction` mostra mensagem de restrição alimentar.
-- `location` mostra mensagem de alimento incompatível com o país/localidade.
-- `calorie_validation` mostra mensagem de calorias/macros inseguras.
-- Timeouts, conexão e erros genéricos continuam com os fallbacks anteriores.
-- Backend, painel admin, XP, arena e treino não foram alterados nesta etapa.
+- Quando uma gravação otimista de memória falha, o app volta para o estado anterior.
+- Quando não há usuário válido, a atualização otimista também é revertida.
+- A referência interna da memória fica sincronizada no sucesso e no rollback.
+- Isso evita que o aluno continue vendo um dado local como salvo quando o backend rejeitou ou falhou.
+- Backend, painel admin, XP, arena, treino e dieta não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -61,6 +60,7 @@ Comportamento validado:
 15. `CEREBROGUTO` PR #16 — dieta bloqueia ovo quando o aluno declara `NÃO COMO` com ovo.
 16. `CEREBROGUTO` PR #17 — falha de geração de dieta retorna motivo estruturado (`food_restriction`, `location`, `calorie_validation`, etc.).
 17. `CORPOGUTO` PR #15 — aba de dieta consome `reason` e exibe mensagem específica para restrição, localidade e calorias/macros.
+18. `CORPOGUTO` PR #16 — `persistMemory` reverte update otimista quando o backend não confirma a gravação.
 
 ---
 
@@ -107,6 +107,7 @@ Status atual:
 - Feito: idade, altura e peso respeitam os ranges oficiais.
 - Feito: mudanças nutricionais da calibragem invalidam a dieta quando ela não está travada pelo coach.
 - Feito: app do aluno só fecha ajustes/calibragem e mostra “salvo” depois de persistência confirmada.
+- Feito: atualização otimista de memória no app volta ao estado anterior se o backend falhar.
 - Feito: chat/backend aplicam e gravam `memoryPatch` antes de devolver resposta ao app.
 - Feito: idioma e nome ficam antes da calibragem, não dentro dela.
 - Feito: settings alteram residência com `country`, `countryCode` e `city` juntos, usando os mesmos campos de memória usados por treino, dieta e painel futuro.
