@@ -17,29 +17,27 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 2.2 da dieta integrada: o app não inventa dieta local quando o backend devolve plano inválido.
+Fase 2.3 da dieta integrada: `NÃO COMO` com peixe/frutos do mar agora bloqueia dieta com peixe, atum, salmão, camarão e equivalentes comuns em PT/EN/IT.
 
 Branch/PR:
 
-- Repositório: `CORPOGUTO`
-- Branch: `codex/no-client-diet-fallback`
-- PR: `#14` — mergeado em `fix/hard-stabilization-p0`.
+- Repositório: `CEREBROGUTO`
+- Branch: `codex/diet-fish-restriction`
+- PR: `#15` — mergeado em `main`.
 
 Validações executadas:
 
-- `CORPOGUTO`: `npx tsc --noEmit`
-- `CORPOGUTO`: `npx eslint lib/diet-plan.ts components/guto/tabs/diet-tab.tsx`
-- GitHub `validate` passou.
-- Vercel preview passou.
+- `CEREBROGUTO`: `npx tsx --test tests/guto-diet-generation.test.ts`
+- `CEREBROGUTO`: `npm run typecheck`
+- `CEREBROGUTO`: `npm run test:guto`
 - `git diff --check`
 
 Comportamento validado:
 
-- A aba de dieta não faz mais fallback local para calcular uma dieta no navegador.
-- Se o plano vindo do backend falhar na validação final de calorias/macros ou restrições, o app bloqueia a exibição e mostra erro.
-- Planos manuais ou travados pelo coach continuam preservados.
-- A regra operacional fica clara: dieta real vem do backend; frontend só exibe, valida e bloqueia caso algo esteja incoerente.
-- Backend, XP, arena, painel admin e fluxo de calibragem inicial não foram alterados nesta etapa.
+- O resolvedor local reconhece `não como peixe`, `sem peixe`, `fish`, `pesce`, `frutos do mar`, `shrimp`, `seafood`, `shellfish`, `gamberi` e equivalentes como restrição alimentar clara.
+- A validação final da dieta recusa refeições com peixe/frutos do mar quando essa restrição está presente.
+- Caso coberto por teste: aluno na Itália, app em português, `foodRestrictions = "não como peixe"` e modelo devolvendo `Tonno/Pesce` => geração recusada e `dietGenerationStatus = "failed"`.
+- Calibragem, painel admin, XP, arena, treino e app do aluno não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -56,6 +54,7 @@ Comportamento validado:
 11. `CEREBROGUTO` PR #13 — backend limpa `countryCode` antigo quando país muda sem novo código válido, inclusive via chat/memory patch.
 12. `CEREBROGUTO` PR #14 — rota administrativa de aluno propaga calibragem para dieta, `countryCode` e `trainingStatus`.
 13. `CORPOGUTO` PR #14 — aba de dieta bloqueia plano inválido em vez de gerar/reconciliar dieta local no frontend.
+14. `CEREBROGUTO` PR #15 — dieta bloqueia peixe/frutos do mar quando o aluno declara `NÃO COMO` com peixe/frutos do mar.
 
 ---
 
@@ -159,7 +158,8 @@ Status atual:
 - Feito: backend valida pós-geração que alimentos brasileiros difíceis de achar não sejam usados fora do Brasil sem o país permitir.
 - Feito: caso coberto por teste: app em português + aluno na Itália + modelo devolvendo `Tapioca` => geração recusada.
 - Feito: frontend não inventa nem reconcilia dieta local quando o plano do backend é inválido; a aba bloqueia e pede nova geração.
-- Falta: validação semântica mais ampla das restrições alimentares complexas, sem depender só de palavras fixas.
+- Feito: `NÃO COMO` com peixe/frutos do mar bloqueia planos com peixe, atum, salmão, camarão e equivalentes comuns em PT/EN/IT.
+- Falta: validação semântica mais ampla das restrições alimentares complexas fora das famílias já cobertas, sem depender só de palavras fixas.
 - Falta: mensagem de erro mais orientada ao aluno quando a dieta falha por alimento incompatível com o país.
 - Falta: checagem semântica/final de coerência alimentar para alergias genéricas e disponibilidade local.
 
