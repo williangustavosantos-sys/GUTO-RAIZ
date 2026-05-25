@@ -17,25 +17,27 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.8 da calibragem: fluxo do app validado para idioma e nome ficarem antes da calibragem.
+Fase 2.1 da dieta integrada: validação geográfica pós-geração para impedir alimentos brasileiros difíceis de achar quando o aluno mora fora do Brasil.
 
 Branch/PR:
 
-- Repositório: `CORPOGUTO`
-- Branch/PR: sem alteração de código nesta etapa; validação local em cima de `fix/hard-stabilization-p0`.
+- Repositório: `CEREBROGUTO`
+- Branch: `codex/diet-geography-validation`
+- PR: `#12` — mergeado em `main`.
 
 Validações executadas:
 
-- Leitura do fluxo `AppStage`: `intro` -> `language` -> `consent` -> `naming` -> `calibration` -> `pact` -> `system`.
-- Leitura de `resolveAuthenticatedStage`, `handleLanguageSelect`, `commitOnboardingName` e `handleCalibrationComplete`.
-- Leitura de `CalibrationScreen`.
+- `npx tsx --test tests/guto-diet-generation.test.ts`
+- `npm run typecheck`
+- `npm run test:guto`
+- `git diff --check`
 
 Comportamento validado:
 
-- Idioma é definido antes da tela de nome/calibragem.
-- Nome da dupla é confirmado em `naming` e só então o app abre `calibration`.
-- `CalibrationScreen` não contém campo de idioma nem campo de nome.
-- A calibragem contém apenas dados físicos, treino, residência e `NÃO COMO`.
+- A geração da dieta agora valida alimentos contra `country`/`countryCode`, não contra o idioma do app.
+- Aluno com app em português, morando na Itália (`countryCode=IT`), não pode receber `tapioca` como alimento normal da dieta.
+- Se o modelo insistir em alimento brasileiro bloqueado por 3 tentativas, a geração falha e a memória fica com `dietGenerationStatus = "failed"`.
+- O cálculo de macros, prompt amplo, painel admin, app do aluno, XP e arena não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -47,6 +49,7 @@ Comportamento validado:
 6. `CORPOGUTO` PR #12 — ajustes/calibragem do app aguardam persistência antes de mostrar salvo ou avançar tela.
 7. Validação local `CEREBROGUTO` — chat/backend gravam `memoryPatch` antes de devolver resposta ao app.
 8. Validação local `CORPOGUTO` — idioma e nome ficam fora da calibragem e antes dela no fluxo do app.
+9. `CEREBROGUTO` PR #12 — dieta bloqueia alimentos brasileiros difíceis de achar quando o aluno mora fora do Brasil, mesmo se o app estiver em português.
 
 ---
 
@@ -136,6 +139,17 @@ Documentos obrigatórios:
 - `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`
 
 Objetivo: dieta segura, coerente e localizada.
+
+Status atual:
+
+- Feito: mudanças nutricionais da calibragem colocam a dieta em `needs_clarification` quando ela não está travada pelo coach.
+- Feito: dieta travada por `lockedByCoach` é preservada quando a calibragem muda, com auditoria da divergência.
+- Feito: país/cidade já entram no prompt de geração.
+- Feito: backend valida pós-geração que alimentos brasileiros difíceis de achar não sejam usados fora do Brasil sem o país permitir.
+- Feito: caso coberto por teste: app em português + aluno na Itália + modelo devolvendo `Tapioca` => geração recusada.
+- Falta: validação semântica mais ampla das restrições alimentares complexas, sem depender só de palavras fixas.
+- Falta: mensagem de erro mais orientada ao aluno quando a dieta falha por alimento incompatível com o país.
+- Falta: checagem semântica/final de coerência alimentar para alergias genéricas e disponibilidade local.
 
 Corrigir/verificar:
 
