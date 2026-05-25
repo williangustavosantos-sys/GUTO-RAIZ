@@ -17,30 +17,29 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.10 da calibragem/memória: propagação correta de alterações feitas por Admin/Coach no caminho técnico atual do painel.
+Fase 2.2 da dieta integrada: o app não inventa dieta local quando o backend devolve plano inválido.
 
 Branch/PR:
 
-- Repositório: `CEREBROGUTO`
-- Branch: `codex/admin-calibration-propagation`
-- PR: `#14` — mergeado em `main`.
+- Repositório: `CORPOGUTO`
+- Branch: `codex/no-client-diet-fallback`
+- PR: `#14` — mergeado em `fix/hard-stabilization-p0`.
 
 Validações executadas:
 
-- `CEREBROGUTO`: `npx tsx --test tests/guto-team-isolation.test.ts`
-- `CEREBROGUTO`: `npx tsx --test tests/guto-diet-invalidation.test.ts`
-- `CEREBROGUTO`: `npm run typecheck`
-- `CEREBROGUTO`: `npm run test:guto`
+- `CORPOGUTO`: `npx tsc --noEmit`
+- `CORPOGUTO`: `npx eslint lib/diet-plan.ts components/guto/tabs/diet-tab.tsx`
+- GitHub `validate` passou.
+- Vercel preview passou.
 - `git diff --check`
 
 Comportamento validado:
 
-- O patch administrativo atual de aluno (`/admin/students/:userId`) agora rastreia campos reais de calibragem alterados por Admin/Coach.
-- Se Admin/Coach altera campo nutricional, a dieta do aluno vai para `needs_clarification`, salvo quando estiver protegida por `lockedByCoach`.
-- Se Admin/Coach muda `country` sem enviar novo `countryCode`, o backend limpa o código técnico antigo para evitar país obsoleto na dieta/proatividade.
-- Quando Admin/Coach altera `trainingLevel`, o backend também sincroniza `trainingStatus` para manter treino e painel no mesmo estado operacional.
-- Isso prepara o caminho do painel Admin/Coach sem criar endpoint novo e sem editar calibragem como JSON cru.
-- App do aluno, XP, arena, criação de empresa e UI do painel não foram alterados nesta etapa.
+- A aba de dieta não faz mais fallback local para calcular uma dieta no navegador.
+- Se o plano vindo do backend falhar na validação final de calorias/macros ou restrições, o app bloqueia a exibição e mostra erro.
+- Planos manuais ou travados pelo coach continuam preservados.
+- A regra operacional fica clara: dieta real vem do backend; frontend só exibe, valida e bloqueia caso algo esteja incoerente.
+- Backend, XP, arena, painel admin e fluxo de calibragem inicial não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -56,6 +55,7 @@ Comportamento validado:
 10. `CORPOGUTO` PR #13 — ajustes do app enviam `countryCode` junto com país/cidade e bloqueiam falso “salvo” quando o país é inválido.
 11. `CEREBROGUTO` PR #13 — backend limpa `countryCode` antigo quando país muda sem novo código válido, inclusive via chat/memory patch.
 12. `CEREBROGUTO` PR #14 — rota administrativa de aluno propaga calibragem para dieta, `countryCode` e `trainingStatus`.
+13. `CORPOGUTO` PR #14 — aba de dieta bloqueia plano inválido em vez de gerar/reconciliar dieta local no frontend.
 
 ---
 
@@ -158,6 +158,7 @@ Status atual:
 - Feito: `countryCode` não fica obsoleto quando o aluno troca país nas configurações ou pelo chat.
 - Feito: backend valida pós-geração que alimentos brasileiros difíceis de achar não sejam usados fora do Brasil sem o país permitir.
 - Feito: caso coberto por teste: app em português + aluno na Itália + modelo devolvendo `Tapioca` => geração recusada.
+- Feito: frontend não inventa nem reconcilia dieta local quando o plano do backend é inválido; a aba bloqueia e pede nova geração.
 - Falta: validação semântica mais ampla das restrições alimentares complexas, sem depender só de palavras fixas.
 - Falta: mensagem de erro mais orientada ao aluno quando a dieta falha por alimento incompatível com o país.
 - Falta: checagem semântica/final de coerência alimentar para alergias genéricas e disponibilidade local.
