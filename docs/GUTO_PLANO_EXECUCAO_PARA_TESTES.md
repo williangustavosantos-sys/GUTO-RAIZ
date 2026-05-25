@@ -17,29 +17,30 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 2.5 da dieta integrada: falhas de geração de dieta agora retornam motivo estruturado para o app orientar o aluno sem mensagem genérica.
+Fase 2.6 da dieta integrada: a aba de dieta do app agora consome o motivo estruturado da falha e mostra mensagem específica.
 
 Branch/PR:
 
-- Repositório: `CEREBROGUTO`
-- Branch: `codex/diet-failure-reasons`
-- PR: `#17` — mergeado em `main`.
+- Repositório: `CORPOGUTO`
+- Branch: `codex/diet-failure-reason-copy`
+- PR: `#15` — mergeado em `fix/hard-stabilization-p0`.
 
 Validações executadas:
 
-- `CEREBROGUTO`: `npx tsx --test tests/guto-diet-generation.test.ts`
-- `CEREBROGUTO`: `npm run typecheck`
-- `CEREBROGUTO`: `npm run test:guto`
+- `CORPOGUTO`: `npx tsc --noEmit`
+- `CORPOGUTO`: `npx eslint components/guto/tabs/diet-tab.tsx`
+- GitHub `validate` passou.
+- Vercel preview passou.
 - `git diff --check`
 
 Comportamento validado:
 
-- `diet_generation_failed` agora retorna `reason` e `issues`.
-- Falhas por restrição alimentar retornam `reason: "food_restriction"`.
-- Falhas por alimento incompatível com país/localidade retornam `reason: "location"`.
-- Falhas por calorias/macros retornam `reason: "calorie_validation"`.
-- Mensagens visíveis diferenciam validação bloqueada de erro técnico do sistema.
-- Calibragem, painel admin, XP, arena, treino e app do aluno não foram alterados nesta etapa.
+- A aba de dieta lê `reason` da resposta de erro do backend.
+- `food_restriction` mostra mensagem de restrição alimentar.
+- `location` mostra mensagem de alimento incompatível com o país/localidade.
+- `calorie_validation` mostra mensagem de calorias/macros inseguras.
+- Timeouts, conexão e erros genéricos continuam com os fallbacks anteriores.
+- Backend, painel admin, XP, arena e treino não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
 
@@ -59,6 +60,7 @@ Comportamento validado:
 14. `CEREBROGUTO` PR #15 — dieta bloqueia peixe/frutos do mar quando o aluno declara `NÃO COMO` com peixe/frutos do mar.
 15. `CEREBROGUTO` PR #16 — dieta bloqueia ovo quando o aluno declara `NÃO COMO` com ovo.
 16. `CEREBROGUTO` PR #17 — falha de geração de dieta retorna motivo estruturado (`food_restriction`, `location`, `calorie_validation`, etc.).
+17. `CORPOGUTO` PR #15 — aba de dieta consome `reason` e exibe mensagem específica para restrição, localidade e calorias/macros.
 
 ---
 
@@ -165,8 +167,8 @@ Status atual:
 - Feito: `NÃO COMO` com peixe/frutos do mar bloqueia planos com peixe, atum, salmão, camarão e equivalentes comuns em PT/EN/IT.
 - Feito: `NÃO COMO` com ovo bloqueia planos com ovo, ovos, egg, uovo/uova, frittata e omelete.
 - Feito: falha de dieta retorna `reason` e `issues` para o app diferenciar restrição, localidade, macros/calorias e falha técnica.
+- Feito: aba de dieta do app usa `reason` para exibir mensagem específica ao aluno.
 - Falta: validação semântica mais ampla das restrições alimentares complexas fora das famílias já cobertas, sem depender só de palavras fixas.
-- Falta: app consumir visualmente `reason/issues` com microcopy específica na aba de dieta.
 - Falta: checagem semântica/final de coerência alimentar para alergias genéricas e disponibilidade local.
 
 Corrigir/verificar:
