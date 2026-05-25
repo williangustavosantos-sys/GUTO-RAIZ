@@ -17,25 +17,25 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.7 da calibragem: chat/backend validados para gravar `memoryPatch` antes de devolver resposta ao app.
+Fase 1.8 da calibragem: fluxo do app validado para idioma e nome ficarem antes da calibragem.
 
 Branch/PR:
 
-- Repositório: `CEREBROGUTO`
-- Branch/PR: sem alteração de código nesta etapa; validação local em cima de `main`.
+- Repositório: `CORPOGUTO`
+- Branch/PR: sem alteração de código nesta etapa; validação local em cima de `fix/hard-stabilization-p0`.
 
 Validações executadas:
 
-- Leitura do fluxo `askGutoModel` -> `applyMemoryPatch` -> `commitMemoryDecision`.
-- `npx tsx --test tests/guto-diet-invalidation.test.ts`
-- `npm run typecheck`
+- Leitura do fluxo `AppStage`: `intro` -> `language` -> `consent` -> `naming` -> `calibration` -> `pact` -> `system`.
+- Leitura de `resolveAuthenticatedStage`, `handleLanguageSelect`, `commitOnboardingName` e `handleCalibrationComplete`.
+- Leitura de `CalibrationScreen`.
 
 Comportamento validado:
 
-- O backend aplica `memoryPatch` do chat antes de finalizar a resposta.
-- `applyMemoryPatch` chama invalidação de dieta quando campos nutricionais mudam pelo chat.
-- `commitMemoryDecision` grava a memória antes do payload voltar ao app.
-- Teste existente confirma mudança via `memoryPatch` do chat com dieta indo para `needs_clarification`.
+- Idioma é definido antes da tela de nome/calibragem.
+- Nome da dupla é confirmado em `naming` e só então o app abre `calibration`.
+- `CalibrationScreen` não contém campo de idioma nem campo de nome.
+- A calibragem contém apenas dados físicos, treino, residência e `NÃO COMO`.
 
 ### Histórico Validado Recente
 
@@ -46,6 +46,7 @@ Comportamento validado:
 5. `CORPOGUTO` PR #11 — contrato do app remove `phone` da memória do aluno e bloqueia atualização de telefone pelo chat.
 6. `CORPOGUTO` PR #12 — ajustes/calibragem do app aguardam persistência antes de mostrar salvo ou avançar tela.
 7. Validação local `CEREBROGUTO` — chat/backend gravam `memoryPatch` antes de devolver resposta ao app.
+8. Validação local `CORPOGUTO` — idioma e nome ficam fora da calibragem e antes dela no fluxo do app.
 
 ---
 
@@ -93,7 +94,7 @@ Status atual:
 - Feito: mudanças nutricionais da calibragem invalidam a dieta quando ela não está travada pelo coach.
 - Feito: app do aluno só fecha ajustes/calibragem e mostra “salvo” depois de persistência confirmada.
 - Feito: chat/backend aplicam e gravam `memoryPatch` antes de devolver resposta ao app.
-- Falta validar no app: idioma e nome ficam antes da calibragem, não dentro dela.
+- Feito: idioma e nome ficam antes da calibragem, não dentro dela.
 - Feito parcialmente: settings alteram os mesmos campos de memória usados por treino, dieta e painel futuro.
 - Falta fase futura do painel: endpoint dedicado de calibragem validada, sem JSON cru.
 
