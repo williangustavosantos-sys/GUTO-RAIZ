@@ -17,13 +17,13 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 2.4 da dieta integrada: `NÃO COMO` com ovo agora bloqueia dieta com ovo, ovos, egg, uovo/uova, frittata e omelete.
+Fase 2.5 da dieta integrada: falhas de geração de dieta agora retornam motivo estruturado para o app orientar o aluno sem mensagem genérica.
 
 Branch/PR:
 
 - Repositório: `CEREBROGUTO`
-- Branch: `codex/diet-egg-restriction`
-- PR: `#16` — mergeado em `main`.
+- Branch: `codex/diet-failure-reasons`
+- PR: `#17` — mergeado em `main`.
 
 Validações executadas:
 
@@ -34,9 +34,11 @@ Validações executadas:
 
 Comportamento validado:
 
-- O resolvedor local reconhece `não como ovo`, `sem ovo`, `egg`, `uovo/uova` e equivalentes como restrição alimentar clara.
-- A validação final da dieta recusa refeições com ovo quando essa restrição está presente.
-- Caso coberto por teste: aluno na Itália, app em português, `foodRestrictions = "não como ovo"` e modelo devolvendo `Uova` => geração recusada e `dietGenerationStatus = "failed"`.
+- `diet_generation_failed` agora retorna `reason` e `issues`.
+- Falhas por restrição alimentar retornam `reason: "food_restriction"`.
+- Falhas por alimento incompatível com país/localidade retornam `reason: "location"`.
+- Falhas por calorias/macros retornam `reason: "calorie_validation"`.
+- Mensagens visíveis diferenciam validação bloqueada de erro técnico do sistema.
 - Calibragem, painel admin, XP, arena, treino e app do aluno não foram alterados nesta etapa.
 
 ### Histórico Validado Recente
@@ -56,6 +58,7 @@ Comportamento validado:
 13. `CORPOGUTO` PR #14 — aba de dieta bloqueia plano inválido em vez de gerar/reconciliar dieta local no frontend.
 14. `CEREBROGUTO` PR #15 — dieta bloqueia peixe/frutos do mar quando o aluno declara `NÃO COMO` com peixe/frutos do mar.
 15. `CEREBROGUTO` PR #16 — dieta bloqueia ovo quando o aluno declara `NÃO COMO` com ovo.
+16. `CEREBROGUTO` PR #17 — falha de geração de dieta retorna motivo estruturado (`food_restriction`, `location`, `calorie_validation`, etc.).
 
 ---
 
@@ -161,8 +164,9 @@ Status atual:
 - Feito: frontend não inventa nem reconcilia dieta local quando o plano do backend é inválido; a aba bloqueia e pede nova geração.
 - Feito: `NÃO COMO` com peixe/frutos do mar bloqueia planos com peixe, atum, salmão, camarão e equivalentes comuns em PT/EN/IT.
 - Feito: `NÃO COMO` com ovo bloqueia planos com ovo, ovos, egg, uovo/uova, frittata e omelete.
+- Feito: falha de dieta retorna `reason` e `issues` para o app diferenciar restrição, localidade, macros/calorias e falha técnica.
 - Falta: validação semântica mais ampla das restrições alimentares complexas fora das famílias já cobertas, sem depender só de palavras fixas.
-- Falta: mensagem de erro mais orientada ao aluno quando a dieta falha por alimento incompatível com o país.
+- Falta: app consumir visualmente `reason/issues` com microcopy específica na aba de dieta.
 - Falta: checagem semântica/final de coerência alimentar para alergias genéricas e disponibilidade local.
 
 Corrigir/verificar:
