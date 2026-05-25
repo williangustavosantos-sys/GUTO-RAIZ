@@ -17,29 +17,25 @@ O painel admin está pausado temporariamente. A prioridade atual é alinhar o ap
 
 ### Última Execução Validada
 
-Fase 1.6 da calibragem: ajustes/calibragem do app só mostram “salvo” depois de confirmação do backend.
+Fase 1.7 da calibragem: chat/backend validados para gravar `memoryPatch` antes de devolver resposta ao app.
 
 Branch/PR:
 
-- Repositório: `CORPOGUTO`
-- Branch: `codex/settings-persist-before-saved`
-- Base: `fix/hard-stabilization-p0`
-- PR: `https://github.com/williangustavosantos-sys/CORPOGUTO/pull/12`
+- Repositório: `CEREBROGUTO`
+- Branch/PR: sem alteração de código nesta etapa; validação local em cima de `main`.
 
 Validações executadas:
 
-- `npx tsc --noEmit`
-- `npx eslint components/guto/guto-app.tsx`
-- `git diff --check`
-- CI `validate` do GitHub
-- Vercel Preview
+- Leitura do fluxo `askGutoModel` -> `applyMemoryPatch` -> `commitMemoryDecision`.
+- `npx tsx --test tests/guto-diet-invalidation.test.ts`
+- `npm run typecheck`
 
 Comportamento validado:
 
-- Tela de calibragem inicial não avança para o pacto se a memória não persistir.
-- Ajustes de idioma, nome, perfil, objetivo, local, limitação, peso/altura, país/cidade, `NÃO COMO` e dados completos aguardam confirmação do backend.
-- Se a gravação falhar, a tela fica aberta e mostra erro curto em PT/EN/IT.
-- Toast “Configurações salvas” só aparece depois de persistência bem-sucedida.
+- O backend aplica `memoryPatch` do chat antes de finalizar a resposta.
+- `applyMemoryPatch` chama invalidação de dieta quando campos nutricionais mudam pelo chat.
+- `commitMemoryDecision` grava a memória antes do payload voltar ao app.
+- Teste existente confirma mudança via `memoryPatch` do chat com dieta indo para `needs_clarification`.
 
 ### Histórico Validado Recente
 
@@ -49,6 +45,7 @@ Comportamento validado:
 4. `CEREBROGUTO` PR #11 — ranges oficiais de idade, altura e peso aplicados na memória pública, chat e painel.
 5. `CORPOGUTO` PR #11 — contrato do app remove `phone` da memória do aluno e bloqueia atualização de telefone pelo chat.
 6. `CORPOGUTO` PR #12 — ajustes/calibragem do app aguardam persistência antes de mostrar salvo ou avançar tela.
+7. Validação local `CEREBROGUTO` — chat/backend gravam `memoryPatch` antes de devolver resposta ao app.
 
 ---
 
@@ -95,9 +92,9 @@ Status atual:
 - Feito: idade, altura e peso respeitam os ranges oficiais.
 - Feito: mudanças nutricionais da calibragem invalidam a dieta quando ela não está travada pelo coach.
 - Feito: app do aluno só fecha ajustes/calibragem e mostra “salvo” depois de persistência confirmada.
+- Feito: chat/backend aplicam e gravam `memoryPatch` antes de devolver resposta ao app.
 - Falta validar no app: idioma e nome ficam antes da calibragem, não dentro dela.
 - Feito parcialmente: settings alteram os mesmos campos de memória usados por treino, dieta e painel futuro.
-- Falta validar no chat: GUTO só diz que salvou depois da persistência realmente acontecer.
 - Falta fase futura do painel: endpoint dedicado de calibragem validada, sem JSON cru.
 
 Corrigir/verificar:
