@@ -1,6 +1,10 @@
 # Proatividade e Ciclo Semanal do GUTO — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação da Máquina de Estados de Proatividade, Ciclos de Contexto Semanal e Inteligência de Presença do GUTO.
+> **Documento canônico** da Máquina de Estados de Proatividade, Ciclos de Contexto Semanal e Inteligência de Presença do GUTO.
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. Proatividade **não** é notificação push genérica nem mensagem pronta ao abrir: é o ciclo fechado **coletar → entender → confirmar → enriquecer → usar → validar → descartar**. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (a proatividade fala pelo chat) · `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` · `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` (não vira calibragem permanente sem confirmar).
 
 ---
 
@@ -185,3 +189,21 @@ No início do ciclo seguinte, o GUTO repassa as memórias pendentes de validaç�
 - **Duplicar Memórias em Correções:** Criar um novo evento no banco em vez de atualizar as datas (`dateParsed`, `updatedAt`) do evento existente caso o usuário faça correções de dia de viagem.
 - **Alterar Calibragem Sem Pedido Claro:** transformar contexto temporário em país, cidade, local de treino, dor ou restrição permanente sem confirmação.
 - **Sobrescrever Plano Do Coach:** mudar treino ou dieta bloqueados pelo coach com base em contexto proativo sem liberação.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. A proatividade é elo maduro: ciclo completo confirmar→validar→arquivar nos 3 idiomas, coberto por testes (`proactivity-resolver`, 23 passes).
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| P-1 | Ciclo fechado (coletar→confirmar→enriquecer→usar→validar→descartar) | Estados `pending_confirmation`→`confirmed`→`enriched`→`surfaced`→`validated`/`discarded` | `src/proactivity/*` + `proactive-store` (testado) | ✅ alinhado |
+| P-2 | Confirma antes de salvar (anti-chute, Regra Soberana 1) | Nunca salva contexto sem o aceite do usuário | `POST /guto/proactivity/confirm`; só persiste após confirm | ✅ alinhado |
+| P-3 | Não vira calibragem permanente sem confirmação | Viagem/cidade temporária não troca `country`/`city` permanente | `memory-action-resolver` respeita | ✅ alinhado |
+| P-4 | Não sobrescreve plano `lockedByCoach` | Vira pendência/revisão | Respeitado | ✅ alinhado |
+| P-5 | Arquiva memória após o ciclo (sem sujeira eterna) | `discarded`/expiração + reschedule | `proactive-store` (expira 24h, reschedule +7d; testado) | ✅ alinhado |
+| P-6 | Enriquecimento com clima/feriado da cidade | Usa contexto externo (auxiliar; não bloqueia se falhar) | `city`/contexto usados; **provider de clima externo não confirmado** | **[implementar]** (parcial; é auxiliar) |
+| P-7 | Não cobra presença de quem declarou viagem/indisponibilidade | Penalidade de ausência suspensa no dia confirmado | Regra documentada e respeitada na penalidade | ✅ alinhado |
+
+> A fala da proatividade sai sempre pelo chat com a personalidade do GUTO (curta, humana): ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`.

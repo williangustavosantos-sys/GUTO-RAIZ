@@ -1,6 +1,10 @@
 # GUTO Online (Sessão Assistida em Tempo Real) — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação da Máquina de Estados, Interface Touch-First, Protocolos de Dor e Resiliência de Retomada do GUTO Online.
+> **Documento canônico** da Máquina de Estados, Interface Touch-First, Protocolos de Dor e Resiliência de Retomada do GUTO Online (a sessão guiada em tempo real).
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. O GUTO Online **usa o plano oficial persistido** (`lastWorkoutPlan`) e respeita `lockedByCoach`; ele **termina na Validação** (com selfie obrigatória — ver decisão). Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 11) · `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` (plano oficial) · `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` (validação → XP/streak) · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (Quick Talk).
 
 ---
 
@@ -173,3 +177,22 @@ Cada transição de estado gera um evento estruturado disparado ao backend para 
 - **Falar Idioma Incompatível:** Ignorar o idioma escolhido pelo usuário (`selectedLanguage`) durante os alertas de voz e áudios de transição de séries do GUTO Online.
 - **Sincronia Quebrada de Trocas:** Trocar um exercício por outro no GUTO Online e não sincronizar essa alteração na visualização estática da aba Missão. O plano de treino é um recurso unificado.
 - **Desrespeitar Plano Travado:** Alterar exercício, volume ou estrutura de treino bloqueado pelo coach sem revisão/autorização.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. O GUTO Online é elo maduro: state machine e retomada por janela de tempo validadas (`guto-online-engine`, `decideResume`).
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| O-1 | Usa plano oficial do backend; não cria sessão falsa | Sessão nasce de `lastWorkoutPlan` | Engine consome `GutoWorkoutPlan` oficial | ✅ alinhado |
+| O-2 | Máquina de estados (briefing/warmup/série/descanso/transição/fim) | Fases controladas | `guto-online-types` + `guto-online-engine` | ✅ alinhado |
+| O-3 | Dor pausa e protege; fadiga ajusta volume | Pain Check / Fatigue Adjustment | Botão de dor + `POST /guto/online/exception` | ✅ alinhado |
+| O-4 | Ações críticas exigem toque (voz não dispara sozinha) | Touch-first; voz só auxiliar | Honrado na UI | ✅ alinhado |
+| O-5 | Retomada por janela (<15min auto / 15min–12h pergunta / >12h expira) | Regra temporal exata | `guto-online-storage.decideResume` | ✅ alinhado |
+| O-6 | Respeita `lockedByCoach` (não troca/altera plano travado) | Pausa, registra, marca revisão | Respeitado | ✅ alinhado |
+| O-7 | Termina na Validação (selfie obrigatória) | Sem prova não conta | Backend hoje aceita validação **sem** foto | **[implementar]** — selfie obrigatória (decisão do fundador); ver `GUTO_EVOLUCAO_XP_E_MORTE` |
+| O-8 | Risco: sessão não inicia sem `userId` no storage | Botão bloqueado sem identidade | Requisito de inicialização presente | ✅ alinhado |
+
+> A finalização leva à Validação (Pág. 12) → XP/streak: detalhe em `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md`.

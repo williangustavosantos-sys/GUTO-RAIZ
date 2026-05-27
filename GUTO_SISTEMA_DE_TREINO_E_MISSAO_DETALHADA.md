@@ -1,6 +1,10 @@
 # Sistema de Montagem de Treino do GUTO — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação da Geração Adaptativa de Exercícios, Coerência Física, Catálogo de Mídias Locais e Dúvidas Contextuais.
+> **Documento canônico** da Geração Adaptativa de Exercícios, Coerência Física, Catálogo de Mídias Locais e Dúvidas Contextuais (a aba **Missão / Treino do Dia**).
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. O treino **consome** a calibragem (`GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`); ele não inventa dado. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 9) · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (botão de dúvida) · `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (Coach Lock).
 
 ---
 
@@ -82,7 +86,7 @@ A geração do treino do dia segue uma hierarquia de origens para garantir o ali
 ## Catálogo de Exercícios e Mídias Locais
 
 O GUTO opera sob a premissa de que o aluno precisa saber executar cada movimento com exatidão.
-- Cada exercício retornado possui o mapeamento de um vídeo de demonstração local armazenado fisicamente em `/public/exercise/visuals/[grupo]/[nome_exercicio].mp4` com duração máxima de 15 segundos.
+- Cada exercício retornado possui o mapeamento de um vídeo de demonstração local armazenado fisicamente em `/public/exercise/visuals/[grupo]/[nome_exercicio].mp4`. **Limites oficiais de vídeo:** catálogo oficial do GUTO **≤ 15 segundos**; exercício **custom** enviado pelo coach pelo painel **≤ 30 segundos** (`/exercise/visuals/custom/`). Ambos: MP4, **sem áudio**, ≤ 720p, ≤ 12 MB, caminho interno validado.
 - **Regra Crítica Absoluta:** Se o ID do exercício não corresponder a um arquivo de vídeo físico existente e validado na pasta, o exercício está **terminantemente banido** de entrar no treino do aluno. O sistema evita catalogar movimentos que não tenham prova visual.
 
 ---
@@ -206,3 +210,21 @@ Se o treino estiver com `lockedByCoach: true`, o fluxo muda:
 - **Silos de Interfaces:** O botão de interrogação `?` abrir um chat genérico com frases de boas-vindas frias e descontextualizadas em vez de responder diretamente sobre o exercício clicado.
 - **Mudar e Não Salvar:** Permitir a troca de um exercício pelo chat sem gravar a substituição na chave `lastWorkoutPlan` no backend. Isso quebraria a consistência e geraria erros na tela de GUTO Online e na Validação de treino.
 - **Desrespeitar o Treinador:** Sobrescrever de forma autônoma treinos que foram montados e bloqueados manualmente pelo Coach no painel administrativo (`lockedByCoach: true`).
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. O treino é elo maduro (gate de vídeo e respeito à dor validados por teste). Decisões herdadas já aplicadas: **vídeo catálogo ≤15s / custom ≤30s**.
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| T-1 | Treino vem do backend; frontend não inventa | `lastWorkoutPlan`/`weeklyWorkoutPlan` do `workout-curator` | App lê o plano; não inventa | ✅ alinhado |
+| T-2 | Gate de vídeo local obrigatório | Exercício sem `videoUrl` válido (`/exercise/visuals/`) não entra | Validado (`workout-catalog-validation`, 27 testes; 89 mp4 reais) | ✅ alinhado |
+| T-3 | Limite de vídeo | **Catálogo ≤15s / custom ≤30s**, sem áudio, ≤720p, ≤12 MB | Catálogo curto; validação custom aceita ≤30s | ✅ alinhado (decisão do fundador) |
+| T-4 | Respeita dor/limitação, nível, local, objetivo | Banimento por região; progressão por nível | `workout-curator` + `workout-progression` (bug joelho/salto corrigido) | ✅ alinhado |
+| T-5 | Coach Lock (`lockedByCoach`) não é sobrescrito | GUTO não reescreve plano travado | `lock/unlock` no admin-router; não-override testado | ✅ alinhado |
+| T-6 | Troca de exercício pelo chat persiste em `lastWorkoutPlan` | Swap salvo no backend; com lock vira pendência p/ coach | Swap por chat persiste; **fila de "pendência" visível ao coach** não confirmada | **[implementar]** (parcial) |
+| T-7 | Botão de dúvida "?" leva contexto do exercício ao chat | Abre chat com contexto, sem saudação genérica | Implementado (`exerciseDoubtTrigger`/`contextChip`) | ✅ alinhado |
+
+> Detalhe do botão "?" e do tratamento de "trocar/dor/execução" no chat: ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`. Coach Lock e edição pelo painel: ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.

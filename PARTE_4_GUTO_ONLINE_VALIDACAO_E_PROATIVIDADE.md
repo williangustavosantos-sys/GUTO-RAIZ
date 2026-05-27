@@ -1,113 +1,20 @@
-# Parte 4 — GUTO Online, Validação, Progressão e Proatividade
+# Parte 4 — GUTO Online, Validação, Progressão e Proatividade (ponteiro)
 
-> Documento de fluxo de execução em tempo real, consistência de dados de recompensa e ciclos inteligentes de presença do GUTO. Leia depois da `Parte 3`.
+> **Esta série `PARTE_x` virou ponteiro.** O conteúdo profundo está nas **`*_DETALHADA`** (fonte de verdade). Este arquivo só aponta o caminho.
 
-## Estado Do Documento
+## Onde está o conteúdo desta parte
 
-Este documento define a execução assistida, validação, XP e proatividade. Ele deve ser usado junto com:
-- `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md`
-- `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md`
-- `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md`
-- `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md`
+| Tema | Documento canônico |
+|---|---|
+| Fluxo página por página (online → validação → arena/evoluir/percurso) | `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 11–15) |
+| GUTO Online (máquina de estados, dor/fadiga, retomada) | `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` |
+| Validação, XP, streak, evolução do avatar, morte | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
+| Arena por escopo (`teamId` / global) | `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` |
+| Proatividade (ciclo semanal fechado) | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` |
 
-Regras fixas desta parte:
-- GUTO Online executa o treino oficial salvo no backend, nunca um treino inventado no frontend.
-- Validação de treino é a fonte de XP, streak, percurso, avatar e Arena.
-- Arena Semanal e Mensal são por empresa/time (`teamId`); Arena Geral é global.
-- Proatividade não altera calibragem, treino ou dieta sensível sem confirmação.
-- Plano bloqueado pelo coach não pode ser sobrescrito automaticamente durante proatividade ou sessão online.
+## Resumo (presença, prova e antecipação)
 
-## O Que Essa Parte Representa
-
-Esta parte rege a presença física e temporal do GUTO na vida do usuário. É o momento do treino propriamente dito, da prestação de contas (accountability) e da proatividade que antecipa as necessidades do aluno. Ela sustenta três promessas fundamentais:
-
-1. **Execução Segura em Tempo Real (GUTO Online)**: o GUTO Online não é um temporizador comum nem um vídeo gravado; é um sistema guiado por estados que acompanha o usuário série por série e o protege em caso de dor ou fadiga.
-2. **Accountability sem Fraude (Validação e XP)**: o treino só conta como feito após validação estruturada enviada ao backend. A consistência de dados garante que o XP creditado atualiza igualmente todas as abas (Arena, Percurso e Evolução do Avatar) eliminando bugs visuais críticos de descompasso.
-3. **Presença Viva Proativa**: o GUTO age e lembra do contexto do usuário sem precisar ser acionado. O ciclo de proatividade garante que dados informados de passagem virem memórias confirmadas e ações úteis de adaptação.
-
----
-
-## 12) GUTO Online (Treino Assistido)
-
-### O que é
-A sessão assistida onde o GUTO executa o treino fisicamente "junto" com o usuário através de uma interface interativa baseada em estados.
-
-O GUTO Online sempre nasce do treino oficial do dia/semana. Se o treino foi gerado pelo GUTO, ele usa esse plano. Se o coach editou e bloqueou o treino, a sessão executa o plano do coach. A sessão não cria uma versão paralela do treino.
-
-### Máquina de Estados do Treino
-O fluxo segue fases estritas controladas pelo backend e replicadas visualmente:
-1. **Briefing**: explicação curta do foco do treino e alinhamento emocional.
-2. **Aquecimento (Warm-up)**: preparação articular obrigatória antes de cargas.
-3. **Exercício Atual**: card do exercício ativo com contagem de séries, repetições e carga.
-4. **Descanso Activo**: temporizador de descanso entre séries com áudio ou instrução rápida de respiração.
-5. **Transição**: instrução para trocar de máquina/localização e preparar o próximo movimento.
-6. **Finalização**: alongamento rápido, coleta de feedback físico e encerramento.
-
-### Regras Críticas de Execução e Voz
-- **Ações Sensíveis Bloqueadas contra Falhas de Voz**: a voz do usuário pode falhar, captar ruídos ou ser interpretada incorretamente. Ações críticas (pular exercício, finalizar treino antes do tempo, aumentar carga de forma drástica ou trocar de movimento) **nunca** devem ser disparadas exclusivamente por frases por voz sem confirmação visual ou física na tela (botões com estado de segurança).
-- **Tratamento de Dor e Fadiga**: se o usuário indicar dor (seja por voz ou por toque no botão de dor):
-  - O treino é pausado imediatamente.
-  - O sistema pergunta a região e a intensidade.
-  - O GUTO se recusa a forçar articulações machucadas, oferecendo adaptação de movimento imediata ou sugerindo encerrar por segurança.
-  - Se o plano estiver bloqueado pelo coach, o GUTO não troca a estrutura sem autorização. Ele registra o sinal de dor e marca revisão operacional.
-- **Retomada de Sessão Resiliente (Crash/Fechamento)**: se o aplicativo for fechado acidentalmente no meio do treino, a retomada segue a regra de tempo decorrido:
-  - **Menos de 15 minutos**: o app abre diretamente no GUTO Online no mesmo exercício e série onde parou.
-  - **Entre 15 minutos e 12 horas**: o GUTO exibe um popup perguntando de forma acolhedora se o usuário quer continuar de onde parou ou se deseja reiniciar a sessão.
-  - **Mais de 12 horas**: a sessão antiga é descartada por expiração e o dia é resetado para nova missão.
-
----
-
-## 13) Validação de Treino, XP e Streak
-
-### O que é
-A prova física de que o usuário realizou o plano do dia. O GUTO não distribui medalhas por intenção; ele valida a presença.
-
-### O Fluxo de Validação
-Após a conclusão do GUTO Online:
-- O usuário envia a prova exigida (como foto de câmera, contagem e frase de confirmação de presença).
-- O backend intercepta o envio, valida a autenticidade da sessão ativa, confere se bate com o plano oficial atual (`lastWorkoutPlan`) e grava o registro definitivo no histórico de treinos.
-- O backend atualiza a data de último sinal/última validação usada pelo painel para classificar aluno em dia, atenção ou crítico.
-
-### Sistema de Recompensas (XP e Streak)
-- **XP de Consistência**: o XP é gerado pela consistência (o ato de aparecer e validar o treino), não pelo ego (peso da carga ou velocidade). 
-- **Integridade Visual do XP (Sem Descompasso)**: uma vez validado, o XP precisa atualizar em tempo real e de forma idêntica as seguintes abas:
-  - **Arena**: atualização de pontuação no ranking semanal da dupla.
-  - **Percurso**: gravação visual e histórica do ponto de presença no diário temporal.
-  - **Evoluir (Avatar)**: progresso do avatar entre os 4 estágios da jornada:
-    - **Baby** (Iniciante, primeiros passos).
-    - **Teen** (Construindo consistência).
-    - **Adult** (Rotina consolidada).
-    - **Elite** (Estilo de vida ativo, alta retenção).
-- *Bug Crítico banido:* o XP ou Streak nunca podem diferir entre uma tela e outra. Se a Arena exibe 120 XP e a tela do Avatar exibe 100 XP, isso é considerado falha técnica grave de sincronização de estado.
-- **Arena Por Escopo Correto**:
-  - Arena Semanal: ranking da empresa/time do aluno.
-  - Arena Mensal: ranking da empresa/time do aluno.
-  - Arena Geral: ranking global de todos os alunos do GUTO, mostrando o nome da empresa ao lado da dupla.
-- **Coach Vê Arena Da Empresa**: o coach acompanha a arena da empresa onde trabalha, não uma arena isolada apenas dos próprios alunos.
-
----
-
-## 14) Proatividade
-
-### O que é
-O mecanismo autônomo do GUTO que faz o usuário sentir que seu companheiro está acordado e prestando atenção na vida dele fora do app.
-
-### O Ciclo de Proatividade
-O ciclo opera de forma estruturada para garantir precisão e evitar alucinações de IA:
-
-```txt
-1. COLETAR    --> Usuário menciona algo de passagem (ex: "Quinta vou para Roma").
-2. ENTENDER   --> Backend interpreta semanticamente a informação e a data.
-3. CONFIRMAR  --> O GUTO pergunta na tela ou chat: "Roma de quinta a domingo, correto?".
-4. SALVAR     --> Após o "sim" do usuário, o dado é gravado como memória contextual ativa.
-5. ENRIQUECER --> Durante a semana, o GUTO cruza essa memória com clima local ou hábitos.
-6. USAR       --> Na quinta, o GUTO adapta o treino: "Treino hoje é mais curto por causa da viagem".
-7. VALIDAR    --> Na segunda seguinte, ele pergunta: "Como foi a viagem a Roma? Conseguiu se mexer?".
-8. DESCARTAR  --> Após a conclusão do ciclo, a memória temporal é arquivada para não acumular lixo.
-```
-
-### Regra de Segurança
-- **Não Salvar sem Confirmar**: se o usuário diz algo ambíguo no chat, o GUTO **nunca** assume como verdade absoluta nem altera a calibragem de forma silenciosa. Ele sempre passa pela etapa de confirmação do ciclo antes de modificar memórias operacionais sensíveis.
-- **Não Transformar Contexto Temporário Em Calibragem Permanente**: uma viagem, semana corrida, dor temporária ou falta de equipamento naquele dia não deve virar campo permanente da calibragem sem confirmação explícita.
-- **Não Sobrescrever Plano Bloqueado**: se uma ação proativa sugerir ajuste de treino ou dieta e o plano estiver bloqueado pelo coach, a ação vira pendência/revisão. O GUTO não troca o plano sozinho.
-- **Memória Temporária Tem Fim**: contexto de viagem, evento, semana atípica ou compromisso deve ser arquivado/encerrado depois do ciclo. O GUTO não deve acumular lixo operacional como se tudo fosse uma característica fixa do aluno.
+- **GUTO Online** executa o treino oficial salvo (nunca inventado); ações críticas exigem toque; dor pausa; retomada por janela de tempo (<15min / 15min–12h / >12h).
+- **Validação** é a fonte única de XP/streak/percurso/avatar/Arena — **com selfie obrigatória** (decisão do fundador). XP/streak/avatar nunca divergem entre telas.
+- **Arena** Semanal/Mensal por empresa (`teamId`); Geral global com `teamName` ao lado da dupla.
+- **Proatividade**: ciclo fechado coletar→confirmar→enriquecer→usar→validar→descartar; nunca vira calibragem permanente sem confirmar; não sobrescreve plano `lockedByCoach`.

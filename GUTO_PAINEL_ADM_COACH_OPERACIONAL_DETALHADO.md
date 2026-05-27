@@ -1,6 +1,11 @@
-# GUTO — Painel ADM/Coach Operacional (Documento Canônico de Engenharia)
+> # ⚠️ DOCUMENTO DE APOIO DE ENGENHARIA — CANÔNICO É O V1
+> A **fonte canônica única** do painel é **`GUTO_PAINEL_ADMIN_CANONICO_V1.md`** (produto/operação). Este arquivo permanece como **apoio de engenharia**: contratos de API reais, mapa do código, P0/P1/P2. Onde divergir do V1 em produto, **o V1 vence**.
+>
+> **⚠️ Atualização — o código avançou desde esta consolidação (2026-05-27):** `/admin` e `/empresa` **agora redirecionam para `/coach`** (o mock não é mais acessível); o painel é **rota única `/coach`** role-aware. O **design canônico do painel é `design_handoff_guto_coach_panel/`**. O caminho `adm/project/coach-panel/` citado abaixo **nunca existiu** neste repo, e o mockup `GUTO Design System/painel-comando/` foi **descontinuado/removido**. Trechos abaixo que tratam `/admin`/`/empresa` como mock ativo, "decisão pendente" ou "risco de vazamento de mock" são **históricos** — para o estado atual, ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md` §1, §2 e §5.
 
-> **Status:** Documento canônico **operacional/de engenharia** do Painel ADM/Coach.
+# GUTO — Painel ADM/Coach Operacional (Apoio de Engenharia)
+
+> **Status:** Documento de **apoio de engenharia** do Painel ADM/Coach (contratos de API, mapa de código). **Canônico de produto = `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.**
 > **Data da consolidação:** 2026-05-27.
 > **Escopo desta consolidação:** documentação estratégica + técnica baseada em auditoria do código real. **Nenhum código foi alterado.** Esta é a referência que deve guiar a próxima tarefa de implementação ("Fase Painel P0").
 
@@ -179,7 +184,7 @@ Resultado: o super_admin/admin caem numa tela mock e o coach cai na tela real. *
 1. **API canônica:** `/admin/*`. Toda chamada de painel passa por aqui. Nada de ressuscitar `/guto/coach/*` (legado, 410).
 2. **Frontend canônico para o P0:** **`app/coach`** (o cockpit já ligado à API real). É onde a Fase Painel P0 deve ser corrigida — não criar tela nova no escuro.
 3. **`app/admin` + `app/empresa`:** continuam sendo a **casa estratégica futura** ("empresas primeiro", per doc estratégico), mas **hoje são mock** e **não devem ser tratados como o painel operacional**. Decisão de produto a tomar na implementação: **(a)** ligar `/admin` e `/empresa` ao `/admin/*` real e migrar o cockpit para lá, **ou (b)** congelar `/admin`+`/empresa` e consolidar tudo em `/coach` renomeado. **Não dividir trabalho entre os dois caminhos antes dessa decisão.**
-4. **Legado a ignorar/remover:** `adm/project/coach-panel/*.jsx`, `adm/project/coach-panel/Coach Panel.html` e `design_handoff_guto_coach_panel/` são **protótipos de design** (origem dos mocks). Não são runtime. Não ligar em produção; servem só como referência visual.
+4. **Design e protótipos:** o **design canônico do painel é `design_handoff_guto_coach_panel/`** (hi-fi, tema light, desktop-first — ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md` §1). É **referência visual**, não runtime. *(Nota histórica: a versão antiga deste doc citava `adm/project/coach-panel/`, que **não existe** neste repo, e o mockup `GUTO Design System/painel-comando/`, **descontinuado/removido**.)*
 5. **Risco de vazamento de mock:** enquanto `/admin`/`/empresa` forem mock, manter o badge "DADOS MOCK · FASE VISUAL" e garantir que `NEXT_PUBLIC_USE_MOCKS` nunca caia em produção sem fonte real.
 
 ---
@@ -524,9 +529,9 @@ A Fase Painel só está pronta quando **todos** forem verdade:
 - `app/empresa/page.tsx`, `app/empresa/_components/*` (stub)
 - `components/panel/*` (shell compartilhado), `lib/panel/*` (`data-source.ts`, `mocks.ts`, `types.ts`, `i18n.ts`, `tokens.ts`, `helpers.ts`)
 
-**Legado / protótipo de design (não-runtime):**
-- `adm/project/coach-panel/*.jsx`, `adm/project/coach-panel/Coach Panel.html`
-- `design_handoff_guto_coach_panel/`
+**Design / protótipo (não-runtime):**
+- `design_handoff_guto_coach_panel/` — **design canônico do painel** (referência visual; ver V1 §1).
+- *(Histórico: `adm/project/coach-panel/` não existe neste repo; `GUTO Design System/painel-comando/` foi descontinuado/removido.)*
 
 ### Backend do painel — arquivos reais (`guto-backend/`)
 - `src/admin-router.ts` (**canônico**, 2063 linhas), `src/auth-router.ts`, `src/auth-middleware.ts`
@@ -559,7 +564,7 @@ A Fase Painel só está pronta quando **todos** forem verdade:
 
 ### Caminhos legados
 - Backend: `/guto/coach/*` (410, `GUTO_ENABLE_LEGACY_COACH_ROUTES` default false).
-- Frontend: `adm/project/coach-panel/*`, `design_handoff_guto_coach_panel/`.
+- Frontend: `/admin` e `/empresa` **redirecionam para `/coach`** (mock não acessível). `design_handoff_guto_coach_panel/` é o **design canônico** (não runtime). *(Histórico: `adm/project/coach-panel/` nunca existiu neste repo.)*
 
 ### Riscos
 1. **Dois caminhos visíveis ao usuário** (super/admin → mock; coach → real) por causa do redirect de login. **Causa raiz da confusão.** Decisão em §6.

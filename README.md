@@ -196,23 +196,26 @@ Se qualquer parte decide sozinha, o produto quebra. Se onboarding salva joelho o
 
 ## Documentos Detalhados Por Área
 
-Depois deste README, use o documento específico da área antes de alterar código:
+> **Arquitetura dos documentos (2026-05-27):** a fonte de verdade de cada área é a série **`*_DETALHADA`** (uma por área), que descreve o **GUTO finalizado — como tem que ser**, com uma seção **"Pontos de Atenção (doc × código)"** sinalizando o que ainda diverge no código. A série **`PARTE_1..5` é só leitura narrativa** e virou **ponteiro** para as DETALHADA. O **painel** tem um único canônico: **`GUTO_PAINEL_ADMIN_CANONICO_V1.md`** (os demais docs de painel são apoio/histórico).
 
-| Área | Documento |
-|---|---|
-| Fluxo geral do app | `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` |
-| Abertura, idioma, login e convite | `PARTE_1_ABERTURA_IDIOMA_LOGIN.md` |
-| Consentimento, nome, calibragem e pacto | `PARTE_2_CONSENTIMENTO_NOME_CALIBRAGEM_PACTO.md` |
-| Calibragem e memória | `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` |
-| Chat, treino e dieta no sistema principal | `PARTE_3_SISTEMA_PRINCIPAL_CHAT_TREINO_DIETA.md` |
-| Treino e missão | `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` |
-| Dieta integrada | `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` |
-| GUTO Online, validação e proatividade | `PARTE_4_GUTO_ONLINE_VALIDACAO_E_PROATIVIDADE.md` |
-| Arena e gamificação | `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` |
-| XP, evolução e morte do GUTO | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
-| Painel admin/coach | `GUTO_PAINEL_ADMIN_E_COACH_DETALHADA.md` |
-| Proatividade e ciclo semanal | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` |
-| Plano de execução para testes | `docs/GUTO_PLANO_EXECUCAO_PARA_TESTES.md` |
+Depois deste README, use o documento canônico da área antes de alterar código:
+
+| Área | Documento canônico (fonte da verdade) | Ponteiro narrativo |
+|---|---|---|
+| Fluxo geral (espinha, página por página) | `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` | — |
+| Abertura, idioma, login e convite | `GUTO_PAGINA_DE_LOGIN_DETALHADA.md` | `PARTE_1_…` |
+| Consentimento, nome, calibragem e pacto | `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` | `PARTE_2_…` |
+| Chat e cérebro do GUTO | `GUTO_CHAT_E_CEREBRO_DETALHADA.md` | `PARTE_3_…` |
+| Treino e missão (treino do dia) | `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` | `PARTE_3_…` |
+| Dieta integrada | `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` | `PARTE_3_…` |
+| GUTO Online (sessão assistida) | `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` | `PARTE_4_…` |
+| Validação, XP, evolução e morte | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` | `PARTE_4_…` |
+| Arena e gamificação | `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` | `PARTE_4_…` |
+| Proatividade e ciclo semanal | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` | `PARTE_4_…` |
+| Painel Admin / Empresa / Coach | `GUTO_PAINEL_ADMIN_CANONICO_V1.md` | `PARTE_5_…` |
+| Plano de execução para testes | `docs/GUTO_PLANO_EXECUCAO_PARA_TESTES.md` | — |
+
+> **Decisões de produto fechadas (aplicadas nas DETALHADA):** selfie **obrigatória** na validação · risco **Atenção 3–5d / Crítico ≥6d** · vídeo de exercício **catálogo ≤15s / custom ≤30s** · telefone **opcional/comercial** (nunca na `GutoMemory`). A **Morte do GUTO** está especificada mas ainda não implementada no backend (maior divergência doc×código).
 
 ## Frase Final
 

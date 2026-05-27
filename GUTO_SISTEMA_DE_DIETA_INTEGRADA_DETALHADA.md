@@ -1,6 +1,10 @@
 # Sistema de Dieta Integrada do GUTO — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação do Motor Nutricional, Isolamento de Intolerâncias, Localização de Contextos e Dúvidas Dietéticas.
+> **Documento canônico** do Motor Nutricional, Isolamento de Intolerâncias (campo **NÃO COMO**), Localização de Contextos (país/cidade) e Dúvidas Dietéticas (a aba **Dieta**).
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. A dieta **consome** a calibragem; idioma traduz texto, **país/cidade definem alimento**, **NÃO COMO** é soberano. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 10) · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (botão de dúvida) · `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` (viagem/evento) · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (Coach Lock de dieta).
 
 ---
 
@@ -268,3 +272,23 @@ Antes de qualquer correção de dieta, o relatório técnico deve responder:
 11. Se `lockedByCoach` é respeitado.
 12. Se o painel consegue visualizar/editar dieta sem quebrar restrições.
 13. Quais testes existem e quais faltam.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. A dieta é elo maduro: nutrição real (BMR/TDEE/macros), restrições banidas e desacoplamento idioma×país validados por teste.
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| D-1 | Dieta vem do backend; frontend não inventa | `weeklyDietPlan`/`DietPlan` persistidos | `POST /guto/diet/generate` + `nutrition.ts`; app lê plano | ✅ alinhado |
+| D-2 | Usa idade/sexo/peso/altura/objetivo/nível | BMR Mifflin-St Jeor + TDEE + macros | `nutrition.ts` (teste `guto-diet-generation`) | ✅ alinhado |
+| D-3 | País/cidade definem alimento; idioma só traduz | Desacoplamento real | `food-availability.ts` (teste `guto-weekly-diet`) | ✅ alinhado |
+| D-4 | NÃO COMO (`foodRestrictions`) é soberano | Bane lactose/glúten/vegano/frutos do mar | tags em `food-catalog.ts`; editor barra alimento proibido | ✅ alinhado |
+| D-5 | Patologia ≠ restrição alimentar | Dor não bloqueia dieta; só NÃO COMO | dieta só bloqueia por `foodRestriction` clarification | ✅ alinhado |
+| D-6 | Macros coerentes (`P*4+C*4+G*9 ≈ targetKcal`) | Conferência matemática antes de salvar | `scaleDietToTarget` repara ±80 kcal antes de bloquear | ✅ alinhado |
+| D-7 | Coach Lock de dieta não é sobrescrito | GUTO não reescreve dieta travada | `diet/lock` no admin-router; preservação testada | ✅ alinhado |
+| D-8 | Troca de alimento pelo chat persiste | Swap salvo; respeita lock | Respeita lock; cobertura de swap por chat **parcial** | **[implementar]** (parcial) |
+| D-9 | "Não tenho alimento" = substituição (não patologia) | Tratado como alimentação | Implementado (contexto de refeição no chat) | ✅ alinhado |
+
+> Botão de dúvida "?" da dieta e tratamento de "não tenho/substituir": ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`. Edição/trava de dieta pelo painel: ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.

@@ -1,6 +1,10 @@
 # Calibragem e Memória Operacional do GUTO — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação da Calibragem Inicial, Alterações de Perfil e Engenharia de Memória do GUTO.
+> **Documento canônico** da Calibragem Inicial, Alterações de Perfil e Engenharia de Memória (`GutoMemory`) do GUTO.
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. É a **fonte de verdade** da calibragem; treino, dieta, chat, GUTO Online, arena e painel **consomem** o que está aqui (não duplicam, não recalculam por conta própria). Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (espinha) · `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` · `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` · `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.
 
 ---
 
@@ -303,3 +307,21 @@ Exemplo de persistência de um usuário calibrado com sucesso:
 - **Alteração Invisível:** Coach/Admin alterar calibragem no painel e o app do aluno continuar mostrando valor antigo depois da sincronização.
 - **Telefone no Aluno:** Salvar telefone dentro da calibragem ou memória do aluno. Telefone pertence a cadastro comercial de empresa/responsável, nunca ao `GutoMemory` do aluno.
 - **Sobrescrever Plano Travado:** Recalcular treino ou dieta automaticamente por mudança de calibragem quando o plano atual estiver bloqueado por Coach (`lockedByCoach: true`) sem revisão/liberação.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. A calibragem é o elo mais maduro do GUTO (validado em teste real em 2026-05-20), então a maioria está **alinhada**. Nada aqui é "doc errado" — são lacunas de robustez de backend, com alvo claro.
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| C-1 | Campos coletados (idade, sexo, peso, altura, nível, objetivo, local, dor, país, cidade, NÃO COMO) | Todos na `GutoMemory`, exigidos no onboarding | Todos presentes e mapeados (`calibration-screen` + backend) | ✅ alinhado |
+| C-2 | Telefone fora da memória do aluno | Proibido em GutoMemory/calibragem/settings/chat | Backend remove `phone` da memória (teste `guto-memory-phone`) | ✅ alinhado |
+| C-3 | Sexo biológico binário | Só `male`/`female` (sem "prefiro não informar") | `normalizeBiologicalSex` aceita só female/male (testado) | ✅ alinhado |
+| C-4 | Campo único NÃO COMO | Um só `foodRestrictions`; sem campo separado de intolerância | Único campo; sem segregação | ✅ alinhado |
+| C-5 | Endpoint validado de calibragem por campo | Rota tipada, ranges oficiais, `source`, snapshot before/after | Hoje via `PATCH /admin/students/:id` com objeto `calibration` (sem rota dedicada validada) | **[implementar]** |
+| C-6 | Origem da alteração (`source`: onboarding/app_settings/chat/coach_panel/admin_panel) | Toda mutação registra origem + operador | Trilha de auditoria existe; não confirmado que os 5 valores são gravados em todos os caminhos | **[implementar]** (parcial) |
+| C-7 | Chat altera calibragem com confirmação | Campos permitidos alteráveis por chat, com confirmação; "anotado" só se persistiu | Chat conservador por design (prompt instrui a não afirmar alteração); persiste subconjunto | **[decisão futura]** — definir matriz campo×canal efetiva (sem urgência) |
+
+> **Decisões herdadas (aplicadas em todo o projeto):** telefone é **opcional/comercial** e nunca entra na `GutoMemory`; alterações sensíveis de calibragem **invalidam** treino/dieta (recalcular ou marcar revisão), exceto quando `lockedByCoach`.

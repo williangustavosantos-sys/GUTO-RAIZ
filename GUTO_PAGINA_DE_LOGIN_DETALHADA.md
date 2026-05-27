@@ -1,6 +1,10 @@
 # Página de Login do App GUTO — Roteiro Detalhado de Engenharia e Fluxo
 
-> Documento complementar da Página de Login e do Controle de Acesso do GUTO. Em caso de conflito, a ordem soberana está em `PARTE_1_ABERTURA_IDIOMA_LOGIN.md`.
+> **Documento canônico** da Página de Login do **app do aluno** e do Controle de Acesso (faturamento, vínculo, Stage Router). A série `PARTE_1` é leitura narrativa e aponta para cá.
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. Cobre o login do **aluno** (`/login`) e o claim de convite (`/convite/[token]`). O login do **painel** (super admin / empresa / coach) é tratado em `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (§5). Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 1–3) · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` (Stage Router → onboarding) · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (login do painel e convite gerado pelo coach/admin).
 
 ---
 
@@ -172,3 +176,21 @@ Se o token do convite for inválido, já tiver sido usado, ou pertencer a um tim
 - O sistema não pode pular nenhuma etapa obrigatória do onboarding (consentimento -> naming -> calibragem -> pacto).
 - O login não pode expor mensagens de erro detalhadas contendo stack-traces do banco de dados ou motivos internos de segurança na tela do usuário.
 - O login do aluno não pode ser utilizado para burlar o acesso e visualizar o painel administrativo de equipes.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. Login e Stage Router estão sólidos; as lacunas são códigos de acesso e recuperação de senha.
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| L-1 | Login aluno / convite / claim | `/auth/user/login`, `/auth/invite/:token/claim` (+30 dias) | Implementado (bcrypt + JWT) | ✅ alinhado |
+| L-2 | Separação de papéis no login | Aluno não entra no painel; coach/admin não entram no app sem conta student | Rotas separadas; cliente força `/coach` se role ≠ student | ✅ alinhado |
+| L-3 | Stage Router (consent→naming→calibração→pacto→sistema) | Bloqueia avanço fora de ordem | `resolveAuthenticatedStage` (máquina completa) | ✅ alinhado |
+| L-4 | Nome Soberano não sobrescrito pelo convite | `presetName` é só sugestão | `namingConfirmed` só no confirm local | ✅ alinhado |
+| L-5 | Códigos de bloqueio distintos | `ACCESS_PAUSED`, `SUBSCRIPTION_EXPIRED`, `GUTO_DECEASED` | Backend emite só `ACCESS_PAUSED`/`SUBSCRIPTION_EXPIRED`; frontend já trata os 3 | **[implementar]** (morte → ver `GUTO_EVOLUCAO_XP_E_MORTE`) |
+| L-6 | Recuperação de senha | Só aparece quando houver endpoint real; nunca simular e-mail | Não há endpoint; UI honesta (orienta contato) | **[implementar]** |
+| L-7 | Erro genérico de credenciais | "E-mail ou senha inválidos" (sem vazar qual) | Mensagem neutra; logs de falha sem dado sensível | ✅ alinhado |
+
+> Login do **painel** (super admin / empresa / coach), incluindo seletor de 3 idiomas e redirecionamento por papel para `/coach`, está em `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (§5).
