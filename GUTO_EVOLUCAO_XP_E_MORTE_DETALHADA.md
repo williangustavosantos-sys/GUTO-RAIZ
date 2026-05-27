@@ -1,6 +1,10 @@
 # Evolução do Avatar, Engenharia de XP e Morte do GUTO — Roteiro Detalhado de Engenharia
 
-> Documento canônico de especificação da Progressão de Nível, Penalidades por Ausência, Travamento Geral de Segurança e Protocolo de Morte Permanente do GUTO.
+> **Documento canônico** da Progressão de Nível (Baby/Teen/Adult/Elite), Engenharia de XP, Penalidades por Ausência, Travamento Geral de Segurança e Protocolo de Morte Permanente do GUTO.
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. XP é **mérito real** (lido, nunca editado à mão); a Validação alimenta XP/streak/avatar/Arena/Percurso da **mesma fonte**. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim — **a Morte do GUTO é a maior lacuna doc×código** (documentada aqui, ainda não implementada no backend).
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 12/14) · `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` (mesma fonte de XP) · `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` (validação) · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (acesso/morte é status comercial, não editável à mão).
 
 ---
 
@@ -145,3 +149,25 @@ O GUTO **não revive dentro do app atual**. Quando o XP chega a zero, aquele ace
 - **Exclusão de Conquistas:** Apagar o histórico de treinos antigos do Percurso do usuário caso a conta morra. O Percurso do GUTO morto deve permanecer em modo de *somente leitura* como prova do legado.
 - **Cobrança Humilhante:** A IA usar cópias que ataquem ou ridicularizem o esforço de disciplina do usuário após a morte da conta. O tom deve ser direto, leal e centrado no restabelecimento do vínculo.
 - **Reviver Automático:** o sistema reativar contas mortas de forma invisível, conceder novo XP automaticamente ou permitir que o aluno drible a trava comercial sem novo acesso comprado e liberado pelo Admin/Coach.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. XP/streak/avatar estão sólidos. **A Morte do GUTO é a maior divergência do projeto** — descrita aqui em detalhe, mas ainda não implementada no backend. É o **primeiro módulo a corrigir** (per `guto-app-v0/docs/GUTO_INVENTARIO_COMPLETO_ESTADO_ATUAL.md`).
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| X-1 | XP total/semanal/mensal | `totalXp` + `weeklyXp`/`monthlyXp` com reset | Implementado + `clampXp` | ✅ alinhado |
+| X-2 | XP por validação (+100 treino, +50 missão adaptada) | Só presença validada gera XP | Implementado | ✅ alinhado |
+| X-3 | XP nunca negativo; penalidade −20 com clamp | Clamp a 0 | `clampXp` + `applyDailyMissPenalty` | ✅ alinhado |
+| X-4 | XP inicial do Pacto não gera streak | Buffer simbólico | Buffer não toca streak | ✅ alinhado |
+| X-5 | Estágios Baby/Teen/Adult/Elite | Progressão por XP | `guto-evolution.ts` (thresholds baby 0 / teen 1500 / adult 5000 / elite 12000) | ✅ alinhado |
+| X-6 | XP/streak/avatar não editáveis à mão pelo painel | Mérito real | Painel não expõe edição de XP | ✅ alinhado |
+| X-7 | **Validação exige selfie** p/ creditar XP/streak | Sem prova, sem mérito (decisão do fundador) | Backend aceita validação **sem** foto | **[implementar]** |
+| X-8 | **Morte: `gutoLifeStatus:"dead"`, `accessLocked`, `deadAt`, `deathReason`** | Estado terminal real no backend | Campos **não existem** | **[implementar]** (P0 de produto) |
+| X-9 | **Guard de API quando morto (403 `GUTO_DECEASED`)** | Backend nega chat/treino/dieta/online/validação | **Nenhum guard** de morte nas rotas | **[implementar]** |
+| X-10 | **Blackout/lockdown no app quando morto** | Telas travadas; Percurso read-only | Só opacidade do avatar (cosmético); interceptor do front já trata o code | **[implementar]** |
+| X-11 | Sem reviver automático; volta só por liberação comercial | Reativação é decisão admin/comercial | Não há auto-revive (nem morte ainda) | ✅ alinhado (depende de X-8) |
+
+> **Decisões do fundador aplicadas:** selfie **obrigatória** (X-7). A Morte é **parte 2 do produto** (o foco atual é onboarding+calibragem+chat+treino+dieta+proatividade), mas o alvo está fechado aqui para quando entrar.

@@ -1,19 +1,40 @@
 # GUTO — Estrutura e Fluxo Detalhado do App (Página por Página)
 
-> Este é o documento canônico de arquitetura de fluxo do GUTO. Ele mapeia detalhadamente cada tela, botão, campo e o impacto sistêmico que cada informação gera de ponta a ponta na experiência da dupla.
+> **Documento canônico de arquitetura de fluxo do GUTO.** É a espinha que mapeia cada tela, botão, campo e o impacto sistêmico que cada informação gera de ponta a ponta na experiência da dupla.
+>
+> **Natureza deste documento:** descreve o **GUTO finalizado — como ele tem que ser** para o fluxo funcionar 100%. É a **referência-alvo**. Onde o código atual ainda diverge, o ponto está marcado em **[⚠️ Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim do arquivo — sinalizado, não silenciado.
 
 ---
 
 ## Como Usar Este Documento
 
-Este arquivo é o mapa geral página por página. Antes de qualquer agente alterar código, ele deve:
+Este arquivo é o **mapa geral página por página** e a porta de entrada depois do `README.md`. Antes de qualquer agente alterar código, ele deve:
 
 1. Ler o `README.md` da raiz.
-2. Ler este documento para entender o fluxo completo.
-3. Ler o documento específico da área afetada.
-4. Comparar documentação com código atual e entregar relatório antes de editar.
+2. Ler **este documento** para entender o fluxo completo de ponta a ponta.
+3. Abrir o **documento canônico da área** afetada (tabela abaixo) para o detalhe profundo.
+4. Comparar documentação com o código atual e entregar relatório antes de editar.
 
-Este documento não substitui os documentos especializados. Em detalhes de calibragem, dieta, arena, painel, login ou GUTO Online, a fonte específica da área prevalece.
+Este documento **não substitui** os documentos especializados. Em detalhes de calibragem, treino, dieta, chat, arena, XP/evolução, login, GUTO Online, proatividade ou painel, **a fonte específica da área prevalece**.
+
+### Mapa de documentos canônicos por área
+
+| Área (página deste mapa) | Documento canônico (fonte da verdade) |
+|---|---|
+| Abertura · Idioma · Login · Convite (Pág. 1–3) | `GUTO_PAGINA_DE_LOGIN_DETALHADA.md` |
+| Consentimento · Nome · Calibragem · Pacto (Pág. 4–7) | `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` |
+| Chat / Cérebro do GUTO (Pág. 8) | `GUTO_CHAT_E_CEREBRO_DETALHADA.md` |
+| Missão / Treino do dia (Pág. 9) | `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` |
+| Dieta (Pág. 10) | `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` |
+| GUTO Online (Pág. 11) | `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` |
+| Validação · XP · Streak (Pág. 12) | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
+| Arena (Pág. 13) | `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` |
+| Evoluir / Avatar / Morte (Pág. 14) | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
+| Percurso (Pág. 15) | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` + `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` |
+| Painel Admin/Empresa/Coach (Pág. 16) | `GUTO_PAINEL_ADMIN_CANONICO_V1.md` |
+| Proatividade (transversal) | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` |
+
+> A série `PARTE_1..5` é **leitura narrativa** e aponta para estes documentos profundos; não decide nada sozinha.
 
 ---
 
@@ -260,7 +281,7 @@ O portão de prestação de contas que consolida os resultados da sessão.
 
 ### Campos e Inputs
 1. **Câmera/Foto de Validação (Upload de Mídia)**
-   - Recebe a captura fotográfica do usuário comprovando que esteve no local de treino.
+   - Recebe a captura fotográfica do usuário comprovando que esteve no local de treino. **A prova por foto/selfie é parte do contrato de presença** — sem prova, não há mérito real. ⚠️ Ver [Pontos de Atenção](#pontos-de-atenção-doc--código-atual) (hoje o backend aceita validação sem foto).
 2. **Campo "Frase de Confirmação" (Input de Texto)**
    - Recebe a confirmação de presença.
 
@@ -360,3 +381,22 @@ Empresa/time é a unidade comercial principal. Toda empresa possui plano, limite
 - Não sobrescrever treino/dieta travados por coach sem liberação.
 - Não editar XP, streak ou avatar manualmente.
 - Não carregar todos os alunos no frontend para calcular métrica global; o backend deve entregar agregados e listas paginadas.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Esta seção lista onde o **GUTO finalizado descrito acima** ainda diverge do **código atual** (`guto-app-v0` + `guto-backend`). É sinalização, não correção de código. A intenção dos documentos é ser a referência do produto pronto; a comparação com o que já existe guia a fila de implementação.
+>
+> Itens marcados **[decisão]** dependem de confirmação do fundador sobre "o que é o certo". Itens **[implementar]** já têm o alvo claro no doc — falta o código alcançar.
+
+| # | Tema | Doc (alvo) | Código atual | Tipo |
+|---|---|---|---|---|
+| A-1 | **Foto/selfie na validação** (Pág. 12) | **Obrigatória sempre** — sem foto não valida e não dá XP/streak (decisão do fundador) | Backend aceita validação **sem** foto (XP não exige selfie) | **[implementar]** — alvo decidido; código diverge |
+| A-2 | **Morte do GUTO** (Pág. 14) | Estado terminal `gutoLifeStatus:"dead"`, `accessLocked`, guard 403, blackout | Só opacidade visual do avatar; backend não emite `GUTO_DECEASED` nem trava rotas | **[implementar]** (parte 2 do produto) |
+| A-3 | **Códigos de acesso** (Pág. 3/16) | `ACCESS_PAUSED`, `SUBSCRIPTION_EXPIRED`, `GUTO_DECEASED` distintos | Backend emite só `ACCESS_PAUSED`/`SUBSCRIPTION_EXPIRED` | **[implementar]** |
+| A-4 | **Painel = rota única** (Pág. 16) | Painel operacional em `/coach` (role-aware); `/admin` e `/empresa` redirecionam | Já implementado assim no código | ✅ alinhado |
+| A-5 | **Risco de abandono** (Pág. 16) | **Verde ≤48h · Atenção 3–5d · Crítico ≥6d** (decisão do fundador) | Código usa Atenção 3–6d / Crítico ≥7d | **[implementar]** — alvo decidido; código diverge |
+| A-6 | **Vídeo de exercício** (Pág. 9) | **Catálogo oficial ≤15s; custom do coach ≤30s** (ambos sem áudio, caminho interno) | Catálogo ok; validação custom aceita ≤30s | ✅ alinhado (dois limites oficiais) |
+
+> **Decisões já fechadas com o fundador** (propagadas para `TREINO`, `EVOLUCAO_XP`, `PAINEL_CANONICO`): selfie **obrigatória** na validação; risco **Atenção 3–5d / Crítico ≥6d**; vídeo **catálogo ≤15s / custom ≤30s**.

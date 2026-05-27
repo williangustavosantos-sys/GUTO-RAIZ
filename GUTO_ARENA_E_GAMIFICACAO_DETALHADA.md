@@ -1,6 +1,10 @@
 # Arena e Sistema de Gamificacao do GUTO — Especificacao Canonica
 
-> Documento canonico de engenharia e produto para a Arena do GUTO: escopos por empresa/time, Arena Geral global, privacidade, XP, rankings, painel admin e experiencia do aluno.
+> **Documento canônico** da Arena do GUTO: escopos por empresa/time, Arena Geral global, privacidade, XP, rankings, painel admin e experiência do aluno.
+>
+> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. A Arena **lê** XP/streak validados (não inventa pontuação); Semanal/Mensal são por **empresa (`teamId`)** e a Geral é global. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+>
+> **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 13) · `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` (XP/streak/avatar — mesma fonte) · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (Arena por papel no painel).
 
 ---
 
@@ -600,3 +604,22 @@ Antes de implementar ou alterar Arena, confirmar:
 - Frontend recebe lista pronta, paginada quando necessario.
 - Super Admin consegue filtrar por empresa.
 - Admin/Coach nao conseguem vazar dados de outro `teamId`.
+
+---
+
+## Pontos de Atenção (doc × código atual)
+
+> Sinalização doc × `guto-app-v0`/`guto-backend`. A Arena está bem alinhada: ranking por `teamId`, geral global e sincronia de XP validadas por teste.
+
+| # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
+|---|---|---|---|---|
+| AR-1 | Semanal/Mensal por empresa (`teamId`); Geral global | Escopo correto por papel | `getUserArenaGroup` deriva do `teamId`; rankings weekly/monthly/individual | ✅ alinhado |
+| AR-2 | Geral mostra `teamName` ao lado da dupla | Contexto de empresa na linha global | `getGlobalIndividualRanking` (testado) | ✅ alinhado |
+| AR-3 | Coach vê Arena da **empresa** (não só seus alunos) | Escopo `teamId`, não `coachId` | `coachRankingsRouter` + tela de arena | ✅ alinhado (atenção: protótipo de design mostrava arena só do coach — ignorar) |
+| AR-4 | XP/streak/avatar não divergem entre Arena/Percurso/Evoluir | Mesma fonte | Desync dos 100 XP iniciais já corrigido | ✅ alinhado |
+| AR-5 | XP inicial do Pacto não conta como treino/streak | Buffer não infla Semanal/Mensal | Buffer não toca `completedWorkoutDates`/streak | ✅ alinhado |
+| AR-6 | `visibleInArena=false` remove da listagem pública | Aluno some do ranking público | `isVisibleInRanking` filtra | ✅ alinhado |
+| AR-7 | Ranking calculado no backend, paginado | Frontend recebe lista pronta | Calculado no backend | ✅ alinhado |
+| AR-8 | Dados sensíveis nunca no ranking | Sem peso/idade/patologia/foto/telefone/email | Respeitado | ✅ alinhado |
+
+> XP, estágios do avatar e morte: ver `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md`. Arena por papel no painel (super/empresa/coach): ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.

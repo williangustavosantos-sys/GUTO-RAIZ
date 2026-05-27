@@ -1,6 +1,9 @@
-# Painel Admin e Coach do GUTO — Roteiro Detalhado de Engenharia
+> # ⚠️ DOCUMENTO HISTÓRICO / DE APOIO — NÃO É MAIS O CANÔNICO
+> A **fonte canônica única** do painel é **`GUTO_PAINEL_ADMIN_CANONICO_V1.md`**. Este arquivo permanece como **referência estratégica/de produto** (visão B2B2C, isolamento de times, planos, camada emocional). Onde divergir do V1, **o V1 vence**. Sua seção "Estado Atual da Implementação" está **desatualizada** (o painel hoje é uma rota única `/coach`).
 
-> Documento canônico de especificação do Painel B2B2C Web, Gestão de Alunos, Isolamento de Equipes (Team Isolation) e Segurança Operacional.
+# Painel Admin e Coach do GUTO — Referência Estratégica (histórica)
+
+> Especificação **estratégica/de produto** do Painel B2B2C Web, Gestão de Alunos, Isolamento de Equipes (Team Isolation) e Segurança Operacional. **Canônico operacional = `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.**
 
 ---
 
