@@ -8,8 +8,7 @@
 |---|---|
 | **Painel completo** (papéis, telas, fluxos, endpoints, idioma, conexão com o app, GAPs) | `GUTO_PAINEL_ADMIN_CANONICO_V1.md` |
 | Visão página 16 (retaguarda B2B2C) | `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 16) |
-| Apoio de engenharia (contratos de API, mapa de código) | `GUTO_PAINEL_ADM_COACH_OPERACIONAL_DETALHADO.md` |
-| Referência estratégica/de telas (histórica) | `GUTO_PAINEL_ADMIN_E_COACH_DETALHADA.md` · `GUTO_PAINEL_ADM_COMPLETO_E_DETALHADO.md` |
+| Design canônico do painel (protótipo visual) | `design_handoff_guto_coach_panel/` |
 
 ## Resumo (o painel em 4 linhas)
 
