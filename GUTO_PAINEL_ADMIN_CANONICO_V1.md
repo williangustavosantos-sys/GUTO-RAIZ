@@ -39,13 +39,10 @@ Hierarquia de autoridade entre os documentos de painel:
 | Documento | Papel | Autoridade |
 |---|---|---|
 | **`GUTO_PAINEL_ADMIN_CANONICO_V1.md`** (este) | **Canônico operacional de produto.** Telas, papéis, fluxos, idioma, conexão com o app, GAPs. | **Prevalece** para entendimento de produto e operação. |
-| `GUTO_PAINEL_ADM_COACH_OPERACIONAL_DETALHADO.md` | Canônico de engenharia (contratos de API, mapa de código, P0/P1/P2). | Válido para **engenharia**. Onde descrever o "Estado Atual" do roteamento (super→`/admin` mock, admin→`/empresa` stub), está **desatualizado** — o código já consolidou tudo em `/coach` (ver §2 e §5). |
-| `GUTO_PAINEL_ADM_COMPLETO_E_DETALHADO.md` | Especificação de telas/fluxos (visão alvo). | Válido como **visão alvo**. Descreve telas que ainda não existem como rota separada; ler como destino, não como estado atual. |
-| `GUTO_PAINEL_ADMIN_E_COACH_DETALHADA.md` | Canônico estratégico (B2B2C, isolamento, planos, camada emocional). | Válido para **visão e regras de negócio**. Sua seção "Estado Atual da Implementação" está desatualizada. |
-| `PARTE_5_PAINEL_COACH_E_ADMIN.md` | Resumo executivo. | Defere aos demais. Sua frase "ainda não cria empresa real" está **errada** — o backend cria empresa/coach/aluno/convite de verdade. |
+| `PARTE_5_PAINEL_COACH_E_ADMIN.md` | Resumo executivo (ponteiro). | Defere a este documento. |
 | **`design_handoff_guto_coach_panel/`** | **Design canônico do painel** (protótipo HTML/JSX, hi-fi, tema LIGHT, desktop-first: `Login` + `Sala de Controle` + `Empresa Portal` + `Coach Portal`). | **Referência visual oficial.** Não é runtime, mas o cockpit `/coach` **já segue** seus tokens (sidebar navy + conteúdo claro + acento ciano `#0E7490`). Tokens, layout, copy e regras de Arena por portal são referência fiel. |
 
-**Regra para qualquer agente:** leia `README.md`, depois este documento (produto), depois `GUTO_PAINEL_ADM_COACH_OPERACIONAL_DETALHADO.md` (engenharia) antes de tocar qualquer código do painel.
+**Regra para qualquer agente:** leia `README.md`, depois este documento (produto) e o código real do painel (`guto-app-v0/app/coach/` + `guto-backend/src/admin-router.ts`) antes de tocar qualquer código do painel.
 
 ### Design canônico do painel (decisão — fim da dúvida dos dois designs)
 
@@ -888,9 +885,6 @@ Usar dot notation (referência do design handoff `i18n.jsx`): `nav.*`, `kpi.*`, 
 
 ### 17.1 Documentos lidos (raiz + submódulos)
 - `README.md`
-- `GUTO_PAINEL_ADM_COACH_OPERACIONAL_DETALHADO.md`
-- `GUTO_PAINEL_ADM_COMPLETO_E_DETALHADO.md`
-- `GUTO_PAINEL_ADMIN_E_COACH_DETALHADA.md`
 - `PARTE_5_PAINEL_COACH_E_ADMIN.md`
 - `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`
 - `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md`

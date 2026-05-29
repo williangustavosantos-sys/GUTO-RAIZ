@@ -19,6 +19,7 @@
 | 4.A — Empresas: pausar/arquivar/excluir | ✅ MERGEADA em produção | 2026-05-28 | Frontend [#32](https://github.com/williangustavosantos-sys/CORPOGUTO/pull/32) ✅ |
 | Bug painel — Gate calibragem ao gerar treino | ✅ MERGEADA em produção | 2026-05-28 | Backend [#36](https://github.com/williangustavosantos-sys/CEREBROGUTO/pull/36) ✅ — bug do fundador (aluno sem calibragem gerava treino) |
 | 4.B — Auditoria completa PARITY painel⇄app | 🟡 Iniciando agora | — | Trilhas: calibragem · treino · dieta · XP/streak · arena · validações |
+| 4.F — Painel B2B Internacionalizado (PT/EN/IT) | ✅ Concluída | 2026-05-28 | Frontend PRs #37 a #45 ✅. Painel `/coach` 100% traduzido. |
 | 4 — Limiar de risco ≥6 | ⬜ Aguardando Fase 3 | — | — |
 | 5 — Painel sem mock | ⬜ Aguardando Fase 4 | — | — |
 | 6 — Morte do GUTO | ⬜ Aguardando teste real | — | Parte 2 do produto |
@@ -54,7 +55,7 @@ O código está mais completo do que parece. Das 70+ áreas do inventário, apen
 - XP, streak, arena, evolução de avatar — sólidos
 - GUTO Online (máquina de estados, retomada por janela)
 - Panel `/coach` consome API real (`/admin/*`); backend admin real e testado
-- i18n PT/EN/IT em todo o app
+- i18n PT/EN/IT em todo o app e em 100% do painel B2B (`/coach`)
 
 **Branches:**
 - Backend `main`: deploy em `cerebroguto.onrender.com` — estado P0
