@@ -1,6 +1,6 @@
-# GUTO — Fix: Contexto > Regra na Proatividade (EM ANDAMENTO)
+# GUTO — Fix: Contexto > Regra na Proatividade (CONCLUÍDO — PR #48 no main)
 
-> Documento vivo. Criado em 2026-05-30. Atualizado a cada passo. Objetivo, plano, progresso e impacto nos docs canônicos.
+> Documento vivo. Criado em 2026-05-30. **Shipado:** CEREBROGUTO PR #48 (merge no main → Render); raiz GUTO-RAIZ commit `351a461`. Objetivo, plano, progresso e impacto nos docs canônicos abaixo.
 
 ## Objetivo
 Fazer o GUTO **entender o contexto** quando o usuário compartilha um evento da semana (viagem/compromisso), em vez de tratar como recusa e cobrar treino. O fluxo-alvo (definido pelo fundador, alinhado à spec `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md`):
@@ -38,7 +38,8 @@ Modelo + memória + ciclo de proatividade **dirigem**; regra (palavra-chave/gate
 - [x] Verificação ao vivo: "viajo na quarta → acolhe/adapta → captura → confirma natural → trip:confirmed"; recusa legítima ainda cobra (sem regressão).
 - [x] tsc 0 + suíte 456/456.
 - [x] Correção do doc canônico de proatividade.
-- [ ] Teste determinístico de regressão do `proactive_context` (requer expor `classifyContractIntentFallback`) — **pendente**.
+- [x] Teste determinístico (`tests/guto-proactive-context.test.ts`, 8 casos) — suíte **464/464**.
+- [x] Shipado: PR #48 (backend → main → Render) + raiz commit `351a461`.
 - [ ] Observado (separado, monitorar): num turno a resposta veio como JSON cru (parse intermitente) — não reproduziu no run limpo.
 
 ## Arquivos alterados
