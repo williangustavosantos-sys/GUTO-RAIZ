@@ -2,7 +2,7 @@
 
 > Spec: `GUTO_CHAT_E_CEREBRO_DETALHADA.md` · Código: `guto-backend/server.ts`, `guto-backend/src/guto-turn-contract.ts`, `guto-backend/src/risk-classifier.ts` · Frontend: `guto-app-v0/components/guto/tabs/chat-tab.tsx`
 >
-> **Veredito: 🟢 B-1..B-5 FECHADOS e verificados ao vivo (2026-05-30) — PRs #42/#43/#44/#45. Resta só B-6 (infra de evals: juiz LLM precisa de chave; não é bug de produto).** Verificado ao vivo em 2026-05-30 conversando com o cérebro real (Gemini configurado).
+> **Veredito: 🟢 B-1..B-5 FECHADOS e verificados ao vivo (2026-05-30). B-4 (álcool) exigiu 2ª rodada — era bug de precedência (escada de recusa/luto sequestrava o override) + classificador instável; resolvido com piso determinístico + guard de precedência (8/8 ao vivo, suíte 456/456). B-6 = infra de evals.** Verificado conversando com o cérebro real (Gemini).
 
 ---
 
@@ -40,7 +40,7 @@ Conversa real, usuário calibrado e **travado** (sem lesão preenchida como "nen
 
 **B-3 — ✅ RESOLVIDO (PR #45, verificado ao vivo).** "fiz o treino" caía em `history_reference` e reperguntava idade/dor (já na memória soberana). Fix: novo `ContractIntentKind` `workout_completed` (distinto de history, o MODELO classifica) + handler que reconhece, registra histórico de hoje, avança o foco, conduz pra validação (XP nasce em `/guto/validate-workout`) e fecha continuidade — sem reabrir intake. `history_reference` legítimo também guardado (não repergunta quando soberano). Travado por `tests/guto-workout-completion.test.ts`.
 
-**B-4 — ✅ RESOLVIDO (PR #44, verificado ao vivo).** `risk-classifier.ts` não cobria doença aguda/álcool. Fix: duas flags novas que o MODELO classifica — `acute_illness` (febre/vômito/tontura) e `intoxication` (álcool) — com recursos em 4 idiomas (descanso/hidratação/médico, nunca treinar). Precedência da segurança: `enforceTrainingFlowCertainty` ganhou guard `riskActive` (o gate determinístico não clobbera mais a resposta de acolhimento). Taxonomia ao vivo 12/12. Travado por `tests/guto-risk-safety.test.ts`.
+**B-4 — ✅ RESOLVIDO (2 rodadas, 8/8 ao vivo).** PR #44 criou `acute_illness`/`intoxication`. A re-verificação independente achou álcool disparando ~1/4 por 3 causas: **(a)** `risk-classifier.ts:134` — schema de saída omitia as flags novas; **(b)** o flash-lite oscila em ressaca/gíria; **(c) bug de precedência:** as branches `isResistance`/`isGrief` (server.ts ~6993/7018) davam `return` antes do `enforceTrainingFlowCertainty` **sem checar riskActive**, sequestrando "bêbado/zuado/tonto". **Fix:** schema corrigido + **`deterministicSafetyFloor`** em `classifyRisk` (álcool/doença + mal-estar → flag 0.9, com guarda de negação) + `isResistance`/`isGrief` agora exigem `!riskOverride`. Ao vivo: **8/8** (álcool/doença → critical; "1 cerveja" engaja; escada normal sem risco intacta). Piso travado por teste determinístico em `tests/guto-risk-safety.test.ts`.
 
 **B-5 — ✅ verificado OK (sem fix necessário).** "tô sem energia **mas vou**" → "faz só 20 minutos pra honrar nosso pacto, bora manter essa evolução juntos" (apoia, reconhece o "vou", não cobra). Comportamento já correto ao vivo.
 
@@ -56,7 +56,7 @@ Conversa real, usuário calibrado e **travado** (sem lesão preenchida como "nen
 1. ~~**(P0) Desarmar o gate de "distração" para perguntas operacionais.**~~ **FEITO** (PR #42) — guard de ≥3 palavras reais no gate `off_topic_distraction`, espelhando o gate de nonsense. Verificado ao vivo + teste de regressão.
 2. ~~**(P0) Corrigir `hasCalibrationProfileLocked`.**~~ **FEITO/verificado** — front força "Sem dor" e backend preserva; usuário saudável trava e recebe treino. Ver [02](02_calibragem_e_memoria.md).
 3. ~~**(P0) Mapear "fiz o treino" → conclusão.**~~ **FEITO** (PR #45) — `ContractIntentKind` `workout_completed` + handler de continuidade, sem reperguntar dado salvo.
-4. ~~**(P0) Ampliar `risk-classifier.ts`** com `acute_illness` e `intoxication`.~~ **FEITO** (PR #44) — flags model-based + recursos 4 idiomas + precedência da segurança no gate.
+4. ~~**(P0 — REABERTO) Ampliar `risk-classifier.ts`.**~~ **FEITO/verificado 8/8** — schema (`:134`) + `deterministicSafetyFloor` (piso: álcool/doença + mal-estar → 0.9, guarda de negação) + precedência da segurança sobre a escada (`!riskOverride` nas branches `isResistance`/`isGrief`). Suíte 456/456.
 5. ~~**(P1) Suavizar o tom** em adesão ("vou/faço/bora").~~ **verificado OK** — já apoia sem cobrar.
 6. **(P1 — infra, não bug de produto) Ligar o juiz dos evals** (`ANTHROPIC_API_KEY`) e re-rodar `release:gate`. Hoje os comportamentos foram verificados ao vivo com Gemini real + testes determinísticos de regressão.
 7. **(verificação) Conversa real de 10 turnos** (harness fora do CI) tem que fluir sem frase robótica nem dado re-perguntado **antes** de declarar pronto.

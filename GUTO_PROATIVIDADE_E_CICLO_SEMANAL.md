@@ -207,3 +207,5 @@ No início do ciclo seguinte, o GUTO repassa as memórias pendentes de validaç�
 | P-7 | Não cobra presença de quem declarou viagem/indisponibilidade | Penalidade de ausência suspensa no dia confirmado | Regra documentada e respeitada na penalidade | ✅ alinhado |
 
 > A fala da proatividade sai sempre pelo chat com a personalidade do GUTO (curta, humana): ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`.
+
+> **Correção 2026-05-30 (ver `GUTO_FIX_CONTEXTO_PROATIVIDADE.md`):** P-2 (confirmação ativa) estava ✅ no papel mas **não acontecia no chat** — compartilhar viagem/compromisso era classificado como recusa (`postpone`) e o GUTO **cobrava treino** em vez de acolher e perguntar "é isso?". A viagem era salva em `pending_confirmation` de forma silenciosa (proibido pela spec) e travava ali. **Corrigido:** novo kind `proactive_context` (contexto ≠ recusa) → a escada de cobrança não atropela; e a confirmação no chat virou natural (sem vazar texto interno). Verificado ao vivo: "viajo na quarta" → acolhe/adapta → captura → confirma natural → `trip:confirmed`. Recusa legítima ("não vou treinar") segue na escada.
