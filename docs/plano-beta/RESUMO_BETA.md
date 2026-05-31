@@ -26,13 +26,20 @@ Backend suíte **467/467 · tsc 0**. Frontend `tsc`/`build` ok.
 - **DIETA:** dieta semanal coerente (2075 kcal déficit, macros, refeições localizadas em PT).
 - **GUTO Online:** sessão guiada **funciona** (aquecimento → exercício → série, checklist, controles).
 - **Arena / Evoluir / Percurso / Painel admin:** XP consistente pós-fix (total bate; semanal sem buffer).
-- **/coach:** super admin carrega; coach edita treino do aluno (com lock).
+- **/coach ↔ app (integração testada 31/05 — backend local + Redis prod):**
+  - **aluno→painel:** XP (100) e status do aluno aparecem no painel = valor do app. ✅
+  - **coach→aluno (treino):** exercícios (séries/reps/carga) editados no painel chegam na memória do aluno (`GET /guto/memory`). ✅
+  - **coach→aluno (dieta):** nome de refeição/alimentos editados chegam ao app (`GET /guto/diet`); validação de calorias barra mismatch (400). ✅
+  - **`title` do treino:** propaga (mas o app MISSÃO não exibe `title`, só `focus`).
+  - **✅ `focus`/`summary` do treino (nome que a MISSÃO mostra) — CORRIGIDO 31/05:** o treino que o coach edita/cria no painel é o que o aluno vê (apresentado como treino normal do GUTO, conteúdo do coach). Verificado na API real: coach grava `focus="QA FOCO REAL"` → aluno lê `focus="QA FOCO REAL"`. Treino gerado pelo GUTO continua localizando pelo `focusKey`.
 
 ## 🔲 Falta pro beta (priorizado)
 **P0 — antes de usuário real amplo**
 - **Storage persistente das selfies** (hoje em `tmp/` efêmero → somem no redeploy do Render). Escolha de infra (S3/Cloudinary). [08]
 - **Validação/selfie ponta a ponta em device real** (câmera não roda no preview): treino → selfie → +100 XP → reflete em Arena/Percurso. [08]
 - **Recuperação de senha** (não existe; hoje só via coach). [01]
+
+- **✅ CORRIGIDO 31/05 — Coach agora consegue renomear o treino que o aluno vê.** Era: `localizeWorkoutPlan` (server.ts) sobrescrevia `focus`/`summary` a partir do `focusKey` na rota do aluno → texto do coach descartado. Fix: quando o plano é autorado pelo coach (`manualOverride===true` / `planSource` de override), `localizeWorkoutPlan` preserva o `focus` que o coach salvou; treino gerado pelo GUTO segue derivando do `focusKey` (localização por idioma intacta). Verificado na API real + suíte 467/467 + tsc 0. [04][10]
 
 **P1 — qualidade/operação**
 - **Curador de treino sob carga** — caía em template >50% em rajada; medir/estabilizar (retry/backoff). [04]
