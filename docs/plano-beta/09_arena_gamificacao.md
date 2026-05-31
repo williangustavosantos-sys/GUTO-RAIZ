@@ -30,3 +30,6 @@ Arena Semanal/Mensal por empresa (`teamId`); Arena Geral global, mostrando `team
 
 ## Como verificar
 Dois alunos em times diferentes; validar treino de um; conferir: aparece na Geral com `teamName`, aparece na Semanal só do próprio time, XP idêntico em todas as telas, e nenhum dado sensível exposto.
+
+## ❗ Correção 2026-05-30 (PR #50, verificado no app real)
+**Achado rodando o app:** AR-4 (XP igual entre telas) **não valia** — Arena (SEMANA) e **painel admin** mostravam **100 XP semanal** num usuário com 0 treinos validados, enquanto Evoluir/Percurso mostravam 0. **Causa:** `awardArenaXp` (`src/arena.ts`) somava o XP em `weeklyXp`/`monthlyXp` e setava streak/lastValidated para **todo tipo, inclusive `bonus`** (o buffer do pacto) → violava AR-5 ("buffer não infla Semanal/Mensal") e X-4 ("pacto não vira streak"). **Fix:** `bonus` agora credita **só `totalXp`**. **Verificado:** recém-onboardado → `memory.totalXp=100` (Evoluir), arena `total=100 weekly=0 monthly=0` (Arena/admin). O **painel admin lê o mesmo `getArenaProfile`** (admin-router.ts:333) que a aba Arena → batem. Teste `tests/guto-arena-bonus.test.ts`.
