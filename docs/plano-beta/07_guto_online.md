@@ -2,7 +2,7 @@
 
 > Spec: `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` · Código: `guto-app-v0/lib/guto-online/*`, `guto-app-v0/components/guto/guto-online-session.tsx` (867 linhas, montado em `mission-tab.tsx:456`); spike nativo em `guto-mobile/`
 >
-> **Veredito: 🔴 a engine (state machine) existe e é testada, mas a sessão NÃO está validada como feature viva. O fundador afirma que "hoje não existe o GUTO Online".**
+> **Veredito: 🟢 a sessão WEB funciona — validada ao vivo (2026-05-31): lança da MISSÃO, a máquina de estados progride (aquecimento → exercício → série), checklist e controles ok. (O spike NATIVO `guto-mobile` ainda tem bugs — GO-3.) A percepção "não existe" estava desatualizada.**
 
 ---
 
@@ -18,7 +18,7 @@ Sessão guiada por **estado** (não cronômetro/videoaula): briefing → aquecim
 - A state machine é **pura e testável** — bom alicerce.
 
 ## ❌ O que está errado / quebra
-- **GO-1 (🔴) — não validado como experiência viva.** A engine passa em teste unitário, mas o fundador relata que **não existe/não funciona** na prática. Falta QA de ponta a ponta da sessão real (web e/ou nativo): abrir do plano → conduzir → validar.
+- **GO-1 — ✅ VALIDADO AO VIVO (2026-05-31).** Lancei pela MISSÃO ("GUTO PERSONAL ONLINE") e a sessão web rodou: briefing → "AQUECIMENTO FEITO" → avançou pra "AGACHAMENTO LIVRE (Exercício 1/5, Série 1 de 3)"; timer rodando, CHECKLIST 0→1 de 16, controles SÉRIE FEITA / FALAR COM GUTO / +MAIS / DESFAZER / REINICIAR. A máquina de estados progride certo. **Funciona como feature viva.**
 - **GO-2 (depende de [04]/[02]/[03]) — sem plano, não há sessão.** O GUTO Online nasce do `lastWorkoutPlan`; se o treino não gera (usuário saudável travado) ou o chat não conduz, a sessão não tem de onde partir.
 - **O-7 (spec) — selfie obrigatória no fim.** Hoje o backend aceita validação sem foto (ver [08 X-7](08_validacao_xp_evolucao_morte.md), divergência a confirmar).
 - **GO-3 (spike nativo) — bugs reais no `guto-mobile`** (caso o nativo entre no beta):
@@ -37,4 +37,4 @@ Sessão guiada por **estado** (não cronômetro/videoaula): briefing → aquecim
 3. **(se nativo — P1)** Corrigir GO-3 (haptic-por-tick, `silence.mp3`/`play()`, `endedAt`, i18n) e adicionar testes da engine.
 
 ## Como verificar
-Depende de treino gerado ([04]). Com plano ativo: abrir GUTO Online, conduzir uma sessão inteira, simular interrupção (<15min volta sozinho; >12h expira), terminar → validação. Hoje isso não está provado ponta a ponta.
+Depende de treino gerado ([04]). **Verificado ao vivo (2026-05-31):** com plano ativo, GUTO Online lança e a máquina de estados progride (aquecimento → exercício → série, checklist). Falta exercitar: retomada por janela (<15min/>12h) e o fim → validação com selfie (a câmera não roda no preview headless). O spike nativo (GO-3) segue pendente se o nativo entrar no beta.
