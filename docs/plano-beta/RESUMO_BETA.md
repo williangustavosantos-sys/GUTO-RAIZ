@@ -69,6 +69,24 @@
 
 ---
 
+## 🧪 Fixtures de teste criadas no prod (31/05) — verificadas AO VIVO no Render
+
+> Contas de teste **descartáveis** (senha compartilhada `guto12345`). Criadas via backend local escrevendo no **Redis de produção**; **login confirmado no backend de prod** (`cerebroguto.onrender.com`). **Apagar/rotacionar antes do lançamento real.**
+
+| Tipo | Nome | Login (email) | Senha | Time | userId |
+|---|---|---|---|---|---|
+| Empresa | Equipe QA Alpha | — | — | `team-4d59cca2c6ca` | — |
+| Empresa | Equipe QA Beta | — | — | `team-b62cd7a433fc` | — |
+| Coach | Coach Alpha | `coach.alpha@guto.test` | `guto12345` | Alpha | `coach-190974648b8b` |
+| Coach | Coach Beta | `coach.beta@guto.test` | `guto12345` | Beta | `coach-86808a0591af` |
+| Aluno | Aluno A1 | `aluno.a1@guto.test` | `guto12345` | Alpha | `G-ALUNO-A1` |
+| Aluno | Aluno A2 | `aluno.a2@guto.test` | `guto12345` | Alpha | `G-ALUNO-A2` |
+| Aluno | Aluno B1 | `aluno.b1@guto.test` | `guto12345` | Beta | `G-ALUNO-B1` |
+| Aluno (convite) | Aluno A3 | — (sem senha) | — | Alpha | `G-ALUNO-A3-CONVITE` |
+
+- **Convite do A3 (claim no app):** `https://corpoguto.vercel.app/convite/5548c5c66874d02a4388de6e2385c82c7710121ea2979670d44d274338b538f1`
+- **✅ Isolamento confirmado AO VIVO no PROD:** Coach Alpha (login 200) vê só A1/A2/A3; Coach Beta (login 200) vê só B1 — sem vazamento entre times. Aluno A1 login 200. (Primeira verificação direta contra o backend de prod nesta sessão.)
+
 ## 🔲 Falta pro beta (priorizado)
 
 ### P0 — antes de usuário real amplo
@@ -79,6 +97,7 @@
 - [ ] **Recuperação de senha** (não existe; hoje só via coach). [01]
 
 ### P1 — qualidade/operação
+- [ ] **🔴 Race no `createTeam` (team-store)** — achado ao criar 2 empresas em sequência: a 2ª sumiu do Redis de prod (write async perdido / não-atômico read-modify-write), mesmo com 201. Workaround: um PATCH posterior re-persiste o store inteiro. Risco real: admin cria empresas em rajada e uma some. Investigar se o write do team-store é fire-and-forget e tornar a persistência confiável (await + serialização). [10]
 - [ ] **Curador de treino sob carga** — caía em template >50% em rajada; medir/estabilizar (retry/backoff). [04]
 - [ ] **Tirar o mock do painel** (`NEXT_PUBLIC_USE_MOCKS=false`) + threshold de risco ≥7→≥6. [10]
 - [ ] **Juiz dos evals** (`ANTHROPIC_API_KEY`) pro `release:gate` medir nuance (hoje `judge:skip`). [03]
