@@ -16,8 +16,10 @@
 | **Consent travava o onboarding** (17-28s → timeout) | CEREBROGUTO #49 | 28s → **0.03s** |
 | **XP do pacto inflava o semanal da Arena/admin** | CEREBROGUTO #50 | total=100 / weekly=0 (app = admin) |
 | **Login quebrava com o teclado** | CORPOGUTO #53 | rola, ENTRAR alcançável |
+| **Foco/nome do treino do coach não chegava ao app** (`localizeWorkoutPlan` sobrescrevia do `focusKey`) | CEREBROGUTO main | coach grava foco → aluno lê o mesmo |
+| **Convite: GET 404 mesmo com convite válido** (`findInviteByUserId` pegava o 1º registro, podia ser `revoked`; regenerate só revogava o 1º) | CEREBROGUTO main | GET acha o pending; regenerate revoga todos antigos, deixa 1 |
 
-Backend suíte **467/467 · tsc 0**. Frontend `tsc`/`build` ok.
+Backend suíte **470/470 · tsc 0**. Frontend `tsc`/`build` ok.
 
 ## ✅ Verificado FUNCIONANDO no app real (visual)
 - **Onboarding:** intro → idioma → login → consentimento → nome → pacto → home (fluxo completo).
