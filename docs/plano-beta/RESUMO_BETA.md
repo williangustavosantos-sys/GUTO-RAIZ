@@ -23,6 +23,7 @@
 | 10 | **Login quebrava com o teclado** | CORPOGUTO #53 | rola, ENTRAR alcançável |
 | 11 | **Foco/nome do treino do coach não chegava ao app** | CEREBROGUTO `main` (b9d1d8a) | coach grava foco → aluno lê o mesmo |
 | 12 | **Convite: GET 404 mesmo com convite válido** | CEREBROGUTO `main` (193c56a) | GET acha o pending; regenerate revoga todos antigos |
+| 13 | **Race no `createTeam`: 2ª empresa criada em rajada sumia do Redis** | CEREBROGUTO `main` | write ao Redis serializado; 2 times concorrentes persistem |
 
 **Detalhe dos fixes 11 e 12 (desta sessão):**
 - **#11 — foco do treino do coach:** `localizeWorkoutPlan` (server.ts) sobrescrevia `focus`/`summary` a partir do `focusKey` na rota do aluno (`GET /guto/memory`) → o nome que o coach digitava era descartado e o aluno via o rótulo padrão. **Fix:** quando o plano é autorado pelo coach (`manualOverride` / `planSource` de override), o `focus` salvo pelo coach é preservado e chega ao app **como treino normal do GUTO** (conteúdo do coach). Treino gerado pelo GUTO continua localizando pelo `focusKey` (i18n por idioma intacto).
@@ -97,7 +98,7 @@
 - [ ] **Recuperação de senha** (não existe; hoje só via coach). [01]
 
 ### P1 — qualidade/operação
-- [ ] **🔴 Race no `createTeam` (team-store)** — achado ao criar 2 empresas em sequência: a 2ª sumiu do Redis de prod (write async perdido / não-atômico read-modify-write), mesmo com 201. Workaround: um PATCH posterior re-persiste o store inteiro. Risco real: admin cria empresas em rajada e uma some. Investigar se o write do team-store é fire-and-forget e tornar a persistência confiável (await + serialização). [10]
+- [x] **✅ CORRIGIDO 31/05 — Race no `createTeam` (team-store).** Era: create/update/deleteTeam disparavam write async **fire-and-forget com snapshot** → dois writes concorrentes chegavam fora de ordem no Upstash e o snapshot antigo sobrescrevia o novo (perdia um time). **Fix:** persistência ao Redis **serializada** (fila de promises) que sempre grava o `memCache` atual. Verificado ao vivo: 2 times criados **concorrentemente** → ambos persistiram no Redis de prod. Suíte 470/470, tsc 0. (CEREBROGUTO `main`)
 - [ ] **Curador de treino sob carga** — caía em template >50% em rajada; medir/estabilizar (retry/backoff). [04]
 - [ ] **Tirar o mock do painel** (`NEXT_PUBLIC_USE_MOCKS=false`) + threshold de risco ≥7→≥6. [10]
 - [ ] **Juiz dos evals** (`ANTHROPIC_API_KEY`) pro `release:gate` medir nuance (hoje `judge:skip`). [03]
