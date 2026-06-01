@@ -28,6 +28,7 @@
 | 15 | **Mesma blindagem anti-clobber em `team-store` + `invite-store`** | CEREBROGUTO `main` | team boot-window → 5 empresas sobrevivem; invites serializados |
 | 16 | **🔴 CRÍTICO: `memory-store` zerava calibragem/onboarding no deploy** (a raiz do "tudo que criei some") | CEREBROGUTO `main` (6f0f9b1) | repro do clobber → usuário sobrevive |
 | 17 | **`arena-store` + `diet-store` com o mesmo clobber** (arena foi de 61 perfis→1 num cold-start observado ao vivo) | CEREBROGUTO `main` (41abd08) | os 6 stores Redis agora blindados; suíte 470/470 |
+| 18 | **Proatividade não perguntava da semana na abertura** (sinal era só instrução suave; modelo ignorava) | CEREBROGUTO `main` (2460162) | gatilho determinístico 1×/semana; verificado no cérebro real |
 
 **Detalhe dos fixes 11 e 12 (desta sessão):**
 - **#11 — foco do treino do coach:** `localizeWorkoutPlan` (server.ts) sobrescrevia `focus`/`summary` a partir do `focusKey` na rota do aluno (`GET /guto/memory`) → o nome que o coach digitava era descartado e o aluno via o rótulo padrão. **Fix:** quando o plano é autorado pelo coach (`manualOverride` / `planSource` de override), o `focus` salvo pelo coach é preservado e chega ao app **como treino normal do GUTO** (conteúdo do coach). Treino gerado pelo GUTO continua localizando pelo `focusKey` (i18n por idioma intacto).
