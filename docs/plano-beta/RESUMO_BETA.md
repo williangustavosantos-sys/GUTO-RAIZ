@@ -25,7 +25,9 @@
 | 12 | **Convite: GET 404 mesmo com convite válido** | CEREBROGUTO `main` (193c56a) | GET acha o pending; regenerate revoga todos antigos |
 | 13 | **Race no `createTeam`: 2ª empresa criada em rajada sumia do Redis** | CEREBROGUTO `main` | write ao Redis serializado; 2 times concorrentes persistem |
 | 14 | **🔴 CRÍTICO: `user-access` zerava no restart/cold-start** (coaches/alunos sumiam → "prod sempre vazio") | CEREBROGUTO `main` | persistência hidratada+serializada; reprodução do clobber → SEM perda |
-| 15 | **Mesma blindagem anti-clobber em `team-store` + `invite-store`** (fecha a classe) | CEREBROGUTO `main` | team boot-window → 5 empresas sobrevivem; invites serializados |
+| 15 | **Mesma blindagem anti-clobber em `team-store` + `invite-store`** | CEREBROGUTO `main` | team boot-window → 5 empresas sobrevivem; invites serializados |
+| 16 | **🔴 CRÍTICO: `memory-store` zerava calibragem/onboarding no deploy** (a raiz do "tudo que criei some") | CEREBROGUTO `main` (6f0f9b1) | repro do clobber → usuário sobrevive |
+| 17 | **`arena-store` + `diet-store` com o mesmo clobber** (arena foi de 61 perfis→1 num cold-start observado ao vivo) | CEREBROGUTO `main` (41abd08) | os 6 stores Redis agora blindados; suíte 470/470 |
 
 **Detalhe dos fixes 11 e 12 (desta sessão):**
 - **#11 — foco do treino do coach:** `localizeWorkoutPlan` (server.ts) sobrescrevia `focus`/`summary` a partir do `focusKey` na rota do aluno (`GET /guto/memory`) → o nome que o coach digitava era descartado e o aluno via o rótulo padrão. **Fix:** quando o plano é autorado pelo coach (`manualOverride` / `planSource` de override), o `focus` salvo pelo coach é preservado e chega ao app **como treino normal do GUTO** (conteúdo do coach). Treino gerado pelo GUTO continua localizando pelo `focusKey` (i18n por idioma intacto).
