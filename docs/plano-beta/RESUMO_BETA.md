@@ -106,9 +106,9 @@
 ### P1 — qualidade/operação
 - [x] **✅ CORRIGIDO 31/05 — Race no `createTeam` (team-store).** Era: create/update/deleteTeam disparavam write async **fire-and-forget com snapshot** → dois writes concorrentes chegavam fora de ordem no Upstash e o snapshot antigo sobrescrevia o novo (perdia um time). **Fix:** persistência ao Redis **serializada** (fila de promises) que sempre grava o `memCache` atual. Verificado ao vivo: 2 times criados **concorrentemente** → ambos persistiram no Redis de prod. Suíte 470/470, tsc 0. (CEREBROGUTO `main`)
 - [x] **✅ FEITO 31/05 — Blindagem anti-clobber portada p/ `team-store` e `invite-store`.** `team-store`: mesma máquina do `user-access` (`ensureHydration` + escrita serializada + re-aplicação) — verificado: createTeam na janela de boot → as 5 empresas sobreviveram. `invite-store`: ops serializadas (lê o Redis fresco a cada op, então sem clobber de boot; o risco era só corrida concorrente). Suíte 470/470, tsc 0. (CEREBROGUTO `main`)
-- [ ] **Curador de treino sob carga** — caía em template >50% em rajada; medir/estabilizar (retry/backoff). [04]
-- [ ] **Tirar o mock do painel** (`NEXT_PUBLIC_USE_MOCKS=false`) + threshold de risco ≥7→≥6. [10]
-- [ ] **Juiz dos evals** (`ANTHROPIC_API_KEY`) pro `release:gate` medir nuance (hoje `judge:skip`). [03]
+- [x] **✅ FEITO 02/06 — Curador de treino sob carga.** `curateWorkout` agora faz **retry com backoff exponencial + jitter** (default 3 tentativas — `GUTO_CURATOR_MAX_ATTEMPTS`/`GUTO_CURATOR_BACKOFF_MS`) em 429/timeout/JSON inválido, em vez de cair direto no template; tentativas e fallback logados. Suíte verde (backoff zerado nos testes). (CEREBROGUTO) [04]
+- [x] **✅ JÁ ESTAVA FEITO — Mock do painel + threshold de risco.** `/admin` e `/empresa` já são **redirect → `/coach`** (`legacyPanelRedirectTarget`); o `/coach` usa **API real** (`lib/api/admin.ts`) — não existe mais `NEXT_PUBLIC_USE_MOCKS`. Threshold já é **≥6 crítico / 3–5 atenção** (`utils.ts:183`). O doc [10] estava defasado. [10]
+- [x] **✅ FEITO 02/06 — Juiz dos evals cabeado.** O `release:gate` agora **liga o juiz LLM automaticamente quando `ANTHROPIC_API_KEY` está no ambiente** (antes forçava `--no-judge` sempre). Sem a chave, degrada para match por palavra-chave com aviso explícito. **Falta só** definir a chave onde o gate roda (local/CI). (CEREBROGUTO) [03]
 - [ ] **Risco probabilístico:** o classificador é modelo pequeno; o piso determinístico cobre álcool/doença, mas re-sondar multi-frase periodicamente. [03]
 
 ### P2 — Parte 2 / decisão de produto

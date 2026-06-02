@@ -21,8 +21,8 @@ Painel **único** = `/coach` (cockpit role-aware); `/admin` e `/empresa` redirec
 - Roteamento real: 3 papéis vão para `/coach`.
 
 ## ❌ O que está errado / quebra (gaps canônicos §15/§17 do doc)
-- **G-P1 (P1) — painel em mock por padrão.** `/admin`/`/empresa` (e dados) usam mock até `NEXT_PUBLIC_USE_MOCKS=false`. Para testar o painel real, desligar o mock no Vercel.
-- **G-06 (P1) — threshold de risco errado.** Código usa **≥7 dias**; decisão canônica é **Verde ≤48h / Atenção 3–5d / Crítico ≥6d**. Corrigir em `app/coach/_components/utils.ts` (1 linha, só display).
+- **G-P1 (P1) — ✅ RESOLVIDO.** Não existe mais mock no painel: `/admin` e `/empresa` são **redirect → `/coach`** (`legacyPanelRedirectTarget` + `LegacyPanelRedirect`); o `/coach` consome a **API real** (`lib/api/admin.ts` via `apiRequest`). Não há mais flag `NEXT_PUBLIC_USE_MOCKS`. (Sobram comentários "dados mock" que descrevem o passado dessas rotas.)
+- **G-06 (P1) — ✅ RESOLVIDO.** Threshold já é **≥6 crítico / 3–5 atenção** em `app/coach/_components/utils.ts:183-185`.
 - **G-08 — i18n do cockpit.** `/coach` é **PT-first hardcoded** (só o login é i18n). Doc exige 3 idiomas. Garantir que **nenhum texto novo entre hardcoded** e migrar para chaves.
 - **G-09 — abas do aluno: 6 vs 9.** Hoje Resumo/Calibragem/Treino/Dieta/Histórico/Acesso; alvo são 9.
 - **G-02 — recuperação de senha** (compartilhado com [01 L-6](01_login_e_acesso.md)).

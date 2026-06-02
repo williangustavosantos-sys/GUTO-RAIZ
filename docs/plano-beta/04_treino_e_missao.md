@@ -20,7 +20,7 @@ Treino do dia nasce do **backend** (ou do plano travado pelo coach), nunca inven
 - Catálogo fechado com vídeo obrigatório — sólido.
 
 ## ❌ O que está errado / quebra
-- **TR-1 (P1, novo — não na spec) — curador falha >50% sob carga.** No `release:gate` (rajada de chamadas): **`curator succeeded: 6` vs `curator failed: 8`** → maioria caiu em template (`[GUTO] curator failed — falling back to template for chest_triceps/gym`). Provável rate-limit/timeout do Gemini. Em uso real de 1 usuário pode ser melhor, mas precisa **medição** e retry/backoff.
+- **TR-1 (P1) — ✅ RESOLVIDO 02/06 (retry/backoff).** Antes o curador caía direto no template em 429/timeout (`curator succeeded: 6` vs `failed: 8` na rajada do `release:gate`). **Fix:** `curateWorkout` agora tenta de novo com **backoff exponencial + jitter** (default 3 tentativas — `GUTO_CURATOR_MAX_ATTEMPTS`/`GUTO_CURATOR_BACKOFF_MS`), distinguindo transiente (429/5xx/timeout/JSON estocástico → repete) de fatal (400/401/403 → não repete); tentativas e fallback ficam logados. Resta **medir a taxa real de fallback em produção** com a telemetria.
 - **TR-2 (P0, upstream) — treino inalcançável pelo chat.** "qual é o treino de hoje?" → "distração" ([03 B-1](03_chat_e_cerebro.md)). O usuário não consegue nem perguntar do treino.
 - **TR-3 (P0, upstream) — não gera para usuário saudável.** Sem lesão, a calibragem não trava e nenhum plano é montado ([02 CM-1](02_calibragem_e_memoria.md)).
 - **T-6 (spec) — fila de pendência de swap para o coach não confirmada.** Swap por chat persiste, mas a pendência visível ao coach (quando `lockedByCoach`) não está confirmada.

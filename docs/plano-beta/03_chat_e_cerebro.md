@@ -44,7 +44,7 @@ Conversa real, usuário calibrado e **travado** (sem lesão preenchida como "nen
 
 **B-5 — ✅ verificado OK (sem fix necessário).** "tô sem energia **mas vou**" → "faz só 20 minutos pra honrar nosso pacto, bora manter essa evolução juntos" (apoia, reconhece o "vou", não cobra). Comportamento já correto ao vivo.
 
-**B-6 — Evals com `judge:skip`.** Sem `ANTHROPIC_API_KEY`, o juiz LLM não roda; o gate cai em match por palavra-chave (infla falso-positivo/negativo). O gate **não é sinal confiável** hoje.
+**B-6 — ✅ CABEADO 02/06.** O `release:gate` antes forçava `--no-judge` sempre. Agora ele **liga o juiz LLM automaticamente quando `ANTHROPIC_API_KEY` está no ambiente** (`guto-release-gate.mjs`); sem a chave, degrada para match por palavra-chave com aviso explícito. **Falta só definir a chave** onde o gate roda (local/CI) — `ANTHROPIC_API_KEY` já está em `.env.example` e no `render.yaml`.
 
 ## ➕ O que falta adicionar
 - Roteamento de perguntas operacionais (treino/dieta/calorias) para **handlers reais ou para o modelo**, nunca para "distração".
