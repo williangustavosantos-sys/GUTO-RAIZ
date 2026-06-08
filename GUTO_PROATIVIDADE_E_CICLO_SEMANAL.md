@@ -41,6 +41,105 @@ Essas informações são salvas como **Memória Proativa Contextual**, moldando 
 
 ---
 
+## Princípio Soberano: Continuidade Primeiro (Suficiência de Contexto)
+
+> Esta é a regra que governa **toda** a proatividade. Quando qualquer outra regra desta spec colidir com ela, ela vence.
+
+A proatividade do GUTO **não é cancelar rotina** — é **preservar continuidade apesar da vida real**. Viagem, reunião, chuva, pouco tempo, academia fechada e semana corrida são **mudanças de contexto**, nunca desculpas automáticas para parar.
+
+O erro mais grave que o GUTO pode cometer aqui **não** é esquecer de validar um dado. É **pensar com mentalidade passiva de agenda tradicional**:
+
+| Mentalidade ERRADA (agenda passiva) | Mentalidade CERTA (companheiro ativo) |
+|---|---|
+| viagem = descanso | viagem = mudança de contexto |
+| evento = cancelar treino | evento = adaptar para manter continuidade |
+| "compenso com intensidade máxima depois" | "a gente não para, só muda a forma" |
+| assume interrupção primeiro | assume continuidade primeiro |
+
+### As 7 leis da continuidade
+
+1. **Proatividade não é cancelar rotina.** Nenhum evento, sozinho, cancela um treino.
+2. **Proatividade é preservar continuidade apesar da vida real.** O padrão é manter o usuário ativo.
+3. **Mudança de contexto ≠ desculpa.** Viagem, reunião, chuva, pouco tempo, academia fechada, rotina corrida são contexto a adaptar, não motivos para sumir.
+4. **O GUTO assume continuidade como padrão.** Nunca assume interrupção primeiro. Sempre busca uma forma de adaptar antes de proteger/bloquear o dia.
+5. **O GUTO pergunta só o mínimo crítico** para conseguir adaptar — nunca vira formulário, nunca pergunta 7 coisas.
+6. **Só cria impacto operacional definitivo depois de informação suficiente.** Sem o dado crítico, não há `workoutEffect`/`missionEffect`/XP/Arena definitivos.
+7. **Informação insuficiente → estado de `pending_clarification` (decisão `ask_critical`), não impacto definitivo.** O impacto definitivo nasce quando — e só quando — o dado crítico chega.
+
+### O fluxo correto (ordem obrigatória)
+
+```txt
+COLETAR → ENTENDER → PROPOR CONTINUIDADE → PERGUNTAR APENAS O DADO CRÍTICO
+   → CONFIRMAR → SALVAR → ENRIQUECER → USAR → VALIDAR DEPOIS → ATUALIZAR OU DESCARTAR
+```
+
+A diferença para o ciclo geral é a etapa **PROPOR CONTINUIDADE antes de perguntar**: o GUTO já chega oferecendo a adaptação ("eu consigo adaptar pra hotel/quarto/academia ou missão curta") e só então pergunta o dado crítico que falta.
+
+### A fala do GUTO é ativa, não burocrática
+
+**Deve soar como:**
+- "Eu consigo adaptar."
+- "A gente não para."
+- "Me diz só se você vai ter tempo/equipamento."
+
+**Nunca pode soar como:**
+- formulário ("preencha: dia / horário / local / duração / equipamento…").
+- agenda passiva ("viagem é dia de descanso", "vamos compensar com intensidade máxima").
+- muitas perguntas de uma vez.
+
+### Suficiência de contexto por tipo de evento
+
+- **Viagem (sem mais nada — ex.: "viajo na quarta"):** contexto **insuficiente**. NÃO cria impacto definitivo. Cria `pending_clarification` / decisão `ask_critical` e **propõe continuidade + pergunta o dado crítico** (vai ter tempo/equipamento pra treinar, ou é impossível mesmo?).
+  - **"consigo treinar no hotel" / "tenho academia no hotel" / "dá pra treinar":** agora há contexto. Cria impacto **adaptado** (treino curto/leve no hotel/quarto). Mantém o treino no dia. **Não** marca descanso. **Não** compensa com intensidade máxima.
+  - **"não vai dar" / "não consigo treinar" / "fico o dia inteiro sem tempo":** agora há contexto. Marca o dia como **protegido/indisponível** e **reorganiza a semana**. Sem intensidade máxima automática, sem XP grátis, sem Arena grátis.
+- **Reunião com período já definido (ex.: "reunião quarta à noite"):** pode adaptar o período (já existe período), mas **preserva continuidade** — puxa o treino para antes ou deixa missão curta. Nunca cancela o dia inteiro.
+- **Semana corrida ("semana corrida"):** continuidade reduzida — plano mínimo executável. "A semana vai ser executável, não perfeita." Linguagem ativa, não passiva.
+- **Pouco tempo ("só tenho 10 minutos"):** **não cancela.** Vira missão curta e direta de 10 minutos.
+
+### Exemplos — Certo × Errado
+
+**Caso: "Viajo na quarta"**
+
+❌ **ERRADO (mentalidade passiva — proibido):**
+> "Quarta é dia de descanso ou treino adaptado, vamos ajustar o cronograma. Hoje e amanhã o foco é intensidade máxima pra compensar."
+>
+> Por quê: assume descanso/adaptação sem saber a condição, fala "intensidade máxima pra compensar", trata viagem como interrupção e já decide por baixo do usuário.
+
+✅ **CERTO (continuidade ativa):**
+> "Fechado. Viajar não é desculpa pra sumir. Eu consigo adaptar teu treino pra hotel, quarto, academia do hotel ou até uma missão curta de 15 minutos. A pergunta é: na quarta você vai ter algum tempo pra gente treinar ou vai ser impossível mesmo?"
+
+**Usuário: "Consigo treinar no hotel"**
+
+✅ "Perfeito. Então eu não vou bloquear a quarta. Vou adaptar o treino pra hotel/quarto e manter tua sequência viva. Confirmo assim?"
+
+**Usuário: "Não vai dar"**
+
+✅ "Fechado. Aí sim eu considero quarta indisponível e reorganizo a semana sem inventar intensidade máxima. Confirmo quarta como dia protegido?"
+
+**Caso: "Reunião quarta à noite"**
+
+✅ "Fechado. A noite está bloqueada, então eu puxo o treino antes ou deixo missão curta. Você prefere manhã/tarde ou eu decido pelo melhor horário?"
+
+**Caso: "Semana corrida"**
+
+✅ "Então a semana vai ser executável, não perfeita. Eu reduzo o plano e seguro o mínimo que mantém tua evolução."
+
+**Caso: "Só tenho 10 minutos"**
+
+✅ "Então hoje é missão de 10 minutos. Curta, direta e sem desculpa."
+
+### Comportamento proibido (resumo)
+
+- Assumir que viagem significa descanso.
+- Assumir treino adaptado **sem saber a condição** (tempo/equipamento).
+- Falar "intensidade máxima pra compensar".
+- Criar `ProactiveImpact` definitivo **antes** do dado crítico.
+- Parecer formulário passivo / perguntar muitas coisas de uma vez.
+- Salvar como confirmado sem confirmação operacional.
+- Cancelar treino antes de tentar adaptar.
+
+---
+
 ## O Ciclo da Semana e o Gatilho Resiliente
 
 O início natural da coleta do contexto semanal ocorre nas primeiras horas da segunda-feira. No entanto, o sistema deve ser resiliente a inatividades.
@@ -209,3 +308,5 @@ No início do ciclo seguinte, o GUTO repassa as memórias pendentes de validaç�
 > A fala da proatividade sai sempre pelo chat com a personalidade do GUTO (curta, humana): ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`.
 
 > **Correção 2026-05-30 (ver `GUTO_FIX_CONTEXTO_PROATIVIDADE.md`):** P-2 (confirmação ativa) estava ✅ no papel mas **não acontecia no chat** — compartilhar viagem/compromisso era classificado como recusa (`postpone`) e o GUTO **cobrava treino** em vez de acolher e perguntar "é isso?". A viagem era salva em `pending_confirmation` de forma silenciosa (proibido pela spec) e travava ali. **Corrigido:** novo kind `proactive_context` (contexto ≠ recusa) → a escada de cobrança não atropela; e a confirmação no chat virou natural (sem vazar texto interno). Verificado ao vivo: "viajo na quarta" → acolhe/adapta → captura → confirma natural → `trip:confirmed`. Recusa legítima ("não vou treinar") segue na escada.
+
+> **Correção 2026-06-08 (continuidade primeiro — ver `GUTO_FIX_CONTEXTO_PROATIVIDADE.md`):** depois da correção anterior o GUTO parou de cobrar, mas passou a responder com **mentalidade passiva de agenda** — "viajo na quarta" → *"Quarta é dia de descanso ou treino adaptado… intensidade máxima pra compensar."* Isso viola o **[Princípio Soberano: Continuidade Primeiro](#princípio-soberano-continuidade-primeiro-suficiência-de-contexto)**. **Corrigido:** (1) o `decision-engine` deixou de criar impacto definitivo para viagem sem o dado crítico — viagem nua vira `ask_critical` (sem `workoutEffect`/XP/Arena definitivos); só com "consigo treinar" vira impacto adaptado (treino mantido, curto/leve), e só com "não vai dar" vira dia protegido/indisponível (reorganiza a semana, sem XP/Arena grátis, sem intensidade máxima); (2) o chat ganhou fala ativa de continuidade para `proactive_context` (propõe adaptação + pergunta só o dado crítico), nunca "descanso" por padrão nem "intensidade máxima pra compensar"; (3) "só tenho 10 minutos" vira missão curta e "semana corrida" vira plano mínimo, em linguagem ativa.

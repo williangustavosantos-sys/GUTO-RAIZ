@@ -57,3 +57,40 @@ Backend local (Gemini real), userId limpo:
 
 ## Impacto nos docs canônicos da raiz
 - `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` (Pontos de Atenção): o ciclo estava marcado ✅, mas na prática a confirmação ativa (P-2) era atropelada pela cobrança quando o usuário compartilhava o evento no chat. Adicionada nota de correção (2026-05-30) apontando este documento.
+
+---
+
+# Fix 2 — Continuidade Primeiro (mentalidade ativa, não agenda passiva)
+
+> Documento vivo. Criado em 2026-06-08. Continuação do fix acima.
+
+## Problema (evidência ao vivo)
+Depois do Fix 1 o GUTO parou de cobrar treino, mas passou a responder com **mentalidade passiva de agenda tradicional**:
+- Usuário: "Viajo na quarta"
+- GUTO: "Quarta é dia de descanso ou treino adaptado, vamos ajustar o cronograma. Hoje e amanhã o foco é intensidade máxima pra compensar."
+
+O erro **não** é falta de validação — é mentalidade. O GUTO assumiu interrupção primeiro ("viagem = descanso"), decidiu adaptação sem saber a condição, e prometeu "intensidade máxima pra compensar". Isso viola o princípio do produto: **o GUTO assume continuidade e busca uma forma de adaptar, nunca assume interrupção primeiro.**
+
+## Causa-raiz
+- **Conversacional:** `proactive_context` não tinha tratamento dedicado no turno do chat (diferente de `isResistance`/`isGrief`, que compõem fala via `composeContextualResponse`). O modelo respondia livre → caía na mentalidade de agenda.
+- **Operacional:** `decision-engine.ts` (`decideFromProactiveMemory`, branch `travelDetected`) criava **impacto definitivo** para viagem nua (`workoutEffect: 'short_light'`, `missionEffect: 'protected_before'`, `blockedPeriod: 'all_day'`) sem saber se o usuário conseguia treinar — decidia adaptação/proteção por baixo do usuário.
+
+## Princípio da correção
+Suficiência de contexto: viagem **sem o dado crítico** (tempo/equipamento) não gera impacto definitivo — gera `ask_critical` (pending_clarification). O impacto definitivo só nasce quando o dado crítico chega: "consigo treinar" → adaptado (treino mantido); "não vai dar" → dia protegido (reorganiza a semana). Nunca descanso por padrão, nunca "intensidade máxima pra compensar".
+
+## Arquivos alterados (Fase 2 — onde a decisão errada nascia)
+- `guto-backend/src/proactivity/decision-engine.ts`: branch `travelDetected` criava impacto definitivo `short_light`/`protected_before` para "viajo quarta". **Era aqui** que a adaptação/proteção era decidida sem o dado crítico.
+- `guto-backend/server.ts`: o turno do chat não tinha branch para `proactive_context` (a fala livre do modelo produzia "descanso/intensidade máxima"); `enforceTrainingFlowCertainty` não tinha piso determinístico de continuidade.
+- `guto-backend/src/proactivity/types.ts`: faltavam estados para representar "perguntar o crítico" e "dia protegido" sem virar descanso.
+
+## Implementação (Fase 3)
+- `types.ts`: `ProactiveWorkoutEffect`/`ProactiveMissionEffect` ganham `'protected'`; `ProactiveDecisionReason` ganha `'short_window'`; `criticalQuestion` ganha `'training'`.
+- `decision-engine.ts`: `detectTravelTrainingSignal()` (can_train / cannot_train / unknown). Viagem **unknown** → `ask_critical` (sem efeitos definitivos); **can_train** → `adapt_day` (treino mantido, curto/leve, sem `all_day`); **cannot_train** → dia `protected` (sem XP/Arena grátis, reorganiza semana). Novo branch `short_window` ("10 minutos") → missão curta. `getAdaptationForDate` expõe `isProtectedDay`.
+- `server.ts`: branch `proactive_context` no turno (compõe fala ativa via `composeContextualResponse` + `buildProactiveContinuityContextPrompt`, com fallback determinístico `buildProactiveContinuityFala`); classificador (LLM + fallback) reconhece semana corrida e janela curta como continuidade; `enforceTrainingFlowCertainty` aplica piso determinístico de continuidade; `applyProactiveWorkoutAdaptation` não fabrica treino em dia `protected`.
+
+## Testes (Fase 4)
+- `tests/guto-proactive-continuity.test.ts` (novo): os 6 casos exigidos (viagem nua → ask_critical; viagem+hotel → adaptado; viagem+impossível → protegido; reunião à noite → bloqueia período preservando continuidade; "10 minutos" → missão curta; "semana corrida" → plano mínimo + linguagem ativa).
+- `tests/proactivity-decision-engine.test.ts` e `tests/guto-proactivity-http.test.ts`: atualizados do contrato antigo (viagem nua = `short_light`) para o novo (viagem nua = `ask_critical`).
+
+## Validação (Fase 5)
+- `npm run typecheck` (tsc 0) + `npm test` (suíte verde).
