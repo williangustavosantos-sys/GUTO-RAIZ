@@ -1,5 +1,7 @@
 # GUTO — Plano Cirúrgico Para Testes
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Documento operacional canônico para execução faseada.
 > Atualizado: 2026-05-28.
 >

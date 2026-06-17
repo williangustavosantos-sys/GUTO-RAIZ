@@ -2,7 +2,7 @@
 
 > **Documento canônico de arquitetura de fluxo do GUTO.** É a espinha que mapeia cada tela, botão, campo e o impacto sistêmico que cada informação gera de ponta a ponta na experiência da dupla.
 >
-> **Natureza deste documento:** descreve o **GUTO finalizado — como ele tem que ser** para o fluxo funcionar 100%. É a **referência-alvo**. Onde o código atual ainda diverge, o ponto está marcado em **[⚠️ Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim do arquivo — sinalizado, não silenciado.
+> **Natureza deste documento:** descreve o **GUTO atual + referência-alvo** para o fluxo funcionar 100%. O que já está confirmado no código fica marcado como atual/alinhado; o que ainda não existe fica como **FUTURO** ou **[implementar]**. Onde o código atual diverge, o ponto está em **[⚠️ Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim do arquivo.
 
 ---
 
@@ -203,13 +203,13 @@ Ritualização da parceria e entrada oficial no app.
    - **O que faz:** O usuário deve pressionar e segurar o botão por 2s. Ao completar, a assinatura é registrada.
    - **Destino da informação:** O backend atualiza o estado operacional do aluno de `"pact"` para `"system"` (liberando as abas principais) e concede o **XP Inicial de Boas-Vindas**.
    - **Efeito cascata posterior:** 
-     - **Buffer Emocional:** O XP inicial aparece acumulado na barra do avatar e no ranking. No entanto, por ser um XP simbólico, ele **não** ativa dias de treino consecutivos (streak) nem gera logs no Percurso.
+     - **Buffer Emocional:** O XP inicial aparece acumulado na barra do avatar, no Percurso como XP do dia e nos rankings semanal/mensal/individual. No entanto, por ser simbólico, ele **não** conta como treino executado, não incrementa `validatedWorkouts` e não ativa dias consecutivos (streak).
 
 ---
 
 ## Página 8: Aba GUTO / Chat (A Central de Relação)
 
-Interface ativa onde o usuário conversa, adapta treinos e tira dúvidas sob um contrato estruturado de turnos.
+Interface ativa onde o usuário conversa, adapta treinos e tira dúvidas sob um contrato estruturado de turnos. No código atual, a aba é conversa real: histórico/contexto/input são a camada principal, e o avatar fica compacto como presença, não como vitrine grande.
 
 ### Campos e Inputs
 1. **Campo "Escreva aqui..." (Input de Texto)**
@@ -217,10 +217,10 @@ Interface ativa onde o usuário conversa, adapta treinos e tira dúvidas sob um 
 
 ### Botões e Interações
 1. **Botão "Enviar" (Icone de seta)**
-   - **O que faz:** Envia a mensagem em um POST para `/guto/chat`.
-   - **Destino da informação:** O backend analisa a mensagem cruzando com a memória e devolve o contrato JSON estruturado contendo a fala (`speech`), emoção do avatar (`avatarEmotion`), as correções de calibragem (`memoryPatch`), planos de exercícios (`workoutPlan`) e botões sugeridos (`expectedResponse`).
+   - **O que faz:** Envia a mensagem em um POST para `/guto`.
+   - **Destino da informação:** O backend analisa a mensagem cruzando com memória, histórico recente e contexto ativo da aba; devolve o contrato JSON estruturado contendo a fala (`speech`/`fala`), emoção do avatar (`avatarEmotion`), correções de memória (`memoryPatch`), planos de exercícios (`workoutPlan`) e botões sugeridos (`expectedResponse`).
    - **Efeito cascata posterior:** 
-     - Se o usuário avisar: "Viajo amanhã", o GUTO inicia o ciclo de **Proatividade**, monta a pergunta de confirmação no chat e, após o aceite, altera o comportamento do treino dos próximos dias.
+     - Se o usuário avisar: "Viajo amanhã", o GUTO inicia o ciclo de **Proatividade**, monta a pergunta/cartão de confirmação no chat e, após o aceite ou ajuste, altera o comportamento do treino dos próximos dias. Enquanto estiver incerto, a decisão fica pendente; impacto definitivo só nasce com dado crítico suficiente.
      - Se o usuário relatar: "Senti uma fisgada no ombro", o backend altera o `lastWorkoutPlan`, removendo exercícios de ombro da aba **Missão** nas próximas 48 horas.
 2. **Botões Rápidos de Resposta (Sugeridos na bolha)**
    - **O que faz:** Toques diretos em opções de texto geradas pelo contrato de turno (ex: "Mudar treino para academia", "Sim, confirmo"). Economizam digitação do usuário e guiam o modelo de IA com exatidão semântica.
@@ -281,7 +281,7 @@ O portão de prestação de contas que consolida os resultados da sessão.
 
 ### Campos e Inputs
 1. **Câmera/Foto de Validação (Upload de Mídia)**
-   - Recebe a captura fotográfica do usuário comprovando que esteve no local de treino. **A prova por foto/selfie é parte do contrato de presença** — sem prova, não há mérito real. ⚠️ Ver [Pontos de Atenção](#pontos-de-atenção-doc--código-atual) (hoje o backend aceita validação sem foto).
+   - Recebe a captura fotográfica do usuário comprovando que esteve no local de treino. **A prova por foto/selfie é parte do contrato de presença** — no backend atual, sem prova a rota retorna `SELFIE_REQUIRED` e não credita XP/Arena.
 2. **Campo "Frase de Confirmação" (Input de Texto)**
    - Recebe a confirmação de presença.
 
@@ -303,7 +303,7 @@ Exibe a posição de consistência da dupla perante as demais duplas ativas do e
 ### Botões e Interações
 1. **Filtros de Período (Semanal, Mensal, Global)**
    - **O que faz:** Altera o agrupamento e visualização das pontuações acumuladas das duplas.
-   - **Efeito cascata posterior:** Utiliza os dados de XP validados fisicamente pelo backend. A identidade exibida no ranking é sempre a dupla (`GUTO & Nome do Aluno`). Impedido de exibir dados inconsistentes em relação ao XP individual do aluno.
+   - **Efeito cascata posterior:** Utiliza os dados de XP do backend. Todo XP ganho entra em Semanal, Mensal e Global/Individual; o que não for treino real, como o pacto, não vira `validatedWorkouts` nem streak. A identidade exibida no ranking é sempre a dupla (`GUTO & Nome do Aluno`). Impedido de exibir dados inconsistentes em relação ao XP individual do aluno.
    - **Arena Semanal e Mensal:** Escopadas por empresa/time (`teamId`). O aluno vê a Arena da própria empresa; o coach também vê a Arena da empresa, não uma arena só dos seus alunos.
    - **Arena Geral:** Global, com todas as duplas do app. Ao lado da dupla, precisa aparecer o nome da empresa/time para contextualizar a origem.
    - **Super Admin:** Pode visualizar todas as Arenas e auditar recortes por empresa.
@@ -312,23 +312,23 @@ Exibe a posição de consistência da dupla perante as demais duplas ativas do e
 
 ## Página 14: Aba Evoluir (Avatar e Engajamento)
 
-Exibe o progresso estético e biológico do companheiro digital.
+Exibe o progresso estético e biológico do companheiro digital. No código atual, esta aba é a **Casa do GUTO**: avatar grande oficial renderizado por código, estágio atual, XP acumulado, progresso até a próxima evolução e vínculo emocional da dupla.
 
 ### Botões e Interações
 1. **Visores de Atributos e XP do Avatar**
-   - **O que faz:** Demonstra o estágio atual do GUTO (`Baby`, `Teen`, `Adult`, `Elite`) e o percentual para atingir o próximo nível.
+   - **O que faz:** Demonstra o estágio atual do GUTO (`Baby`, `Teen`, `Adult`, `Elite`) e o percentual para atingir o próximo nível. Os thresholds atuais são `0`, `1500`, `5000` e `12000` XP.
    - **Efeito cascata posterior:** Se o aluno valida treinos, o avatar ganha animações e força visual. Se o aluno some por muitos dias consecutivos, o avatar perde brilho e expressa enfraquecimento da relação, gerando um gatilho emocional saudável focado em retenção.
 
 ---
 
 ## Página 15: Aba Percurso (Visual de Consistência)
 
-O diário histórico visual que preserva os registros da jornada.
+O diário histórico visual que preserva os registros da jornada. No código atual, é um calendário mensal vivo com eventos do dia, não apenas uma lista de fotos antigas.
 
 ### Botões e Interações
-1. **Botão de Visualização de Treinos Passados**
-   - **O que faz:** Abre um detalhamento de fotos, datas e exercícios realizados nos dias marcados do Percurso.
-   - **Destino da informação:** Carrega os dados persistidos no banco de dados vindos da Página 12. Fornece ao usuário a sensação visual e palpável de "Eu apareci e construí uma história junto com o GUTO".
+1. **Calendário Mensal / Dia Selecionado**
+   - **O que faz:** Exibe mês, status diário e eventos como treino concluído, treino adaptado, dia protegido, viagem, dor, compromisso, decisão pendente e XP.
+   - **Destino da informação:** Carrega validações, `completedWorkoutDates`, missões adaptadas/perdidas, memórias proativas, impactos proativos e `xpEvents`. Fornece ao usuário a sensação visual e palpável de "Eu apareci e construí uma história junto com o GUTO".
 
 ---
 
@@ -386,17 +386,17 @@ Empresa/time é a unidade comercial principal. Toda empresa possui plano, limite
 
 ## Pontos de Atenção (doc × código atual)
 
-> Esta seção lista onde o **GUTO finalizado descrito acima** ainda diverge do **código atual** (`guto-app-v0` + `guto-backend`). É sinalização, não correção de código. A intenção dos documentos é ser a referência do produto pronto; a comparação com o que já existe guia a fila de implementação.
+> Esta seção lista onde a **referência-alvo descrita acima** ainda diverge do **código atual** (`guto-app-v0` + `guto-backend`). É sinalização, não correção de código. A intenção dos documentos é separar estado operacional, parcial e futuro com clareza.
 >
 > Itens marcados **[decisão]** dependem de confirmação do fundador sobre "o que é o certo". Itens **[implementar]** já têm o alvo claro no doc — falta o código alcançar.
 
 | # | Tema | Doc (alvo) | Código atual | Tipo |
 |---|---|---|---|---|
-| A-1 | **Foto/selfie na validação** (Pág. 12) | **Obrigatória sempre** — sem foto não valida e não dá XP/streak (decisão do fundador) | Backend aceita validação **sem** foto (XP não exige selfie) | **[implementar]** — alvo decidido; código diverge |
-| A-2 | **Morte do GUTO** (Pág. 14) | Estado terminal `gutoLifeStatus:"dead"`, `accessLocked`, guard 403, blackout | Só opacidade visual do avatar; backend não emite `GUTO_DECEASED` nem trava rotas | **[implementar]** (parte 2 do produto) |
-| A-3 | **Códigos de acesso** (Pág. 3/16) | `ACCESS_PAUSED`, `SUBSCRIPTION_EXPIRED`, `GUTO_DECEASED` distintos | Backend emite só `ACCESS_PAUSED`/`SUBSCRIPTION_EXPIRED` | **[implementar]** |
+| A-1 | **Foto/selfie na validação** (Pág. 12) | **Obrigatória sempre** — sem foto não valida e não dá XP/streak (decisão do fundador) | Backend exige `imageBase64`; sem foto retorna `SELFIE_REQUIRED` | ✅ alinhado |
+| A-2 | **FUTURO - Morte do GUTO** (Pág. 14) | Estado terminal `gutoLifeStatus:"dead"`, `accessLocked`, guard 403, blackout | Backend não emite `GUTO_DECEASED` nem trava rotas por morte; não é comportamento operacional atual | **FUTURO** |
+| A-3 | **Códigos de acesso** (Pág. 3/16) | `ACCESS_PAUSED`, `SUBSCRIPTION_EXPIRED`, `GUTO_DECEASED` distintos | Backend emite só `ACCESS_PAUSED`/`SUBSCRIPTION_EXPIRED`; `GUTO_DECEASED` pertence ao módulo futuro de morte | **FUTURO** |
 | A-4 | **Painel = rota única** (Pág. 16) | Painel operacional em `/coach` (role-aware); `/admin` e `/empresa` redirecionam | Já implementado assim no código | ✅ alinhado |
-| A-5 | **Risco de abandono** (Pág. 16) | **Verde ≤48h · Atenção 3–5d · Crítico ≥6d** (decisão do fundador) | Código usa Atenção 3–6d / Crítico ≥7d | **[implementar]** — alvo decidido; código diverge |
+| A-5 | **Risco de abandono** (Pág. 16) | **Verde ≤48h · Atenção 3–5d · Crítico ≥6d** (decisão do fundador) | Código usa Atenção 3–5d / Crítico ≥6d | ✅ alinhado |
 | A-6 | **Vídeo de exercício** (Pág. 9) | **Catálogo oficial ≤15s; custom do coach ≤30s** (ambos sem áudio, caminho interno) | Catálogo ok; validação custom aceita ≤30s | ✅ alinhado (dois limites oficiais) |
 
 > **Decisões já fechadas com o fundador** (propagadas para `TREINO`, `EVOLUCAO_XP`, `PAINEL_CANONICO`): selfie **obrigatória** na validação; risco **Atenção 3–5d / Crítico ≥6d**; vídeo **catálogo ≤15s / custom ≤30s**.

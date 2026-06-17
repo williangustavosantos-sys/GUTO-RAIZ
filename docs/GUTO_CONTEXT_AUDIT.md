@@ -1,5 +1,7 @@
 # GUTO — Context Audit (Sprint de Contexto)
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > **Natureza:** diagnóstico de engenharia. Lê os documentos canônicos da raiz como lei e o
 > código real dos submódulos (`CORPOGUTO` = `guto-app-v0`, `CEREBROGUTO` = `guto-backend`)
 > como estado atual. **Não** propõe reescrita de arquitetura. Foco exclusivo: **por que o GUTO

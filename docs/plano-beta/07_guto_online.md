@@ -1,5 +1,7 @@
 # 07 — GUTO Online (Sessão Assistida)
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` · Código: `guto-app-v0/lib/guto-online/*`, `guto-app-v0/components/guto/guto-online-session.tsx` (867 linhas, montado em `mission-tab.tsx:456`); spike nativo em `guto-mobile/`
 >
 > **Veredito: 🟢 a sessão WEB funciona — validada ao vivo (2026-05-31): lança da MISSÃO, a máquina de estados progride (aquecimento → exercício → série), checklist e controles ok. (O spike NATIVO `guto-mobile` ainda tem bugs — GO-3.) A percepção "não existe" estava desatualizada.**

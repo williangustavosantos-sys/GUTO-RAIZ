@@ -2,7 +2,7 @@
 
 > **Documento canônico** da Máquina de Estados de Proatividade, Ciclos de Contexto Semanal e Inteligência de Presença do GUTO.
 >
-> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. Proatividade **não** é notificação push genérica nem mensagem pronta ao abrir: é o ciclo fechado **coletar → entender → confirmar → enriquecer → usar → validar → descartar**. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+> **Natureza:** descreve o **GUTO atual + alvo de produto**. Proatividade **não** é notificação push genérica nem mensagem pronta ao abrir: é o ciclo fechado **ENTENDER → VALIDAR COM O USUÁRIO → SALVAR → MOSTRAR → USAR DEPOIS**. O código ainda mantém estados internos mais detalhados (`pending_confirmation`, `confirmed`, `enriched`, `surfaced`, `pending_validation`, `validated_happened`, `validated_postponed`, `discarded`). Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
 >
 > **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (a proatividade fala pelo chat) · `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` · `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` (não vira calibragem permanente sem confirmar).
 
@@ -18,7 +18,15 @@ A proatividade do GUTO é a chave de virada sensorial do produto. Ela é o mecan
 - Enviar alertas irritantes de calendário sem qualquer relação com o estado físico do aluno.
 
 **Proatividade É:**
-Um ciclo integrado e fechado onde o GUTO **pergunta, entende, confirma, salva, enriquece, usa e valida** eventos e contextos pessoais da vida do usuário que afetam de forma direta a sua capacidade de cumprir a Missão.
+Um ciclo integrado e fechado onde o GUTO **entende, valida com o usuário, salva, mostra e usa depois** eventos e contextos pessoais da vida do usuário que afetam de forma direta a sua capacidade de cumprir a Missão.
+
+Contrato operacional curto:
+
+```txt
+ENTENDER → VALIDAR COM O USUÁRIO → SALVAR → MOSTRAR → USAR DEPOIS
+```
+
+As informações coletadas não servem apenas para preencher calendário. Elas passam a orientar treino, dieta, cobrança, XP, Arena, Percurso, GUTO Online e conversas futuras. Quando o evento é temporal ou incerto, o GUTO não gera impacto definitivo sem validação/dado crítico suficiente.
 
 Se este ciclo operar com 100% de precisão e integridade, o GUTO atinge sua promessa de valor: o usuário sente que não está sozinho e que o GUTO sabe exatamente o que está acontecendo na semana dele.
 
@@ -64,7 +72,7 @@ O erro mais grave que o GUTO pode cometer aqui **não** é esquecer de validar u
 4. **O GUTO assume continuidade como padrão.** Nunca assume interrupção primeiro. Sempre busca uma forma de adaptar antes de proteger/bloquear o dia.
 5. **O GUTO pergunta só o mínimo crítico** para conseguir adaptar — nunca vira formulário, nunca pergunta 7 coisas.
 6. **Só cria impacto operacional definitivo depois de informação suficiente.** Sem o dado crítico, não há `workoutEffect`/`missionEffect`/XP/Arena definitivos.
-7. **Informação insuficiente → estado de `pending_clarification` (decisão `ask_critical`), não impacto definitivo.** O impacto definitivo nasce quando — e só quando — o dado crítico chega.
+7. **Informação insuficiente → decisão `ask_critical`, não impacto definitivo.** O impacto definitivo nasce quando - e só quando - o dado crítico chega.
 
 ### O fluxo correto (ordem obrigatória)
 
@@ -89,9 +97,9 @@ A diferença para o ciclo geral é a etapa **PROPOR CONTINUIDADE antes de pergun
 
 ### Suficiência de contexto por tipo de evento
 
-- **Viagem (sem mais nada — ex.: "viajo na quarta"):** contexto **insuficiente**. NÃO cria impacto definitivo. Cria `pending_clarification` / decisão `ask_critical` e **propõe continuidade + pergunta o dado crítico** (vai ter tempo/equipamento pra treinar, ou é impossível mesmo?).
-  - **"consigo treinar no hotel" / "tenho academia no hotel" / "dá pra treinar":** agora há contexto. Cria impacto **adaptado** (treino curto/leve no hotel/quarto). Mantém o treino no dia. **Não** marca descanso. **Não** compensa com intensidade máxima.
-  - **"não vai dar" / "não consigo treinar" / "fico o dia inteiro sem tempo":** agora há contexto. Marca o dia como **protegido/indisponível** e **reorganiza a semana**. Sem intensidade máxima automática, sem XP grátis, sem Arena grátis.
+- **Viagem (sem mais nada — ex.: "viajo na quarta"):** contexto **insuficiente**. NÃO cria impacto definitivo. Gera decisão `ask_critical` e **propõe continuidade + pergunta o dado crítico** (vai ter tempo/equipamento pra treinar, ou é impossível mesmo?).
+  - **"consigo treinar no hotel" / "tenho academia no hotel" / "dá pra treinar":** agora há contexto. Cria impacto **adaptado** (treino curto/leve no hotel/quarto). Mantém o treino no dia. **Não** marca descanso, não cria dia protegido e **não** compensa com intensidade máxima.
+  - **"não vai dar" / "não consigo treinar" / "fico o dia inteiro sem tempo":** agora há contexto. Abre/usa confirmação de dia protegido/indisponível e só depois salva o impacto definitivo no Percurso. Sem intensidade máxima automática, sem XP grátis, sem Arena grátis.
 - **Reunião com período já definido (ex.: "reunião quarta à noite"):** pode adaptar o período (já existe período), mas **preserva continuidade** — puxa o treino para antes ou deixa missão curta. Nunca cancela o dia inteiro.
 - **Semana corrida ("semana corrida"):** continuidade reduzida — plano mínimo executável. "A semana vai ser executável, não perfeita." Linguagem ativa, não passiva.
 - **Pouco tempo ("só tenho 10 minutos"):** **não cancela.** Vira missão curta e direta de 10 minutos.
@@ -115,6 +123,14 @@ A diferença para o ciclo geral é a etapa **PROPOR CONTINUIDADE antes de pergun
 **Usuário: "Não vai dar"**
 
 ✅ "Fechado. Aí sim eu considero quarta indisponível e reorganizo a semana sem inventar intensidade máxima. Confirmo quarta como dia protegido?"
+
+### Card de confirmação de viagem/indisponibilidade
+
+Quando a viagem impede treino, o card é a materialização do ciclo **entender → validar → salvar**:
+
+- O GUTO primeiro tenta adaptar. Se o usuário consegue treinar, não há bloqueio nem dia protegido.
+- Se o usuário diz que não consegue treinar, o GUTO mostra confirmação (`confirmar`, `alterar`, `fechar`) antes do impacto definitivo.
+- O Percurso pode exibir uma decisão pendente como memória visual, mas o efeito definitivo (`day_protected`, reorganização e ausência de cobrança) só deve nascer após confirmação ou dado crítico suficiente.
 
 **Caso: "Reunião quarta à noite"**
 
@@ -297,12 +313,12 @@ No início do ciclo seguinte, o GUTO repassa as memórias pendentes de validaç�
 
 | # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
 |---|---|---|---|---|
-| P-1 | Ciclo fechado (coletar→confirmar→enriquecer→usar→validar→descartar) | Estados `pending_confirmation`→`confirmed`→`enriched`→`surfaced`→`validated`/`discarded` | `src/proactivity/*` + `proactive-store` (testado) | ✅ alinhado |
-| P-2 | Confirma antes de salvar (anti-chute, Regra Soberana 1) | Nunca salva contexto sem o aceite do usuário | `POST /guto/proactivity/confirm`; só persiste após confirm | ✅ alinhado |
+| P-1 | Ciclo fechado (entender→validar→salvar→mostrar→usar depois) | Estados `pending_confirmation`→`confirmed`→`enriched`→`surfaced`→`pending_validation`→`validated`/`discarded` | `src/proactivity/*` + `proactive-store` (testado) | ✅ alinhado |
+| P-2 | Confirma antes de impacto definitivo (anti-chute, Regra Soberana 1) | Pode guardar pendência, mas não deve aplicar treino/dieta/XP/Percurso definitivo sem aceite/dado crítico | `memory-action-resolver` + `decision-engine` usam `ask_critical`, confirm/discard/update | ✅ alinhado |
 | P-3 | Não vira calibragem permanente sem confirmação | Viagem/cidade temporária não troca `country`/`city` permanente | `memory-action-resolver` respeita | ✅ alinhado |
 | P-4 | Não sobrescreve plano `lockedByCoach` | Vira pendência/revisão | Respeitado | ✅ alinhado |
 | P-5 | Arquiva memória após o ciclo (sem sujeira eterna) | `discarded`/expiração + reschedule | `proactive-store` (expira 24h, reschedule +7d; testado) | ✅ alinhado |
-| P-6 | Enriquecimento com clima/feriado da cidade | Usa contexto externo (auxiliar; não bloqueia se falhar) | `city`/contexto usados; **provider de clima externo não confirmado** | **[implementar]** (parcial; é auxiliar) |
+| P-6 | Enriquecimento com clima/feriado da cidade | Usa contexto externo (auxiliar; não bloqueia se falhar) | `memory-enricher` usa `wttr.in` e `date.nager.at` quando há cidade/data | ✅ alinhado |
 | P-7 | Não cobra presença de quem declarou viagem/indisponibilidade | Penalidade de ausência suspensa no dia confirmado | Regra documentada e respeitada na penalidade | ✅ alinhado |
 
 > A fala da proatividade sai sempre pelo chat com a personalidade do GUTO (curta, humana): ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`.

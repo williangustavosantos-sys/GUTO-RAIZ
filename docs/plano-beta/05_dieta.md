@@ -1,5 +1,7 @@
 # 05 — Dieta Integrada
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` · Código: `guto-backend/src/nutrition.ts`, `food-catalog.ts`, `food-availability.ts`, `diet-store.ts`; `guto-app-v0/components/guto/tabs/diet-tab.tsx`, `lib/diet-plan.ts`
 >
 > **Veredito: 🟢 a engenharia da dieta é a mais sólida do produto — mas hoje está 🔴 inalcançável pelo chat.**

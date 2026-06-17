@@ -1,5 +1,7 @@
 # 02 — Calibragem e Memória Operacional
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` · Código: `guto-app-v0/components/guto/screens/calibration-screen.tsx`, `guto-backend/server.ts` (memória/gate), `guto-backend/src/memory-store.ts`, `dirty-data-resolver.ts`
 >
 > **Veredito: 🟢 coleta madura; o furo CM-1 (usuário saudável) foi fechado no front e verificado ao vivo (2026-05-30).**

@@ -1,5 +1,7 @@
 # 08 — Validação, XP, Evolução e Morte do GUTO
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` · Código: `guto-backend/server.ts` (rota de validação, uploads), `src/guto-evolution.ts`, `arena-store.ts`, `user-access-store.ts`, `auth-middleware.ts`; `guto-app-v0/components/guto/validation/workout-validation-flow.tsx`
 >
 > **Veredito: 🟢 XP/evolução sólidos; o P0 de segurança (selfies públicas) foi FECHADO — PR #46, verificado — e a selfie obrigatória (X-7) está implementada. Resta (P2 produto) a Morte do GUTO e o storage persistente das selfies.**

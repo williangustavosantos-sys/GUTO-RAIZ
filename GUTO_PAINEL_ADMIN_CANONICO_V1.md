@@ -55,7 +55,7 @@ Hierarquia de autoridade entre os documentos de painel:
 
 ## 2. Estado Atual Resumido
 
-> Auditado no código real em 2026-05-27. Esta seção corrige os "Estados Atuais" desatualizados dos documentos antigos.
+> Auditado no código real em 2026-05-27 e revisado novamente em 2026-06-17. Esta seção corrige os "Estados Atuais" desatualizados dos documentos antigos.
 
 ### 2.1 O que JÁ EXISTE e funciona (✅)
 
@@ -69,26 +69,29 @@ Hierarquia de autoridade entre os documentos de painel:
 
 ### 2.2 O que está PARCIAL (🟡)
 
-- **Detalhe do aluno** — abas reais hoje: **Resumo, Calibragem, Treino, Dieta, Histórico, Acesso** (6 abas; `utils.ts → DETAIL_TABS`). A visão alvo pede também **Arena, XP/Evolução, Percurso/Validações e Logs do aluno** como abas dedicadas (hoje essas informações ficam diluídas em Resumo/Histórico). GAP G-09.
+- **Detalhe do aluno** — abas reais hoje: **Resumo, Calibragem, Treino, Dieta, Validações, Histórico, Acesso** (7 abas; `utils.ts → DETAIL_TABS`). A visão alvo ainda pede **Arena, XP/Evolução, Percurso e Logs do aluno** como abas dedicadas (parte dessas informações fica diluída em Resumo/Histórico/Validações). GAP G-09.
 - **Status de onboarding** — derivado da `GutoMemory` no frontend; não há campo único `onboardingStage` no backend. GAP G-04.
 - **Edição de calibragem** — flui por `PATCH /admin/students/:id` com objeto `calibration`; **não existe** endpoint dedicado validado por campo com auditoria before/after. GAP G-05.
-- **i18n do cockpit** — só a tela de login (`/admin/login`) é 100% PT/IT/EN. O cockpit `/coach` é **PT-first com texto hardcoded** (títulos, labels, toasts). GAP G-08.
+- **i18n do cockpit** — existe base `panel-i18n` PT/EN/IT e parte do cockpit já usa idioma persistido, mas ainda há labels/toasts hardcoded em PT. Portanto é **parcial**, não 100%. GAP G-08.
 - **Códigos de acesso** — backend emite só `ACCESS_PAUSED` e `SUBSCRIPTION_EXPIRED`; `GUTO_DECEASED/GUTO_DEAD` é tratado no interceptor do frontend mas o backend **não emite** (morte não implementada). GAP G-07.
 
-### 2.3 O que está ERRADO / inconsistente (🟣)
+### 2.3 O que segue FUTURO/PARCIAL (🟣)
 
-- **Threshold de risco — decisão fechada:** o **canônico é Verde ≤48h · Atenção 3–5 dias · Crítico ≥6 dias** (decisão do fundador). O frontend (`utils.ts → studentRisk`) ainda usa **Atenção 3–6 / Crítico ≥7** → **código a corrigir**. GAP G-06.
-- **Telas residuais no código:** `coaches`, `treinos`, `dietas` ainda existem como `Screen` e no `switch` de `ActiveScreen` (`app/coach/page.tsx`), mas **foram removidas da navegação**. São telas órfãs — devem ser removidas ou explicitamente reaproveitadas como **filas de revisão dentro do escopo** (ver §12).
+- **Morte do GUTO por XP zerado:** `GUTO_DECEASED/GUTO_DEAD` é tratado como possibilidade no cliente, mas o backend ainda não implementa `gutoLifeStatus`, `deadAt` nem guard 403 de morte. GAP G-07.
+- **i18n 100% do cockpit:** base parcial existe, mas não cobre todo texto operacional. GAP G-08.
 - **Documentos antigos desatualizados:** descrevem `/admin` como Sala mock e `/empresa` como stub recebendo o operador. **Não é mais verdade** (ver 2.4).
 
 ### 2.4 O que era LEGADO/MOCK e foi RESOLVIDO
 
 - **`/admin` e `/empresa` agora são apenas redirect para `/coach`** (`app/admin/page.tsx` e `app/empresa/page.tsx` renderizam `<LegacyPanelRedirect />`; regra em `lib/panel-rules.ts → legacyPanelRedirectTarget`). A UI mock (`lib/panel/data-source.ts`, `IS_MOCK_DATA`) **não é mais alcançável por essas rotas**. O risco de "vazamento de mock" descrito nos docs antigos está **mitigado**.
 - **Rotas legadas de coach no backend (`/guto/coach/*`)** — desativadas por padrão (`410 LEGACY_COACH_ROUTES_DISABLED`); só `/guto/coach/rankings` (Arena) permanece ativo.
+- **Threshold de risco alinhado** — o código atual usa Verde ≤48h · Atenção 3–5 dias · Crítico ≥6 dias (`studentRisk` em `utils.ts`).
+- **Telas órfãs globais removidas do fluxo ativo** — `Screen`/`ActiveScreen` atuais não expõem `coaches`, `treinos` e `dietas` como telas globais; coach fica no drawer da empresa e treino/dieta no drawer do aluno.
+- **Selfie obrigatória implementada** — validação sem `imageBase64` retorna `SELFIE_REQUIRED`; XP/Arena só entram com evidência.
 
 ### 2.5 O que precisa virar GAP (resumo; detalhe em §15)
 
-Onboarding-stage dedicado, endpoint validado de calibragem, abas faltantes do aluno (Arena/XP/Percurso/Logs), i18n completa do cockpit, decisão de threshold de risco, emissão de código de morte, remoção das telas órfãs, role dedicada de empresa (ver §4.5).
+Onboarding-stage dedicado, endpoint validado de calibragem, abas faltantes do aluno (Arena/XP/Percurso/Logs), i18n completa do cockpit, emissão de código de morte, role dedicada de empresa (ver §4.5).
 
 ---
 
@@ -186,7 +189,7 @@ Hoje **não existe** um role `company_admin` separado: o papel `admin` cumpre o 
 ### 5.1 Tela inicial e idioma
 - Rota real: **`/admin/login`** (`app/admin/login/page.tsx`). É **login real** (não mock).
 - **3 idiomas obrigatórios** no seletor (canto superior direito): **PT-BR, IT-IT, EN-US**. A escolha afeta labels, placeholders, botões e mensagens de erro **instantaneamente, sem reload**.
-- Persistência: `localStorage["guto-admin-language"]` e espelhada em `localStorage["guto-panel-lang"]` (`pt|en|it`) para o cockpit pós-login.
+- Persistência atual: `localStorage["guto-admin-language"]`.
 - **Seletor visual de papel** (3 cápsulas): **Super Admin**, **Empresa**, **Coach**. É um atalho de UX — **a verdade do papel vem do backend/token** (ver 5.3). O usuário não "vira" super admin só por clicar na cápsula.
 
 ### 5.2 Campos e ações
@@ -249,7 +252,7 @@ Sidebar do Super Admin (grupos → itens):
 - Empresas ativas reais (exclui `GUTO_CORE` e exclui pausadas/arquivadas — `activeClientTeams`).
 - Alunos ativos (contagem do escopo).
 - Treinos validados hoje.
-- Críticos (**≥6 dias** sem validar; código ainda usa ≥7 — ver G-06).
+- Críticos (**≥6 dias** sem validar; alinhado no código atual).
 - Em atenção (faixa intermediária).
 - Pendências de aprovação (exercícios custom aguardando).
 - Lista curta de empresas ativas.
@@ -536,14 +539,14 @@ Campos exibidos (do `GutoMemory`; draft em `CalibrationDraft`):
 - Risco operacional: se o storage não tiver `userId`, a sessão não inicia (botão bloqueado).
 - O painel pode mostrar logs de sessão (`session_started`, `set_completed`, `pain_reported`, `session_finished`).
 
-### 9.7 Validação (aba `historico`)
-- Câmera: foto/selfie de prova — **obrigatória** (decisão do fundador): sem foto não valida e não dá XP/streak. Hoje o backend aceita validação **sem** foto → **código a corrigir** (G-13).
+### 9.7 Validação (aba `validacoes`)
+- Câmera: foto/selfie de prova — **obrigatória** (decisão do fundador): sem foto não valida e não dá XP/streak. O backend atual retorna `SELFIE_REQUIRED` sem `imageBase64`, e o painel exibe a aba **Validações** com imagem, data, foco, local, XP e feedback.
 - Frase de confirmação (quando existir).
 - Status: pendente/aprovado/rejeitado.
 - **Privacidade:** nunca expor imagem de validação pública sem autenticação; se o consentimento for revogado, ocultar fotos e dados biológicos.
 
 ### 9.8 XP / Evolução (alvo: aba dedicada; hoje no Resumo)
-- XP inicial de boas-vindas = **+100** (buffer do pacto) — **não é prova de treino** e **não ativa streak**.
+- XP inicial de boas-vindas = **+100** (buffer do pacto) — conta em XP total/Semanal/Mensal/Individual do período, mas **não é prova de treino**, **não ativa streak** e **não incrementa `validatedWorkouts`**.
 - XP por validação real (+100 treino; +50 missão adaptada).
 - **XP nunca negativo** (`clampXp`); penalidade por ausência = −20 (clamp a 0).
 - Evolução: **Baby / Teen / Adult / Elite** (`getAvatarStage(totalXp)`).
@@ -728,15 +731,15 @@ Convite: token SHA-256, **expira em 7 dias**, status `pending_claim → active �
 
 ## 12. O Que NÃO Deve Existir
 
-- ❌ **Treino global fora do aluno.** Treino vive dentro do aluno (drawer). A tela `treinos` residual deve ser removida ou virar **fila de revisão escopada** (lista de alunos com treino pendente), nunca um editor global solto.
-- ❌ **Dieta global fora do aluno.** Idem; tela `dietas` residual → remover ou virar fila de revisão escopada.
-- ❌ **Coach global sem empresa.** Coach só existe dentro de `teamId`. A tela `coaches` global residual deve ser removida — coaches vivem no drawer da empresa.
+- ❌ **Reintroduzir treino global fora do aluno.** Treino vive dentro do aluno (drawer) ou em fila escopada de revisão, nunca como editor global solto.
+- ❌ **Reintroduzir dieta global fora do aluno.** Dieta vive dentro do aluno (drawer) ou em fila escopada de revisão.
+- ❌ **Reintroduzir coach global sem empresa.** Coach só existe dentro de `teamId`; coaches vivem no drawer da empresa.
 - ❌ **Aluno sem empresa/coach**, exceto a exceção interna documentada **GUTO_CORE**.
 - ❌ **Empresa contando GUTO_CORE como cliente** (excluir de métricas — `clientTeams`).
 - ❌ **Empresa arquivada/pausada contando como ativa** (`activeClientTeams` filtra).
 - ❌ **Mock acessível em produção.** `/admin` e `/empresa` redirecionam; nunca religar `IS_MOCK_DATA` em produção sem fonte real.
 - ❌ **Botão `+Aluno` solto no Dashboard** do super admin (`headerCtaForScreen("hoje") = null`).
-- ❌ **Texto hardcoded fora do sistema de idioma** (ver §16 — hoje o cockpit viola isso; é GAP G-08).
+- ❌ **Texto hardcoded fora do sistema de idioma** (ver §16 — hoje o cockpit está parcialmente migrado; cobertura total é GAP G-08).
 - ❌ **Resposta do GUTO tratando alimento como dor** (ex.: "nessun dolore" não é restrição alimentar).
 - ❌ **Resposta do GUTO tratando dor como alimento** (patologia ≠ NÃO COMO).
 - ❌ **Imagem de validação pública sem autenticação.**
@@ -800,7 +803,7 @@ Convite: token SHA-256, **expira em 7 dias**, status `pending_claim → active �
 - Confirmar `/admin` e `/empresa` redirecionando (✅ já no código).
 - Decidir role de empresa (G-01): manter `admin` como Admin de Empresa **ou** criar `company_admin`.
 - Garantir escopo por papel em todas as telas (esconder o que o papel não pode ver).
-- Remover telas órfãs `coaches`/`treinos`/`dietas` da navegação/`switch` ou reaproveitá-las como filas de revisão escopadas (§12).
+- Manter a regra atual: coaches dentro do drawer da empresa; treino/dieta dentro do drawer do aluno. Não reintroduzir telas globais `coaches`/`treinos`/`dietas`.
 
 ### Fase P1 — Super Admin completo
 - Empresa: criar/editar/pausar/arquivar (drawer completo).
@@ -835,14 +838,14 @@ Convite: token SHA-256, **expira em 7 dias**, status `pending_claim → active �
 | **G-03** | Renomear rota `/coach` → nome neutro (ex.: `/painel`) | Nome confunde (atende 3 papéis) | `app/coach/*`, redirects | P2 | Rota nova + redirect de `/coach`; testes verdes |
 | **G-04** | `onboardingStage` derivado no backend | Painel recalcula regra de negócio no front | `admin-router.ts → buildStudentView` | P1 | Campo no `GET /admin/students/:id` + badge no painel |
 | **G-05** | Endpoint validado de calibragem por campo + auditoria before/after | Risco de gravar dado inconsistente | `admin-router.ts`, `memory-store.ts` | P1 | Rota tipada com ranges + log before/after; teste |
-| **G-06** | **Decidido:** risco **Verde ≤48h / Atenção 3–5d / Crítico ≥6d**; vídeo **catálogo ≤15s / custom ≤30s**. Código ainda usa risco ≥7. | Alinhar código à decisão | `app/coach/_components/utils.ts` | P1 | Código alinhado à decisão + teste |
+| **G-06** | **FECHADO:** risco **Verde ≤48h / Atenção 3–5d / Crítico ≥6d**; vídeo **catálogo ≤15s / custom ≤30s**. | Código atual alinhado | `app/coach/_components/utils.ts` | Fechado | `studentRisk` usa crítico ≥6 |
 | **G-07** | Backend não emite `GUTO_DECEASED`; morte não implementada | Promessa de produto sem enforcement; copy errada p/ expirado | `auth-middleware.ts`, `memory-store.ts` | P1 | `gutoLifeStatus`/guard 403 + emissão do code; teste |
-| **G-08** | i18n do cockpit `/coach` (hoje PT-first hardcoded) | Painel não cumpre os 3 idiomas | `app/coach/_components/*` (texto hardcoded) | P1 | Sistema de chaves PT/EN/IT no cockpit; toggle funciona |
-| **G-09** | Abas faltantes no detalhe do aluno (Arena, XP/Evolução, Percurso/Validações, Logs) | Visão incompleta do aluno | `app/coach/_components/student-drawer.tsx`, `DETAIL_TABS` | P1 | Abas presentes lendo memória/arena/logs |
+| **G-08** | i18n do cockpit `/coach` parcial | Painel ainda não cumpre 100% dos 3 idiomas | `app/coach/_components/*` (textos/toasts restantes hardcoded) | P1 | Todos os textos via `panel-i18n`; toggle cobre cockpit inteiro |
+| **G-09** | Abas faltantes no detalhe do aluno (Arena, XP/Evolução, Percurso, Logs) | Visão incompleta do aluno | `app/coach/_components/student-drawer.tsx`, `DETAIL_TABS` | P1 | Abas dedicadas presentes lendo memória/arena/logs; **Validações já existe** |
 | **G-10** | Plano governa só volumetria; recursos premium por plano | Sem diferenciação comercial além de limite | `team-plans.ts` | P2 | Matriz de recursos por plano + enforcement |
-| **G-11** | Telas órfãs `coaches`/`treinos`/`dietas` no `Screen`/switch sem nav | Superfície morta/confusa | `app/coach/page.tsx`, `utils.ts` | P0 | Removidas **ou** viram filas escopadas documentadas |
+| **G-11** | **FECHADO:** telas globais `coaches`/`treinos`/`dietas` não estão no `Screen` ativo | Superfície morta removida do fluxo | `app/coach/page.tsx`, `utils.ts` | Fechado | Coach fica no drawer da empresa; treino/dieta ficam no drawer do aluno |
 | **G-12** | Filtros de logs por empresa/ação/data | Auditoria pouco navegável | `admin-router.ts → /logs` | P2 | Query params + UI de filtro |
-| **G-13** | **Decidido: selfie obrigatória** na validação; código aceita sem foto | Accountability sem prova | backend de validação | P1 | Enforcement no backend + teste |
+| **G-13** | **FECHADO:** selfie obrigatória na validação | Accountability com prova | backend de validação | Fechado | Sem `imageBase64`, backend retorna `SELFIE_REQUIRED`; sem prova não há XP/Arena |
 | **G-14** | Agregados `/admin/panel/*` paginados | Escala (não carregar tudo no front) | `admin-router.ts` | P2 | Endpoints agregados + paginação cursor |
 
 ---
@@ -854,10 +857,10 @@ Convite: token SHA-256, **expira em 7 dias**, status `pending_claim → active �
 - **Inglês (`en-US`)**.
 - **Italiano (`it-IT`)**.
 
-País **não** é idioma (um brasileiro em Roma usa PT com contexto alimentar italiano). Persistência: `localStorage["guto-admin-language"]` (login) e `["guto-panel-lang"]` (`pt|en|it`, cockpit).
+País **não** é idioma (um brasileiro em Roma usa PT com contexto alimentar italiano). Persistência atual: `localStorage["guto-admin-language"]`.
 
 ### 16.2 Regra dura
-**Não pode haver texto hardcoded solto fora do sistema de idioma.** Hoje a tela `/admin/login` cumpre isso (objeto `COPY` por idioma). O cockpit `/coach` **viola** (títulos, labels, toasts em PT hardcoded — `SCREEN_TITLES`, etc.). Resolver = **G-08**.
+**Não pode haver texto hardcoded solto fora do sistema de idioma.** Hoje existe base `panel-i18n` PT/EN/IT e parte do cockpit já usa esse sistema, mas ainda há labels/toasts hardcoded em PT. Resolver cobertura total = **G-08**.
 
 ### 16.3 Convenção de chaves
 Usar dot notation (referência do design handoff `i18n.jsx`): `nav.*`, `kpi.*`, `risk.*`, `rank.*`, `screen.<id>.title`, `screen.<id>.sub`, `action.*`, `error.<code>`. Erros de API devem mapear `code → mensagem` por idioma (o cliente já tem base em `lib/api/client.ts → gutoApiErrorCopy`).
@@ -875,7 +878,7 @@ Usar dot notation (referência do design handoff `i18n.jsx`): `nav.*`, `kpi.*`, 
 | Banco GUTO | "Banco do GUTO" | `screen.banco.title` | super; catálogo aprovado |
 | Arena | "Arena" | `screen.arena.title` | Semanal/Mensal (teamId) + Geral |
 | Logs | "Logs" | `screen.logs.title` | super; auditoria |
-| Detalhe aluno | "Resumo/Calibragem/Treino/Dieta/Histórico/Acesso" | `detail.tab.*` | abas; ler memória |
+| Detalhe aluno | "Resumo/Calibragem/Treino/Dieta/Validações/Histórico/Acesso" | `detail.tab.*` | abas; ler memória |
 
 > Não é preciso traduzir todos os textos agora; é preciso garantir que **nenhum texto novo entre hardcoded** e que o cockpit migre para chaves (G-08).
 
@@ -915,10 +918,11 @@ Usar dot notation (referência do design handoff `i18n.jsx`): `nav.*`, `kpi.*`, 
 2. **Telefone do aluno.** Doc de engenharia dizia "obrigatório no backend (conflito de privacidade)". **Código real: telefone é opcional** (valida só se enviado). → Conflito resolvido a favor do código (§11.5).
 3. **Email duplicado.** Doc de engenharia listava como GAP. **Código real já retorna `409 GUTO_EMAIL_DUPLICATE`.** → GAP fechado.
 4. **"Não cria empresa real" (PARTE_5).** **Errado:** backend cria empresa/coach/aluno/convite de verdade. → Corrigido.
-5. **Threshold de risco e vídeo — DECIDIDOS.** Risco canônico: **Verde ≤48h / Atenção 3–5d / Crítico ≥6d** (código usa ≥7 → corrigir). Vídeo: **catálogo ≤15s / custom ≤30s** (ambos oficiais). → GAP G-06 (alinhar código).
+5. **Threshold de risco e vídeo — DECIDIDOS e alinhados.** Risco canônico: **Verde ≤48h / Atenção 3–5d / Crítico ≥6d**; vídeo: **catálogo ≤15s / custom ≤30s**. → G-06 fechado.
 6. **Morte do GUTO.** Docs descrevem lockdown/guard 403; **backend não implementa** (`resolveBlockedAccessCode` não trata morte). → GAP G-07.
-7. **i18n do painel.** Docs exigem 3 idiomas em todo o painel; **cockpit `/coach` é PT-first hardcoded** (só o login é i18n). → GAP G-08.
-8. **Abas do aluno.** Doc-alvo pede 9 abas; **código tem 6** (Resumo/Calibragem/Treino/Dieta/Histórico/Acesso). → GAP G-09.
+7. **i18n do painel.** Docs exigem 3 idiomas em todo o painel; **cockpit `/coach` tem base parcial `panel-i18n`, mas ainda não é 100%**. → GAP G-08.
+8. **Abas do aluno.** Doc-alvo pede mais abas dedicadas; **código tem 7** (Resumo/Calibragem/Treino/Dieta/Validações/Histórico/Acesso). → GAP G-09 apenas para Arena, XP/Evolução, Percurso e Logs dedicados.
+9. **Selfie obrigatória.** Docs antigos diziam que o backend aceitava validação sem foto; **código atual retorna `SELFIE_REQUIRED` e só credita XP/Arena com evidência**. → G-13 fechado.
 
 ### 17.6 Principais decisões canônicas
 - **Painel único = `/coach`** (cockpit role-aware). `/admin` e `/empresa` são redirects. `/admin/login` é a porta.
@@ -929,7 +933,7 @@ Usar dot notation (referência do design handoff `i18n.jsx`): `nav.*`, `kpi.*`, 
 - **3 idiomas oficiais; nada hardcoded fora do sistema de idioma.**
 
 ### 17.7 Principais GAPs (ver §15)
-Role de empresa (G-01), recuperação de senha (G-02), `onboardingStage` (G-04), calibragem validada (G-05), threshold de risco/vídeo (G-06), morte/lockdown (G-07), i18n do cockpit (G-08), abas do aluno (G-09), remoção das telas órfãs (G-11), foto de validação obrigatória (G-13).
+Role de empresa (G-01), recuperação de senha (G-02), `onboardingStage` (G-04), calibragem validada (G-05), morte/lockdown (G-07), i18n completa do cockpit (G-08), abas dedicadas restantes do aluno (G-09), agregados/logs (G-12/G-14).
 
 ### 17.8 Arquivos alterados
 - **Apenas 1 arquivo foi criado:** `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.

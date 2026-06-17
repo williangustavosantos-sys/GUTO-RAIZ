@@ -1,5 +1,7 @@
 # Guto: Nome "Operador" + Treino Incoerente — Implementation Plan
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Eliminar o fallback "Operador" no backend e fazer o plano de treino respeitar `trainingGoal` + `preferredTrainingLocation` de forma estrutural.

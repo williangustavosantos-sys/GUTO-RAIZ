@@ -1,5 +1,7 @@
 # GUTO — Estado Geral pro Beta (documento mestre)
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > **Atualizado 2026-05-31.** Fonte única do que foi **testado, corrigido, está certo e ainda falta**. Tudo aqui foi checado **rodando o app/cérebro de verdade** (API real + Redis de produção) ou pela **suíte de testes** — não só por testes que mockam o modelo. Detalhe por área em `00_INDICE.md` + docs `01..11`.
 >
 > **Status do build:** backend suíte **470/470 · tsc 0** · frontend `tsc`/`build` ok.

@@ -2,7 +2,7 @@
 
 > **Documento canônico** da Arena do GUTO: escopos por empresa/time, Arena Geral global, privacidade, XP, rankings, painel admin e experiência do aluno.
 >
-> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. A Arena **lê** XP/streak validados (não inventa pontuação); Semanal/Mensal são por **empresa (`teamId`)** e a Geral é global. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+> **Natureza:** descreve o **GUTO atual + alvo de produto**. A Arena **lê** eventos de XP/streak do backend (não inventa pontuação); Semanal/Mensal são por **empresa (`teamId`)** e a Geral é global. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
 >
 > **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 13) · `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` (XP/streak/avatar — mesma fonte) · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (Arena por papel no painel).
 
@@ -357,7 +357,7 @@ Quando isso acontece:
 
 ## Eventos E Pontuacao
 
-A Arena consome eventos de XP validados pelo backend.
+A Arena consome eventos de XP persistidos pelo backend.
 
 ```txt
 Treino Validado                  -> +100 XP
@@ -366,12 +366,12 @@ Conclusao do Pacto               -> +100 XP inicial
 Ausencia injustificada, se ativa -> penalidade conforme regra do produto
 ```
 
-Regra de integridade:
+Regra de integridade atual:
 
-- XP inicial do Pacto pode entrar no saldo geral.
+- XP inicial do Pacto entra no XP total e também nos contadores Semanal/Mensal/Individual do período em que foi concedido.
 - XP inicial do Pacto nao conta como treino executado.
 - XP inicial do Pacto nao ativa streak.
-- XP inicial do Pacto nao deve inflar Arena Semanal/Mensal como se fosse presenca real.
+- XP inicial do Pacto nao deve ser interpretado como presença real, `validatedWorkouts` ou treino validado.
 
 ---
 
@@ -477,7 +477,7 @@ O desempate deve ser estavel e calculado no backend:
 
 ## Sincronismo Total De Estados
 
-Toda pontuacao nasce de evento validado no backend.
+Toda pontuacao nasce de evento de XP persistido no backend. Treinos e missões adaptadas exigem validação/evidência; o Pacto entra como bônus inicial idempotente.
 
 ```txt
 Validacao de treino aprovada
@@ -617,7 +617,7 @@ Antes de implementar ou alterar Arena, confirmar:
 | AR-2 | Geral mostra `teamName` ao lado da dupla | Contexto de empresa na linha global | `getGlobalIndividualRanking` (testado) | ✅ alinhado |
 | AR-3 | Coach vê Arena da **empresa** (não só seus alunos) | Escopo `teamId`, não `coachId` | `coachRankingsRouter` + tela de arena | ✅ alinhado (atenção: protótipo de design mostrava arena só do coach — ignorar) |
 | AR-4 | XP/streak/avatar não divergem entre Arena/Percurso/Evoluir | Mesma fonte | Desync dos 100 XP iniciais já corrigido | ✅ alinhado |
-| AR-5 | XP inicial do Pacto não conta como treino/streak | Buffer não infla Semanal/Mensal | Buffer não toca `completedWorkoutDates`/streak | ✅ alinhado |
+| AR-5 | XP inicial do Pacto conta como XP, mas não como treino/streak | Buffer entra no período e total; não vira presença real | `awardArenaXp(type:"bonus")` soma weekly/monthly/total; não toca `completedWorkoutDates`/streak/`validatedWorkouts` | ✅ alinhado |
 | AR-6 | `visibleInArena=false` remove da listagem pública | Aluno some do ranking público | `isVisibleInRanking` filtra | ✅ alinhado |
 | AR-7 | Ranking calculado no backend, paginado | Frontend recebe lista pronta | Calculado no backend | ✅ alinhado |
 | AR-8 | Dados sensíveis nunca no ranking | Sem peso/idade/patologia/foto/telefone/email | Respeitado | ✅ alinhado |

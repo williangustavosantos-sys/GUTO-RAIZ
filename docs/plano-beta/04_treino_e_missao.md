@@ -1,5 +1,7 @@
 # 04 — Treino e Missão (treino do dia)
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` · Código: `guto-backend/src/workout-curator.ts`, `workout-level.ts`, `workout-progression.ts`, `workout-catalog-validation.ts`, `exercise-catalog.ts`; `guto-app-v0/components/guto/tabs/mission-tab.tsx`
 >
 > **Veredito: 🟠 a engenharia do treino é madura, mas a geração é frágil sob carga e está bloqueada upstream pelo chat e pela calibragem.**
