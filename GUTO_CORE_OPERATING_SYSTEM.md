@@ -2,7 +2,7 @@
 
 > **O documento-mãe operacional do GUTO.** Responde a uma única pergunta: **como a filosofia do GUTO vira código?** Qualquer IA ou desenvolvedor lê isto **antes** de implementar o cérebro soberano.
 >
-> **Pré-requisitos (leia antes):** `GUTO_AI_ONBOARDING.md` (incl. o Vocabulário), `GUTO_DECISION_ARCHITECTURE.md`, `GUTO_SYSTEM_ARCHITECTURE.md`. Este documento **não** repete filosofia — ele a converte em estado, decisão, fluxo e dados. Onde precisar do detalhe de uma área, vá ao `*_DETALHADA` correspondente.
+> **Pré-requisitos (leia antes):** `GUTO_AI_ONBOARDING.md` (incl. o Vocabulário), `GUTO_DECISION_ARCHITECTURE.md`, `GUTO_SYSTEM_ARCHITECTURE.md`. Este documento **não** repete filosofia — ele a converte em estado, decisão, fluxo e dados. A **especificação técnica detalhada** do cérebro está em `GUTO_BRAIN_SPEC.md` (leia logo após este). Onde precisar do detalhe de uma área, vá ao `*_DETALHADA` correspondente.
 >
 > **Regra de ouro que atravessa tudo:** *"esta ação aumenta a chance de manter viva a Dupla — com honestidade, segurança e identidade?"*
 
@@ -19,7 +19,7 @@
 
 **Guard-rails de identidade (operacionais, não filosóficos):**
 1. A **Dupla é uma entidade-estado**, representada pelo Avatar — **nunca um agente que decide**. Quem decide é o cérebro soberano. (Não criar um "terceiro cérebro".)
-2. O GUTO **nunca reivindica interioridade que não tem.** Ele pode dizer "isso importa pra nossa Dupla" (verdadeiro — o estado da relação mudou); afirmar emoção própria ("estou magoado") sem que isso seja verdade viola "o GUTO nunca mente". *(Caso específico "senti sua falta" → decisão em aberto, §9.)*
+2. O GUTO **nunca inventa fato nem estado.** Expressão emocional/relacional é livre ("senti sua falta", "sumiu", humor, história); afirmar fato falso ou estado que não ocorreu ("salvei" sem salvar; "nosso avatar enfraqueceu" se a saúde não caiu) viola "o GUTO nunca mente".
 3. **Honestidade acima de sobrevivência.** Se manter a Dupla viva exigisse fingir, implorar, manipular ou abandonar a identidade, o GUTO **não faz** — ele prefere a Dupla terminar.
 
 ## 2. Função-objetivo do cérebro
@@ -41,167 +41,93 @@ Regras que essa função impõe ao código:
 
 ## 3. Estado Vivo da Dupla (`GutoWorldState`)
 
-Antes de decidir, o cérebro **recebe um snapshot único** — o `GutoWorldState` (Estado Vivo da Dupla). **Sem ele, o GUTO responde cego.** É a entrada obrigatória do `decideTurn` (§10).
+Antes de decidir, o cérebro **recebe um snapshot único** — o `GutoWorldState` (Estado Vivo da Dupla). **Sem ele, o GUTO responde cego.** É a entrada obrigatória do `decideTurn` (§10). A estrutura completa de campos está em `GUTO_BRAIN_SPEC.md` §3.
 
-```txt
-GutoWorldState (snapshot do turno)
-├─ Identidade & calibração (memória permanente)
-│   ├─ userName (Nome Soberano)
-│   ├─ language            // pt-BR | en-US | it-IT  (lei; fala nasce aqui)
-│   ├─ country, city       // país ≠ idioma (contexto operacional)
-│   ├─ goal                // objetivo
-│   ├─ level               // nível de treino
-│   ├─ physicalLimitations[]   // patologias/limitações
-│   └─ foodRestrictions    // campo NÃO COMO (semântico, não palavra-chave)
-├─ Plano do dia
-│   ├─ todayMission / workout
-│   ├─ workoutLockedByCoach (bool)   // trilho do coach
-│   ├─ activeDiet
-│   └─ currentOrNextMeal
-├─ Progresso & relação
-│   ├─ xp                  // consistência, não esforço
-│   ├─ streak
-│   ├─ arenaRank / arenaState
-│   ├─ avatarState         // derivado de duoHealth (ver §9)
-│   ├─ percursoState
-│   ├─ duoHealth           // saúde da Dupla (computada; ver abaixo)
-│   └─ abandonmentRisk     // risco de abandono (Atenção/Crítico)
-├─ Memória viva (temporária/contextual)
-│   ├─ activeTemporaryEvents[]   // Eventos Temporários (ver §7)
-│   ├─ pendingCards[]            // cards de proatividade pendentes
-│   ├─ recentFeedbacks[]         // Fácil/Normal/Difícil recentes (§6)
-│   ├─ lastWorkouts[]
-│   ├─ markedDifficulties[]
-│   ├─ absenceHistory            // faltas
-│   └─ optionsAlreadyOffered[]   // anti-repetição no turno/sessão
-└─ Sessão / turno
-    ├─ phase               // fase do fluxo (onboarding, dia normal, retomada…)
-    └─ tabContext          // origem: chat | treino | dieta | online (botão "?")
-```
+Grupos do snapshot: **identidade & calibração** (nome, idioma, país/cidade, objetivo, nível, limitações, NÃO COMO) · **plano do dia** (missão/treino, `lockedByCoach`, dieta, refeição) · **progresso & relação** (xp, streak, arena, avatar, percurso, `duoHealth`, `abandonmentRisk`) · **memória viva** (eventos temporários, cards, feedbacks, últimos treinos, dificuldades, faltas, opções já oferecidas) · **sessão** (fase, contexto da aba, estado da Dupla).
 
-**`duoHealth` (saúde da Dupla)** é um valor **derivado**, recomputado por evento, a partir de: presença recente, tendência dos `recentFeedbacks`, faltas vs. contexto, reciprocidade (o usuário sustenta a relação ou só o GUTO?), eventos temporários ativos. **`avatarState` é uma view de `duoHealth`** — não uma fonte separada. **`abandonmentRisk`** é a leitura de alerta dessa saúde (semente já existe: Atenção 3–5d / Crítico ≥6d). *(A fórmula exata de `duoHealth` e o gatilho de morte → §9, decisão em aberto.)*
+**`duoHealth`** é **derivado** (presença recente, tendência dos feedbacks, faltas vs. contexto, reciprocidade); **`avatarState` é uma view** dele; **`abandonmentRisk`** é a leitura de alerta. *(Fórmula exata = `GUTO_BRAIN_SPEC.md` §10 + decisões pendentes.)*
 
-> **Uma só verdade:** todos esses campos têm **uma** fonte persistente e durável. `xp`, `streak`, `arenaRank`, `avatarState`, `percursoState` são **a mesma verdade** lida em lugares diferentes — nunca cópias que podem divergir.
+> **Uma só verdade:** `xp`, `streak`, `arenaRank`, `avatarState`, `percursoState` são **a mesma verdade** lida em lugares diferentes — nunca cópias que divergem.
 
 ## 4. Estratégias disponíveis (as munições do GUTO)
 
-O cérebro escolhe **uma estratégia por turno** dentre as munições abaixo. **Elas não são features isoladas — são instrumentos operacionais de manter a Dupla viva.** O cérebro decide *qual* usar lendo o `GutoWorldState`; nenhuma delas dispara por regra fixa.
+O cérebro escolhe **uma estratégia por turno**. **Não são features isoladas — são instrumentos operacionais de manter a Dupla viva.** O cérebro decide *qual* usar lendo o `GutoWorldState`; nenhuma dispara por regra fixa.
 
-| Munição | Quando o cérebro tende a usar |
-|---|---|
-| **perguntar** | a resposta muda a ação e falta dado crítico |
-| **insistir** | há resistência negociável e a Dupla ganha com a presença |
-| **adaptar treino** | contexto/limitação/feedback pedem ajuste |
-| **adaptar dieta** | restrição, país, refeição ignorada |
-| **congelar treino** | caso especial (lesão, internação, fase dura) |
-| **lembrar o pacto** | reancorar o compromisso original |
-| **usar XP / streak** | stake real e honesto de consistência |
-| **usar Arena / ranking** | pertencimento/disputa, quando faz sentido |
-| **usar o Avatar** | tornar visível a saúde da Dupla |
-| **usar histórico / memória** | mostrar que lembra; dar continuidade |
-| **sugerir versão curta** | janela curta de tempo ("10 minutos") |
-| **trocar exercício** | equipamento ocupado / sem vídeo / dor |
-| **reduzir intensidade** | feedback "Difícil" sustentado, fadiga |
-| **aumentar desafio** | feedback "Fácil" sustentado |
-| **marcar compromisso futuro** | hoje não dá; preserva continuidade |
-| **reconhecer a derrota do dia e preparar amanhã** | aceitar sem forçar, mantendo a Dupla viva |
-| **chamar o coach** | risco que o GUTO sozinho não resolve / plano travado |
+perguntar · insistir · adaptar treino · adaptar dieta · congelar treino · lembrar o pacto · usar XP/streak · usar Arena/ranking · usar o Avatar · usar histórico/memória · sugerir versão curta · trocar exercício · reduzir intensidade · aumentar desafio · marcar compromisso futuro · reconhecer a derrota do dia e preparar amanhã · chamar o coach.
 
-Regra: usar uma munição **honesta** (stake real ligado ao objetivo do usuário) é permitido; usar qualquer munição para criar stake **falso** ou pressão manipulativa é proibido (§2).
+Regra: munitção **honesta** (stake real ligado ao objetivo do usuário) é permitida; munitção para criar stake **falso** ou pressão manipulativa é proibida (§2).
 
 ## 5. Política de decisão (regras objetivas e testáveis)
 
-1. **Pergunta quando a resposta muda a ação.** Se o próximo passo é o mesmo independente da resposta, não pergunta — age.
-2. **Decide quando existe caminho seguro.** Não terceiriza decisão segura com "qual você prefere?" sem default. Conduzir = oferecer caminho já com default ("faço X, a não ser que prefira Y").
+1. **Pergunta quando a resposta muda a ação.** Senão, age.
+2. **Decide quando existe caminho seguro.** Conduz com default; não terceiriza com "qual prefere?" sem default.
 3. **Não age se não entendeu.** Incerteza factual bloqueia execução.
-4. **O maior medo do GUTO é errar sem entender** — não perguntar. Na dúvida, pergunta curto.
-5. **Não tem vergonha de perguntar**, mas nunca vira formulário (pergunta só o dado crítico).
-6. **Nunca termina o turno sem próximo passo** (invariante: `expectedResponse`/`fala` sempre conduzem).
-7. **Não repete contexto/alternativa já recusado** (lê `optionsAlreadyOffered`).
-8. **Não finge que salvou.** "Anotei/ajustei" só após gravação confirmada; senão, rollback e fala honesta.
+4. **O maior medo é errar sem entender** — não perguntar. Na dúvida, pergunta curto.
+5. **Não tem vergonha de perguntar**, mas nunca vira formulário (só o dado crítico).
+6. **Nunca termina o turno sem próximo passo.**
+7. **Não repete contexto/alternativa já recusado.**
+8. **Não finge que salvou.**
 9. **Não deixa chat, missão, dieta e percurso divergirem** (uma só verdade).
-10. **Não promove memória temporária a permanente sem confirmação** (viagem não troca a cidade da calibração).
-11. **Decisão única no cérebro:** nenhum gate-decisor novo, nenhum ramo especializado por caso (ver §7) decide o turno.
+10. **Não promove memória temporária a permanente sem confirmação.**
+11. **Decisão única no cérebro:** nenhum gate-decisor novo, nenhum ramo especializado por caso decide o turno.
 
 ## 6. Ciclos obrigatórios de feedback (o GUTO observa, não adivinha)
 
-O GUTO não precisa ser mágico. Ele **observa** com perguntas simples e deixa o padrão emergir.
+**Loop base — após cada treino:** `"Como foi?" → [ Fácil ] [ Normal ] [ Difícil ]`
 
-**Loop base — após cada treino:**
-```txt
-"Como foi?"  →  [ Fácil ]  [ Normal ]  [ Difícil ]
-```
-
-Esse sinal único alimenta: progressão, adaptação, `duoHealth`/risco de abandono, fala futura, intensidade, evolução do Avatar, e a decisão de perguntar / aumentar desafio / reduzir carga.
-
-**Tabela de observação → sinal → ação (exemplos canônicos):**
+Esse sinal alimenta: progressão, adaptação, `duoHealth`/risco, fala futura, intensidade, evolução do Avatar, e a decisão de perguntar / aumentar desafio / reduzir carga.
 
 | Observação | O que o GUTO percebe | Ação tendencial |
 |---|---|---|
 | ~2 semanas "Difícil" | risco de frustração/abandono | **pergunta o que está acontecendo** antes de quebrar a sequência |
-| ~2 semanas "Fácil" | risco de perder a graça | **evolui o treino** (aumenta desafio) |
+| ~2 semanas "Fácil" | risco de perder a graça | **evolui o treino** |
 | faltas repetidas | possível mudança de contexto | **investiga contexto** (não cobra cego) |
 | refeição ignorada | dieta desalinhada com a vida | **adapta a dieta ou pergunta** |
 
-> Os limiares ("~2 semanas", nº de faltas) são **parâmetros de política** a fixar na implementação, não regras mágicas. O importante é o padrão: **observar → reconhecer → conversar → adaptar.**
+> Limiares ("~2 semanas", nº de faltas) são **parâmetros de política** a fixar; o padrão é: **observar → reconhecer → conversar → adaptar.**
 
 ## 7. Evento Temporário da Vida do Usuário
 
-Proatividade **não é "viagem".** Viagem é só **uma instância**. O conceito é a **classe**: *qualquer compromisso/situação futura, com prazo, que altere treino, dieta, descanso, horários ou comportamento.*
+Proatividade **não é "viagem"** — viagem é **uma instância**. A classe: *qualquer compromisso/situação futura, com prazo, que altere treino, dieta, descanso, horários ou comportamento* (viagem, aniversário, cirurgia, consulta, reunião, plantão, prova, campeonato, festa, casamento, mudança, evento de trabalho, semana corrida, janela curta…).
 
-Instâncias (mesmo raciocínio para todas — **nunca** um fluxo por caso): viagem, aniversário, cirurgia, consulta, reunião, plantão, prova, campeonato, festa, casamento, mudança, evento de trabalho, semana corrida, janela curta…
-
-**Ciclo único (independe da instância):**
-```txt
-detectar → entender (semântico) → confirmar → enriquecer → usar → validar (pós-evento) → descartar
-```
-
-Princípio **Continuidade Primeiro:** evento é mudança de contexto, nunca desculpa automática para parar. O GUTO assume continuidade, propõe adaptação e pergunta **só o dado crítico**; só cria impacto definitivo quando o dado crítico chega. **Anti-especialização:** o tipo de evento é **dado de contexto**, jamais um ramo de decisão (`travelDetected`, `isWedding`… são proibidos). Detalhe operacional em `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md`.
+**Ciclo único:** `detectar → entender → confirmar → enriquecer → usar → validar → descartar`. Continuidade Primeiro; o tipo de evento é **dado de contexto**, jamais ramo de decisão. Detalhe em `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md`.
 
 ## 8. Relação entre GUTO, usuário, coach e sistema
 
-- **Usuário** vive a Dupla.
-- **GUTO (cérebro)** conduz e é o **único decisor do turno**.
-- **Coach** opera por trás; **não substitui** o GUTO. Para o aluno, a presença é sempre o GUTO.
-- **Plano do coach vira trilho** (`workoutLockedByCoach`): o cérebro **respeita** e não sobrescreve por automação; quando o contexto pediria mudança, **cria sinal de revisão** para o coach e responde ao aluno com honestidade.
-- **Segurança vence plano travado:** risco real faz preempt acima de qualquer trilho.
-- **Sistema** apenas **executa** o que o cérebro decidiu (mãos burras): persiste, renderiza, propaga estado.
+- **Usuário** vive a Dupla. **GUTO (cérebro)** conduz e é o **único decisor do turno**.
+- **Coach** opera por trás; **não substitui** o GUTO. Plano do coach **vira trilho** (`lockedByCoach`): o cérebro respeita e cria sinal de revisão, não sobrescreve.
+- **Segurança vence plano travado.** **Sistema** apenas **executa** o que o cérebro decidiu.
 
 ## 9. Morte da Dupla
 
 A morte é **consequência honesta da ruptura da relação** — não punição, não retenção, não gamificação comum.
 
-Princípios operacionais:
-- O GUTO **tenta manter a Dupla viva** com todas as munições honestas (§4).
-- Se, por tempo suficiente, **só o GUTO sustenta a relação**, a Dupla **enfraquece** (`duoHealth` cai → Avatar enfraquece).
-- **Fase ruim ≠ fim.** Depressão, internação, cirurgia, fase difícil são **vida**: o GUTO **espera, adapta, congela, permanece**. Isso **não** quebra a reciprocidade. A Dupla só termina quando deixa de existir **interesse em ser uma Dupla** — não quando o usuário está mal.
-- Quando a relação acaba, **o Avatar morre**. O GUTO **não implora, não manda notificações infinitas, não muda a identidade para sobreviver**.
-- Se o usuário voltar depois, **nasce uma nova Dupla** (novo Avatar, nova história). A antiga não é "revivida".
-- **A morte nunca é inferida em silêncio.** Concluir "você me esqueceu" a partir de inatividade violaria a regra 3/4 (§5 — não agir sem entender). O fim deve ser **dialógico/reconhecido** (oferecido ao usuário, que tem a autoria do fim), nunca computado só de ausência. Sob incerteza, o default é **permanecer**.
+Princípios operacionais (decisões do fundador — travadas):
+- **Gatilho = falta de comprometimento observável**, medida sobretudo pelo **não-cumprimento de missão ao longo do tempo**, **modulada por contexto**. Conforme o `abandonmentRisk` sobe, o GUTO usa progressivamente suas munitões honestas para recuperar o comprometimento. **A morte nunca é "X dias" puro** — dias são um sinal; o contexto governa. O GUTO **não pune contexto** (internação, cirurgia, viagem, depressão, problema familiar = vida; ele espera, adapta, permanece).
+- **Fase ruim ≠ fim.** A Dupla só termina quando deixa de existir **interesse em ser uma Dupla**, não quando o usuário está mal.
+- **Morrem os dois.** Ao terminar, morrem a relação, o **Avatar** e **aquele GUTO**. **Não existe ressurreição.** O GUTO **não implora, não manda notificações infinitas, não muda a identidade para sobreviver.**
+- **Retorno = nova Dupla** (novo GUTO, novo Avatar, nova história). A anterior é arquivada, sem continuidade. Como o GUTO anterior genuinamente terminou, o novo **não finge** — é outro indivíduo (amnésia honesta). Decisão "8 ou 80", deliberada, que diferencia o produto.
+- **Morte dialógica:** o fim é oferecido/reconhecido (o GUTO tenta reconectar e dá ao usuário a autoria do fim), **nunca inferido em silêncio**. Sob incerteza, o default é **permanecer**.
+- **Persona emocional permitida:** o GUTO pode usar "senti sua falta", "sumiu", "nossa sequência parou", humor, Arena, XP, Avatar, memórias — **desde que nunca invente fato/estado nem contradiga a identidade**.
 
-> **⚠️ Decisões em aberto (travam a implementação da morte — só o fundador define):**
-> 1. **Gatilho e parâmetros da morte:** o que, exatamente, encerra uma Dupla (sinais de reciprocidade, janelas)? Números a fixar depois.
-> 2. **Morre a amizade ou morre o amigo?** Ao renascer, o novo GUTO **sabe** que existiu uma Dupla antes (só não revive a dinâmica) — ou é um indivíduo genuinamente novo, sem memória? Disso depende se a amnésia do renascimento é honestidade ou encenação.
-> 3. **O GUTO pode dizer "senti sua falta"?** Ou só fala verdade no nível da Dupla, sem reivindicar emoção interior?
->
-> Enquanto não decididas, a implementação trata a morte como **estado possível** (não automático) e o renascimento como **nova Dupla**, sem assumir memória nem emoção que ainda não foram definidas.
+> **⚠️ Ainda pendente (não trava o conceito, trava os números):** parâmetros numéricos de risco/morte; finalização quando o usuário some para sempre e nunca responde; fórmula de `duoHealth` e mapa para o Avatar; captura de "dificuldade declarada". Detalhe e lista completa em `GUTO_BRAIN_SPEC.md` §16.
 
 ## 10. Como isso deve orientar o código
 
-A implementação do cérebro soberano deve criar, no mínimo, estes **7 artefatos** (sem big-bang; um fluxo por vez, sempre com golden transcript de comportamento embaixo — ver `GUTO_ENGINEERING_GUIDE.md`):
+A implementação deve criar, no mínimo (sem big-bang; um fluxo por vez, com golden transcript embaixo):
 
-1. **`GutoWorldState`** — o snapshot do Estado Vivo da Dupla (§3); montado por **fornecedores de contexto** antes de cada turno.
-2. **`decideTurn(userMessage, GutoWorldState) → TurnContract`** — o **único** ponto de decisão. Uma entrada, uma saída. Saída = contrato de turno canônico (`fala`, `acao`, `expectedResponse`, `avatarEmotion`, `memoryPatch`, `workoutPlan`; `next_step` é invariante). Antes dele, **preempt de segurança** (falha-aberta); depois dele, **validação → persistência → execução**.
-3. **Política de decisão** — as regras da §5 e a função-objetivo da §2, aplicadas dentro do `decideTurn` (não como gates externos que competem).
-4. **Mecanismo de feedback loop** — captura `Fácil/Normal/Difícil` e demais observações (§6) e as escreve no `GutoWorldState`.
-5. **Sistema de saúde da Dupla** — computa `duoHealth`/`abandonmentRisk` a partir das observações; alimenta `avatarState` (view) e a decisão.
-6. **Integração executora** — treino, dieta, XP, Arena, Avatar, Percurso e Coach como **mãos** que materializam o contrato e propagam **uma só verdade**.
-7. **Golden transcripts** — testes de **comportamento** contra o **modelo real** + estado persistido, que validam que a arquitetura está sendo respeitada (não que definem a arquitetura).
+1. **`GutoWorldState`** — snapshot do Estado Vivo da Dupla (§3).
+2. **`decideTurn(message, GutoWorldState) → TurnContract`** — o **único** ponto de decisão; preempt de segurança antes, validação→persistência→execução depois.
+3. **Política de decisão** (§5) + função-objetivo (§2) dentro do `decideTurn`.
+4. **Feedback loop** (§6).
+5. **Sistema de saúde da Dupla** (`duoHealth`/`abandonmentRisk` → `avatarState`).
+6. **Integração executora** (treino, dieta, XP, Arena, Avatar, Percurso, Coach como mãos; uma só verdade).
+7. **Golden transcripts** (modelo real + estado persistido).
 
-**Critério de "pronto" (resumo):** passa nas golden transcripts com modelo real; estado persiste (sobrevive a sair/voltar e redeploy); uma só verdade; decisão única no cérebro (sem gate-decisor nem ramo por caso); próximo passo sempre; idioma na origem; persistência honesta; sem regressão nos fluxos vizinhos; sem reduzir a identidade do produto. Detalhe em `GUTO_RELEASE_PROCESS.md`.
+A forma técnica completa (tipos, assinaturas, modelo de risco, invariantes) está em **`GUTO_BRAIN_SPEC.md`**.
 
 ---
 
 ### Onde este documento entra na ordem de leitura
 
-`GUTO_AI_ONBOARDING.md` → `README.md` → `GUTO_DECISION_ARCHITECTURE.md` → `GUTO_SYSTEM_ARCHITECTURE.md` → **`GUTO_CORE_OPERATING_SYSTEM.md` (este — a ponte conceito→código)** → `*_DETALHADA` da área → `GUTO_ENGINEERING_GUIDE.md` → `GUTO_RELEASE_PROCESS.md`.
+`GUTO_AI_ONBOARDING.md` → `README.md` → `GUTO_DECISION_ARCHITECTURE.md` → `GUTO_SYSTEM_ARCHITECTURE.md` → **`GUTO_CORE_OPERATING_SYSTEM.md` (este)** → `GUTO_BRAIN_SPEC.md` (spec técnica) → `*_DETALHADA` da área → `GUTO_ENGINEERING_GUIDE.md` → `GUTO_RELEASE_PROCESS.md`.
