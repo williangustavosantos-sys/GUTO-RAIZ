@@ -14,7 +14,7 @@ Calibragem → Memória → Chat → Treino → Missão → GUTO Online
    → Proatividade → Memória (de novo)
 ```
 
-**Regra de ouro do organismo:** se qualquer parte decide sozinha ou deixa de atualizar outra parte, o usuário deixa de sentir continuidade e o produto inteiro quebra. Por isso Arena, Avatar, Coach, Percurso, Dieta, Treino e Proatividade **não são opcionais** — eles existem para formar **um único comportamento**.
+**Regra de ouro do organismo:** se qualquer parte decide sozinha ou deixa de atualizar outra parte, o usuário deixa de sentir continuidade e o produto inteiro quebra. Por isso Arena, Avatar, Coach, Percurso, Dieta, Treino e Proatividade **não são opcionais** — eles existem para formar **um único comportamento** e fazem parte da **identidade**, não de uma lista de extras.
 
 ## 2. As três camadas físicas
 
@@ -72,7 +72,7 @@ O contrato é **validado** antes de aplicar. Turno malformado cai no **fallback 
 
 ### Fornecedores de contexto (informam, não decidem)
 - **Memória / Calibragem:** quem é o usuário, restrições, objetivo, idioma, país/cidade, histórico.
-- **Proatividade:** eventos da semana (viagem, compromisso, janela curta) como contexto a adaptar — **propõe** continuidade, não decide sozinha.
+- **Proatividade:** **Eventos Temporários da Vida do Usuário** (ver §6) como contexto a adaptar — **propõe** continuidade, não decide sozinha.
 - **Catálogos (exercício/comida):** os trilhos seguros; o que pode ser prescrito.
 - **Histórico/risco de abandono, clima/feriado local:** sinais auxiliares.
 
@@ -85,23 +85,28 @@ O contrato é **validado** antes de aplicar. Turno malformado cai no **fallback 
 ### Operação humana (por trás)
 - **Coach / Empresa / Admin:** acompanham, editam plano (que vira `lockedByCoach`), geram convite, veem risco. **Para o aluno, a presença continua sendo o GUTO.** Isolamento forte por time/coach. XP/streak não são editados à mão (são confiança do sistema).
 
-## 6. As áreas do organismo (mapa rápido)
+## 6. Proatividade: Eventos Temporários da Vida do Usuário (conceito, não casos)
 
-| Área | Papel no organismo | Doc fonte de verdade |
-|---|---|---|
-| Calibragem & Memória | Coleta inicial → memória operacional viva | `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` |
-| Chat & Cérebro | Central de relação; onde a decisão acontece | `GUTO_CHAT_E_CEREBRO_DETALHADA.md` |
-| Treino & Missão | Treino do dia, dentro dos trilhos | `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` |
-| Dieta | Plano alimentar por memória + país + restrição | `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` |
-| GUTO Online | Sessão assistida guiada por estado | `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` |
-| Validação, XP, Evolução | Presença validada vira progresso | `GUTO_EVOLUCAO_XP_E_MORTE_DETALHADA.md` |
-| Arena & Gamificação | Consistência vira pertencimento/ranking | `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` |
-| Proatividade | Contexto semanal vira presença ativa | `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` |
-| Painel Admin/Coach/Empresa | Operação B2B2C por trás | `GUTO_PAINEL_ADMIN_CANONICO_V1.md` |
+A proatividade **não é sobre viagem.** Viagem foi apenas a primeira instância onde uma falha grave de arquitetura apareceu. O conceito canônico é:
+
+> **Evento Temporário da Vida do Usuário:** qualquer compromisso ou situação futura, com prazo, que altere treino, dieta, descanso, horários ou comportamento.
+
+Instâncias (todas tratadas pelo **mesmo** raciocínio, nunca por fluxos separados): viagem, aniversário, reunião, entrevista, campeonato, jogo, consulta médica, cirurgia, festa, casamento, férias, plantão, evento de trabalho, mudança, show, semana corrida, janela curta de tempo, academia fechada, etc.
+
+O ciclo é sempre o mesmo, **independente da instância**:
+
+```txt
+detecção → entendimento semântico → confirmação → enriquecimento
+   → uso → validação pós-evento → descarte/arquivamento
+```
+
+Princípio soberano da proatividade — **Continuidade Primeiro:** evento é mudança de contexto, **nunca** desculpa automática para parar. O GUTO assume continuidade, propõe adaptação e pergunta **só o dado crítico** que falta; só cria impacto definitivo quando o dado crítico chega. (Detalhe em `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md`.)
+
+**Implicação arquitetural (obrigatória):** o cérebro raciocina sobre a **classe** de evento, não sobre o exemplo. Não pode existir um "motor de viagem", um "motor de cirurgia", um "motor de casamento". Existe **um** raciocínio de Evento Temporário. Especializar por instância é a mesma doença do parlamento de gates (ver `GUTO_DECISION_ARCHITECTURE.md`).
 
 ## 7. Idioma na arquitetura (lei, não camada de tradução)
 
-O idioma **não** é uma etapa de tradução no fim do pipeline. O **cérebro produz a fala já no idioma do usuário** (`pt-BR`, `en-US`, `it-IT`), com a personalidade do GUTO naquele idioma. Todos os módulos apenas exibem.
+O idioma **não** é uma etapa de tradução no fim do pipeline. O **cérebro pensa e produz a fala já no idioma do usuário** (`pt-BR`, `en-US`, `it-IT`), com a personalidade do GUTO naquele idioma, desde a origem. Os três idiomas existem sempre; não há fase "só um idioma". Todos os módulos apenas exibem.
 
 **País ≠ idioma.** O idioma governa fala/botões/voz. O país/cidade governa contexto (alimentação, clima, disponibilidade, cultura). Os dois entram como contexto no cérebro e saem combinados em uma única resposta. Tratar idioma como tradução posterior é uma regressão arquitetural.
 
@@ -109,8 +114,9 @@ O idioma **não** é uma etapa de tradução no fim do pipeline. O **cérebro pr
 
 1. **Uma só verdade:** todas as áreas leem o mesmo estado persistido.
 2. **Uma só decisão por turno:** emitida pelo cérebro, no contrato.
-3. **Persistência honesta:** "salvei" só com gravação confirmada.
-4. **Próximo passo sempre:** `next_step` nunca vazio.
-5. **Trilhos fechados:** prescrição só dentro do catálogo validado.
-6. **Idioma correto na origem:** fala nasce no idioma do usuário.
-7. **Plano do coach soberano:** `lockedByCoach` nunca é sobrescrito por automação.
+3. **Raciocínio por conceito:** o cérebro trata classes (ex.: Evento Temporário), nunca fluxos especializados por instância.
+4. **Persistência honesta:** "salvei" só com gravação confirmada.
+5. **Próximo passo sempre:** `next_step` nunca vazio.
+6. **Trilhos fechados:** prescrição só dentro do catálogo validado.
+7. **Idioma correto na origem:** fala nasce no idioma do usuário; país independente.
+8. **Plano do coach soberano:** `lockedByCoach` nunca é sobrescrito por automação.

@@ -33,7 +33,9 @@ Consequências diretas, todas observadas:
 - **Cada correção desestabiliza outra coisa:** mais gates = mais colisões = mais superfície imprevista.
 - **O produto vira software comum:** quando um gate de palavra-chave decide o turno, o usuário sente o robô. A régua "alguém pensa por mim" falha.
 
-**Sintoma típico:** "viajo na quarta" → gate de cobrança agarra o turno → cobra treino. Remove-se o gate → modelo responde solto → "viagem = descanso". Adiciona-se gate de continuidade → colide com o próximo caso. Três correções, mesmo bug, nenhuma estável. **Isto é a assinatura de um sistema sem centro.**
+> **Sobre os exemplos deste documento:** quando aparecer "viagem", entenda como **uma instância** da classe *Evento Temporário da Vida do Usuário* (ver `GUTO_SYSTEM_ARCHITECTURE.md` §6). Viagem foi só o **primeiro caso** onde a falha apareceu; **não é o foco** e o cérebro nunca deve ser desenhado em torno dela.
+
+**Sintoma típico:** um evento temporário é compartilhado ("viajo na quarta", "tenho cirurgia sexta", "plantão no sábado") → um gate de cobrança agarra o turno → cobra treino. Remove-se o gate → modelo responde solto → "então é descanso". Adiciona-se um gate de continuidade → colide com o próximo caso. Três correções, mesmo problema, nenhuma estável. **Isto é a assinatura de um sistema sem centro.**
 
 ## 3. O princípio: Um Cérebro Soberano + mãos burras
 
@@ -56,11 +58,11 @@ Todo o resto se reorganiza em quatro papéis, e **apenas o cérebro decide**:
                                                  ▼
               ┌─────────────────────────────────────────────┐
   EXECUTORES  │ treino, dieta, missão, online, XP, arena,   │
-  (mãos)      │ avatar, percurso, UID — apenas EXECUTAM      │
+  (mãos)      │ avatar, percurso, UI — apenas EXECUTAM      │
               └─────────────────────────────────────────────┘
 ```
 
-Isto é **mais fiel à visão**, não menos: o README já diz "se qualquer parte decide sozinha, o produto quebra". Hoje as partes decidem sozinhas. Consolidar num cérebro é **cumprir a spec**.
+Isto é **mais fiel à visão**, não menos: o README já diz "se qualquer parte decide sozinha, o produto quebra". Hoje as partes decidem sozinhas. Consolidar num cérebro é **cumprir a spec** — e **não remove nenhum módulo do organismo**. A identidade (Arena, Avatar, XP, Percurso, Coach, GUTO Online, Dieta, Proatividade, B2B, três idiomas) permanece inteira; o que muda é **quem decide**.
 
 E é **mais fácil de manter sozinho**: o raio de explosão de cada mudança colapsa de "o organismo inteiro" para "um cérebro com um contrato".
 
@@ -71,6 +73,7 @@ E é **mais fácil de manter sozinho**: o raio de explosão de cada mudança col
 - Produz: **um** contrato de turno (`fala`, `acao`, `expectedResponse`, `avatarEmotion`, `memoryPatch`, `workoutPlan`, `next_step`).
 - É **uma porta de entrada e uma porta de saída**. Nada mais decide comportamento.
 - Interpreta intenção + contexto + memória + certeza. Se não tem certeza, **pergunta** (curto). Se tem caminho seguro, **decide** (não terceiriza com "qual prefere?").
+- Raciocina sobre **classes/conceitos**, não sobre instâncias (ver §6).
 - Emite a fala **já no idioma do usuário**.
 
 ### b) Fornecedores de Contexto — **informam, nunca decidem**
@@ -79,7 +82,7 @@ E é **mais fácil de manter sozinho**: o raio de explosão de cada mudança col
 - A proatividade **propõe** continuidade como contexto ("posso adaptar pra hotel/quarto/missão curta") — mas a decisão final é do cérebro.
 
 ### c) Segurança — **veta, por exceção, falha-aberta**
-- O `risk-classifier` é o **único** módulo com poder de interromper a persona — e só para risco real (autolesão, transtorno alimentar, cardio/neuro agudo, trauma). 
+- O `risk-classifier` é o **único** módulo com poder de interromper a persona — e só para risco real (autolesão, transtorno alimentar, cardio/neuro agudo, trauma).
 - Falha-aberta: qualquer erro/incerteza → não veta → comportamento normal.
 - É **piso de segurança**, não motor. Nunca decide o conteúdo normal do turno.
 
@@ -101,7 +104,15 @@ Pergunte de cada pedaço de código:
 
 Se **dois pedaços diferentes** respondem "sim" à primeira pergunta para o mesmo turno, você encontrou um parlamento. **Consolidar é a tarefa.**
 
-## 6. Os trilhos fechados (criatividade controlada, não regra burra)
+## 6. Generalize o conceito, nunca o caso (anti-especialização)
+
+Existe uma forma disfarçada do parlamento de cérebros: **especializar o cérebro por instância.** Criar um "fluxo de viagem", depois um "fluxo de cirurgia", depois um "fluxo de casamento" é o **mesmo erro** de criar um gate por palavra-chave — só que maior.
+
+> O cérebro raciocina sobre **classes**: *Evento Temporário da Vida do Usuário*, *limitação física*, *restrição alimentar*, *janela de tempo*, *indisponibilidade*. Viagem, aniversário, plantão, prova, cirurgia, casamento são **instâncias** da mesma classe, tratadas pelo **mesmo** raciocínio e pelo **mesmo** ciclo (`detecção → entendimento → confirmação → enriquecimento → uso → validação → descarte`).
+
+Sinal de alerta: se o código (ou o prompt) tem ramos nomeados por exemplo (`travelDetected`, `isWedding`, `surgeryBranch`…) decidindo comportamento, isso é especialização por caso — **regressão arquitetural**. O certo é um único raciocínio de evento que recebe o tipo como **dado de contexto**, não como **ramo de decisão**.
+
+## 7. Os trilhos fechados (criatividade controlada, não regra burra)
 
 Um cérebro soberano **não** significa um modelo solto. Significa **um** decisor operando dentro de trilhos:
 
@@ -110,30 +121,33 @@ Um cérebro soberano **não** significa um modelo solto. Significa **um** deciso
 - **Contrato de turno validado:** turno malformado → fallback honesto.
 - **`lockedByCoach`:** o plano do coach é soberano; o cérebro cria sinal de revisão, não sobrescreve.
 
-A diferença entre trilho e gate-cérebro: **o trilho restringe o espaço de ações seguras; o gate-cérebro escolhe a ação.** Trilho é bom. Gate escolhendo a resposta é o parlamento.
+A diferença entre trilho e gate-cérebro: **o trilho restringe o espaço de ações seguras; o gate-cérebro escolhe a ação.** Trilho é bom. Gate (ou ramo por caso) escolhendo a resposta é o parlamento.
 
-## 7. Como eliminar o parlamento (estratégia, sem código)
+## 8. Como eliminar o parlamento (estratégia, sem código)
 
 1. **Crie um único ponto de decisão** ("decide-turn"): uma entrada, uma saída (o contrato já existe).
 2. **Reclassifique cada gate atual** em um dos quatro papéis. A maioria vira **fornecedor de contexto** (entra no prompt) ou **executor** (aplica o contrato). Pouquíssimos são segurança. **Nenhum** continua decidindo o turno.
-3. **Migre um fluxo por vez**, sempre com uma transcrição dourada (modelo real) cobrindo aquele fluxo antes de mexer.
-4. **Invariante de produto:** todo turno volta com `next_step` não-vazio; se o cérebro não produzir, o sistema preenche um seguro.
-5. **Separe canal de controle do canal de fala** para sempre (marcador interno nunca vira texto do usuário).
-6. **Proibição permanente:** corrigir bug adicionando gate que decide. A correção certa é levar a decisão ao cérebro e dar a ele o contexto que faltava.
+3. **Colapse ramos por caso em raciocínio por classe** (ver §6): `travelDetected` e similares deixam de ser ramos de decisão e viram, no máximo, um campo de contexto "tipo de evento".
+4. **Migre um fluxo por vez**, sempre com uma transcrição dourada (modelo real) cobrindo o **comportamento** antes de mexer.
+5. **Invariante de produto:** todo turno volta com `next_step` não-vazio; se o cérebro não produzir, o sistema preenche um seguro.
+6. **Separe canal de controle do canal de fala** para sempre (marcador interno nunca vira texto do usuário).
+7. **Proibição permanente:** corrigir bug adicionando gate que decide, ou ramo especializado por caso. A correção certa é levar a decisão ao cérebro e dar a ele o contexto que faltava.
 
-## 8. O que NÃO fazer (resumo afiado)
+## 9. O que NÃO fazer (resumo afiado)
 
-- ❌ Adicionar `if/regex/classificador` que escolhe a resposta. 
+- ❌ Adicionar `if/regex/classificador` que escolhe a resposta.
+- ❌ Especializar o cérebro/fluxo por instância (um "motor de viagem"). Raciocine sobre a classe.
 - ❌ Deixar `decision-engine`, `injector`, "escada de cobrança" ou classificadores decidirem em paralelo ao modelo.
 - ❌ Múltiplas fontes de verdade do estado.
 - ❌ Tratar idioma como tradução pós-decisão.
+- ❌ Reduzir o produto/identidade para "simplificar". Simplifique a arquitetura de decisão, não o organismo.
 - ❌ Big-bang rewrite do backend (suicídio técnico — ver `GUTO_ENGINEERING_GUIDE.md`).
-- ✅ Um cérebro, um contrato, contexto rico, mãos burras, trilhos fechados, segurança por exceção.
+- ✅ Um cérebro, um contrato, contexto rico, raciocínio por classe, mãos burras, trilhos fechados, segurança por exceção.
 
-## 9. A pergunta de validação
+## 10. A pergunta de validação
 
 Para qualquer decisão de arquitetura de decisão, volte à régua:
 
-> "Esta mudança faz o turno ser decidido em **um** lugar que enxerga o organismo inteiro — e isso faz o usuário sentir que alguém pensa por ele?"
+> "Esta mudança faz o turno ser decidido em **um** lugar que enxerga o organismo inteiro e raciocina por **conceito** — e isso faz o usuário sentir que alguém pensa por ele?"
 
-Se a decisão se fragmenta em mais lugares, é regressão arquitetural, mesmo que o código esteja correto e os testes verdes.
+Se a decisão se fragmenta em mais lugares, ou se especializa por caso, é regressão arquitetural, mesmo que o código esteja correto e os testes verdes.
