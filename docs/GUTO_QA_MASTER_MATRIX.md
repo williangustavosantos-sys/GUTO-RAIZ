@@ -1,5 +1,7 @@
 # GUTO — QA MASTER MATRIX
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 **Data:** 2026-05-16
 **Auditor:** Claude (Opus 4.7) — modo executivo
 **Status:** FASE 1 (inventário) + FASE 4 (relatório). FASE 2/3 (Playwright live + screenshots fresh) **não executadas neste sandbox** — comandos exatos para Will rodar localmente estão na Seção 7.

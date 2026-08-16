@@ -1,5 +1,7 @@
 # 09 — Arena e Gamificação
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_ARENA_E_GAMIFICACAO_DETALHADA.md` · Código: `guto-backend/src/arena.ts`, `arena-store.ts`; `guto-app-v0/components/guto/tabs/arena-tab.tsx`
 >
 > **Veredito: 🟢 a Arena está bem alinhada e testada. O risco é consistência de XP entre telas em uso real.**

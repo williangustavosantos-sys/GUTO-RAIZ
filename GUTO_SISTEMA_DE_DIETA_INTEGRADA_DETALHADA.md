@@ -2,7 +2,7 @@
 
 > **Documento canônico** do Motor Nutricional, Isolamento de Intolerâncias (campo **NÃO COMO**), Localização de Contextos (país/cidade) e Dúvidas Dietéticas (a aba **Dieta**).
 >
-> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. A dieta **consome** a calibragem; idioma traduz texto, **país/cidade definem alimento**, **NÃO COMO** é soberano. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+> **Natureza:** descreve o **GUTO atual + alvo de produto**. A dieta **consome** a calibragem; idioma traduz texto, **país/cidade definem alimento**, **NÃO COMO** é soberano. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
 >
 > **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 10) · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (botão de dúvida) · `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` (viagem/evento) · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (Coach Lock de dieta).
 
@@ -217,6 +217,8 @@ A IA responde de forma precisa:
 - **Pergunta do usuário:** *"Não tenho pão integral hoje, o que uso?"*
 - **Resposta contextual do GUTO:** *"Substitui por 80g de aveia sem glúten misturada com água ou fruta, Will. Mantém a mesma energia para o teu treino de força de hoje e passa longe da lactose!"*
 
+No código atual, o Chat preserva o contexto do alimento/refeição quando a dúvida nasce do card da Dieta. Se o usuário disser "não tenho esse alimento", o GUTO não pergunta de novo qual alimento era: ele usa `foodName`, `mealName`, plano completo, perfil e restrições. Quando há alternativa compatível, responde com substituto concreto e porção; quando falta opção segura, pergunta o que o usuário tem disponível ou conduz uma investigação curta sem perder o contexto original.
+
 ---
 
 ## Sobresposição do Treinador (Coach Priority)
@@ -288,7 +290,7 @@ Antes de qualquer correção de dieta, o relatório técnico deve responder:
 | D-5 | Patologia ≠ restrição alimentar | Dor não bloqueia dieta; só NÃO COMO | dieta só bloqueia por `foodRestriction` clarification | ✅ alinhado |
 | D-6 | Macros coerentes (`P*4+C*4+G*9 ≈ targetKcal`) | Conferência matemática antes de salvar | `scaleDietToTarget` repara ±80 kcal antes de bloquear | ✅ alinhado |
 | D-7 | Coach Lock de dieta não é sobrescrito | GUTO não reescreve dieta travada | `diet/lock` no admin-router; preservação testada | ✅ alinhado |
-| D-8 | Troca de alimento pelo chat persiste | Swap salvo; respeita lock | Respeita lock; cobertura de swap por chat **parcial** | **[implementar]** (parcial) |
+| D-8 | Dúvida/substituição de alimento pelo chat preserva contexto | Orienta troca segura; persistência automática do swap oficial respeita lock | `buildDietModelContext` + `buildFoodSubstituteResponse` dão substituto concreto; persistência automática no plano ainda parcial | 🟡 parcial |
 | D-9 | "Não tenho alimento" = substituição (não patologia) | Tratado como alimentação | Implementado (contexto de refeição no chat) | ✅ alinhado |
 
 > Botão de dúvida "?" da dieta e tratamento de "não tenho/substituir": ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`. Edição/trava de dieta pelo painel: ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.

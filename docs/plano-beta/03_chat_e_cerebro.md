@@ -1,5 +1,7 @@
 # 03 — Chat e Cérebro do GUTO
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_CHAT_E_CEREBRO_DETALHADA.md` · Código: `guto-backend/server.ts`, `guto-backend/src/guto-turn-contract.ts`, `guto-backend/src/risk-classifier.ts` · Frontend: `guto-app-v0/components/guto/tabs/chat-tab.tsx`
 >
 > **Veredito: 🟢 B-1..B-5 FECHADOS e verificados ao vivo (2026-05-30). B-4 (álcool) exigiu 2ª rodada — era bug de precedência (escada de recusa/luto sequestrava o override) + classificador instável; resolvido com piso determinístico + guard de precedência (8/8 ao vivo, suíte 456/456). B-6 = infra de evals.** Verificado conversando com o cérebro real (Gemini).

@@ -1,5 +1,7 @@
 # 11 — Fluxo Geral (espinha) e Ordem de Execução
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` + `README.md` · Síntese de todas as partes.
 >
 > **Veredito: a engenharia de cada peça é madura, mas a CORRENTE que faz o GUTO "parecer vivo" está partida em dois elos: calibragem→chat.**

@@ -1,5 +1,7 @@
 # GUTO — Checklist de Teste (Beta / primeiros minutos)
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Marque cada item: `[x]` = certo · `[!]` = errado/bug (escreva o que aconteceu ao lado).
 > Data do teste: ______ · Dispositivo: ______ · Idioma testado: ______
 

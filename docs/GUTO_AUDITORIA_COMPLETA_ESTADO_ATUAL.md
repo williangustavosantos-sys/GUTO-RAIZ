@@ -1,5 +1,7 @@
 # GUTO — Auditoria Completa do Estado Atual
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 Data da auditoria: 2026-05-16  
 Referência absoluta: `GUTO_SANTO_GRAAL_V3_1_IMPECAVEL.md`  
 Escopo: leitura local de frontend, backend, documentação, rotas, componentes, hooks, serviços, memória, idioma, assets, testes e captura visual com Playwright.

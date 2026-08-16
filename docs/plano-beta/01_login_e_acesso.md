@@ -1,5 +1,7 @@
 # 01 — Login, Acesso e Convite
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_PAGINA_DE_LOGIN_DETALHADA.md` · Código: `guto-backend/src/auth-router.ts`, `auth-middleware.ts`, `user-access-store.ts`; `guto-app-v0/app/login`, `app/convite/[token]`, `components/guto/guto-app.tsx` (Stage Router)
 >
 > **Veredito: 🟢 sólido.** É a parte mais madura. Lacunas são pontuais (recuperação de senha, code de morte) e um ponto de atenção operacional (grant de acesso).

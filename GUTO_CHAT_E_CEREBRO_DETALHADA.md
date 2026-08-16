@@ -2,7 +2,7 @@
 
 > **Documento canônico** da aba **GUTO / Chat** e do **cérebro** que a sustenta: interpretação de intenção, contrato de turno estruturado, memória, contexto, honestidade de persistência, fallback e segurança.
 >
-> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. O chat é a **central de relação** da dupla; ele não é um chatbot genérico nem uma árvore de palavras-chave. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+> **Natureza:** descreve o **GUTO atual + alvo de produto**. O chat é a **central de relação** da dupla; ele não é um chatbot genérico nem uma árvore de palavras-chave. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
 >
 > **Documentos relacionados:** `README.md` (seções "Chat Do GUTO" e "Sistema Interno Necessário") · `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 8) · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` (fonte de verdade) · `GUTO_SISTEMA_DE_TREINO_E_MISSAO_DETALHADA.md` e `GUTO_SISTEMA_DE_DIETA_INTEGRADA_DETALHADA.md` (botão de dúvida "?") · `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` (a proatividade fala pelo chat).
 
@@ -13,6 +13,8 @@
 A aba **GUTO** é o centro operacional da relação. O chat serve para conversar, ajustar memória, adaptar treino, tirar dúvidas, lidar com desculpas, registrar contexto e **conduzir** o usuário.
 
 O chat **não é livre no sentido perigoso**. Toda mensagem passa pelo backend (o cérebro), usa a `GutoMemory`, chama a IA dentro de um **contrato estruturado** e só executa ação se houver certeza. Se falta dado, ele pergunta. Se existe dor, ele protege. Se o usuário tenta mudar algo sensível, ele confirma. Se a IA falha, o fallback é honesto e seguro.
+
+No código atual, a aba GUTO é **chat real**: a lista de mensagens, o histórico recente, o chip de contexto, o input e os banners/cartões de decisão são a superfície principal. O avatar aparece compacto como presença da dupla; a vitrine grande do avatar fica na aba **Evoluir**.
 
 A diferença central para um app comum: **um app entrega conteúdo; o GUTO entrega presença.** Ele não pergunta "como posso ajudar?". Ele puxa o usuário para clareza, ação ou continuidade.
 
@@ -44,7 +46,7 @@ O chat é onde as 3 Regras Soberanas do GUTO mais aparecem (ver `README.md`):
 
 ```txt
 Usuário escreve / toca botão rápido
-→ Frontend POST /guto/chat  (mensagem + contexto da aba, se houver)
+→ Frontend POST /guto  (mensagem + contexto da aba, se houver)
 → Backend carrega GutoMemory do usuário (fonte de verdade)
 → Pré-classificador de segurança (1 chamada, ver §8)
 → IA (LLM) dentro do CONTRATO DE TURNO + regras fechadas
@@ -91,7 +93,9 @@ Interpretação semântica obrigatória (Regra Soberana 3):
 - **"Dor no ombro/joelho"** → **limitação física** → protege, pausa, adapta (ou marca revisão se `lockedByCoach`).
 - **"Nessun dolore" / "no pain"** → ausência de dor (treino), **não** restrição alimentar.
 
-Se o usuário confirma uma troca, o backend executa em background, **persiste** (`lastWorkoutPlan`/dieta) e devolve o patch para a UI atualizar na hora. Com `lockedByCoach`, vira **pendência de revisão** para o coach, e a resposta ao aluno é honesta.
+No código atual, o frontend injeta um bloco explícito de contexto no turno e mantém histórico recente no envio. O botão `?` de exercício também persiste o exercício ativo na memória operacional para a dúvida não morrer no turno seguinte. O botão `?` de alimento injeta alimento, refeição completa, restrições e perfil; se o usuário diz que não tem o alimento, o GUTO deve oferecer substituto concreto ou perguntar o que há disponível, sem perder o alimento original.
+
+Se o usuário confirma uma troca, o backend executa em background, **persiste** quando a ação altera plano oficial (`lastWorkoutPlan`/dieta) e devolve o patch para a UI atualizar na hora. Com `lockedByCoach`, vira **pendência/revisão** para o coach ou orientação segura sem sobrescrever o plano, e a resposta ao aluno é honesta.
 
 ---
 
@@ -161,8 +165,8 @@ O chat responde **sempre no idioma escolhido** pelo usuário (`pt-BR`, `en-US`, 
 | # | Tema | Doc (alvo / GUTO finalizado) | Código atual | Tipo |
 |---|---|---|---|---|
 | CH-1 | Contrato de turno estruturado | `fala/acao/expectedResponse/avatarEmotion/memoryPatch/workoutPlan` | `guto-turn-contract.ts` + parse/validação em `server.ts` | ✅ alinhado |
-| CH-2 | Contexto do "?" (treino/dieta) chega ao chat | Abre com contexto, sem saudação genérica | `exerciseDoubtTrigger`/`contextChip`; contexto de refeição | ✅ alinhado |
-| CH-3 | Intenção semântica (trocar/dor/execução/equipamento) | Classifica e roteia por intenção, não palavra-chave | `classifyExerciseDoubtMessage`; equipamento ocupado → substitui | ✅ alinhado |
+| CH-2 | Contexto do "?" (treino/dieta) chega ao chat | Abre com contexto, sem saudação genérica | `activeExerciseContextRef`/`activeDietContextRef`, `contextChip`; histórico recente no `POST /guto` | ✅ alinhado |
+| CH-3 | Intenção semântica (trocar/dor/execução/equipamento/alimento) | Classifica e roteia por intenção, não palavra-chave | Contexto de exercício/alimento preservado; equipamento ocupado → substituição direta; alimento indisponível → substituto ou pergunta dirigida | ✅ alinhado |
 | CH-4 | Honestidade de persistência | "Anotado" só com gravação confirmada | Rollback otimista + prompt de honestidade | ✅ alinhado |
 | CH-5 | Classificador de segurança (SAFETY_OVERRIDE) | Acolhe + encaminha em risco real | `risk-classifier.ts` (4 flags, falha aberta) | ✅ alinhado |
 | CH-6 | Fallback honesto quando IA cai | Mantém identidade, não inventa | `fallbackLine`/`classifyContractIntentFallback` | ✅ alinhado |

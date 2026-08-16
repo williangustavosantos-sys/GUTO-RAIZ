@@ -2,7 +2,7 @@
 
 > **Documento canônico** da Geração Adaptativa de Exercícios, Coerência Física, Catálogo de Mídias Locais e Dúvidas Contextuais (a aba **Missão / Treino do Dia**).
 >
-> **Natureza:** descreve o **GUTO finalizado — como tem que ser**. O treino **consome** a calibragem (`GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`); ele não inventa dado. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
+> **Natureza:** descreve o **GUTO atual + alvo de produto**. O treino **consome** a calibragem (`GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md`); ele não inventa dado. Onde o código atual diverge, ver **[Pontos de Atenção](#pontos-de-atenção-doc--código-atual)** no fim.
 >
 > **Documentos relacionados:** `GUTO_ESTRUTURA_E_FLUXO_DETALHADO_DO_APP.md` (Pág. 9) · `GUTO_CALIBRAGEM_E_MEMORIA_DETALHADA.md` · `GUTO_CHAT_E_CEREBRO_DETALHADA.md` (botão de dúvida) · `GUTO_ONLINE_SESSAO_ASSISTIDA_DETALHADA.md` · `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (Coach Lock).
 
@@ -188,6 +188,8 @@ A IA interpreta esse objeto e responde de forma imediata e personalizada:
 - **Pergunta do usuário:** *"Posso trocar este?"*
 - **Resposta contextual do GUTO:** *"Posso trocar sim, Will. Como você tem o joelho sensível, esse exercício de deitar não força em nada tua articulação. Mas se preferir por causa do ombro, posso colocar o supino reto com barra. Confirma que eu mudo o plano!"*
 
+No código atual, o Chat preserva o exercício ativo quando a dúvida nasce do card. Se o usuário disser "o aparelho está ocupado" ou "não consigo fazer esse", o GUTO não pergunta "qual exercício?": ele usa o exercício, treino completo, perfil, limitações e local de treino já injetados no contexto e responde com alternativa equivalente para o mesmo grupo muscular/local.
+
 ### Dúvida Convertida em Ação Física (Mudança no Plano)
 Se o usuário confirmar a troca no chat (ex: *"Muda para barra"*), o backend executa as seguintes operações em background:
 - Localiza o exercício alternativo compatível no catálogo.
@@ -226,5 +228,6 @@ Se o treino estiver com `lockedByCoach: true`, o fluxo muda:
 | T-5 | Coach Lock (`lockedByCoach`) não é sobrescrito | GUTO não reescreve plano travado | `lock/unlock` no admin-router; não-override testado | ✅ alinhado |
 | T-6 | Troca de exercício pelo chat persiste em `lastWorkoutPlan` | Swap salvo no backend; com lock vira pendência p/ coach | Swap por chat persiste; **fila de "pendência" visível ao coach** não confirmada | **[implementar]** (parcial) |
 | T-7 | Botão de dúvida "?" leva contexto do exercício ao chat | Abre chat com contexto, sem saudação genérica | Implementado (`exerciseDoubtTrigger`/`contextChip`) | ✅ alinhado |
+| T-8 | Aparelho ocupado/dúvida contextual não perde o exercício | GUTO sugere substituto direto sem perguntar qual exercício | `buildExerciseModelContext` + `activeExerciseContextRef` preservam exercício/treino/perfil/local | ✅ alinhado |
 
 > Detalhe do botão "?" e do tratamento de "trocar/dor/execução" no chat: ver `GUTO_CHAT_E_CEREBRO_DETALHADA.md`. Coach Lock e edição pelo painel: ver `GUTO_PAINEL_ADMIN_CANONICO_V1.md`.

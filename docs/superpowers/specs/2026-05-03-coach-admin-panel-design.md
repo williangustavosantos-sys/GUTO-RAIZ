@@ -1,4 +1,7 @@
 # Coach/Admin Panel — Design Spec
+
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 **Date:** 2026-05-03
 **Status:** Approved
 

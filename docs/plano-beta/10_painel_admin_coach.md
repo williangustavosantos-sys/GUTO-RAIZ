@@ -1,5 +1,7 @@
 # 10 — Painel Admin / Empresa / Coach
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_PAINEL_ADMIN_CANONICO_V1.md` (canônico único) · Código: `guto-backend/src/admin-router.ts`, `auth-router.ts`, `team-store.ts`, `team-plans.ts`, `invite-store.ts`, `log-store.ts`; `guto-app-v0/app/coach/*`, `app/admin/*`, `app/empresa/*`, `lib/panel-rules.ts`, `lib/api/admin.ts`
 >
 > **Veredito: 🟠 funcional e com backend real (cria empresa/coach/aluno/convite), isolamento de time testado; falta tirar o mock e fechar uma lista de gaps conhecida (G-01..G-13).**

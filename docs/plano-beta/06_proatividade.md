@@ -1,5 +1,7 @@
 # 06 — Proatividade e Ciclo Semanal
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > Spec: `GUTO_PROATIVIDADE_E_CICLO_SEMANAL.md` · Código: `guto-backend/src/proactivity/*` (`memory-extractor`, `memory-action-resolver`, `memory-enricher`, `proactive-store`, `weekly-conversation`), `presence/*`
 >
 > **Veredito: 🟢 o ciclo está implementado e testado (23 testes). Falta validar em device e a fala depende do chat (que está quebrado).**

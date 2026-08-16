@@ -1,5 +1,7 @@
 # GUTO — Plano de Beta, Parte por Parte (verificado no código rodando)
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 > **Data:** 2026-05-30 · **Método:** para cada área eu li o documento canônico da raiz (`*_DETALHADA`), li o código real de `guto-backend`/`guto-app-v0`, e **rodei o sistema de verdade** (backend no ar + conversa real com o cérebro Gemini). Cada doc traz: **o que a spec manda · o que existe no código · ✅ certo · ❌ errado/quebra · ➕ falta · 🛠 plano**.
 >
 > Este plano **não altera código** — é diagnóstico + plano de execução. Ele complementa e, em pontos, **corrige** as auditorias antigas (`docs/GUTO_AUDITORIA_*`, `docs/GUTO_PLANO_EXECUCAO_PARA_TESTES.md`).

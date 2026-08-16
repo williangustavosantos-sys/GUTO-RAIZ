@@ -69,6 +69,17 @@ Regras operacionais:
 
 Para o GUTO funcionar, tudo precisa estar integrado. Um campo preenchido na calibragem não pode morrer naquela tela. Ele precisa virar memória operacional e chegar no chat, treino, dieta, GUTO Online, validação, proatividade, arena e painel coach.
 
+### Estado atual confirmado no código (2026-06-17)
+
+- **Chat:** a aba GUTO é conversa real. A UI prioriza histórico, contexto, input e banners/cartões de decisão; o avatar ali é compacto, não a vitrine principal.
+- **GUTO Online:** é sessão assistida por máquina de estados, focada no treino em execução; assunto fora do treino é redirecionado para o chat normal.
+- **Evoluir:** é a casa visual do GUTO. O avatar grande oficial é renderizado por código (`GutoVividAvatar`/`GutoAvatarController`), com estágios Baby, Teen, Adult e Elite por XP.
+- **Percurso:** é calendário mensal/memória visual. Treino validado, treino adaptado, dia protegido, viagem, dor, compromisso, pendência e XP aparecem como eventos.
+- **Validação:** selfie é obrigatória no backend atual. Sem `imageBase64`, a rota retorna `SELFIE_REQUIRED`; sem prova, não há XP/Arena.
+- **Arena/XP:** todo XP ganho conta nos rankings semanal, mensal e individual, inclusive o XP do pacto. O pacto não conta como treino validado e não ativa streak.
+- **Painel:** `/coach` é o painel operacional único para super admin, admin e coach. Detalhe do aluno já tem abas de Resumo, Calibragem, Treino, Dieta, Validações, Histórico e Acesso. i18n do cockpit está parcial.
+- **FUTURO:** Morte/lockdown do GUTO ainda não existe no backend. App nativo/mobile segue como spike, não como app completo de produção.
+
 O fluxo base é:
 
 ```txt
@@ -128,7 +139,7 @@ O GUTO não mede só intenção. Ele mede presença validada.
 
 Após o treino, o usuário valida com câmera, contagem, frase e envio para o backend. Se a validação é aceita, o sistema registra o treino, atualiza histórico, dá XP, alimenta Arena, Percurso e evolução do avatar.
 
-XP é consistência, não ego. O usuário não ganha mais porque treinou pesado. Ele ganha porque apareceu. O XP inicial do pacto é só um buffer psicológico, não conta como treino.
+XP é consistência, não ego. O usuário não ganha mais porque treinou pesado. Ele ganha porque apareceu. O XP inicial do pacto é um buffer psicológico que conta como XP nas superfícies de período e no total, mas não conta como treino executado nem ativa streak.
 
 Arena, Evoluir, Percurso e memória precisam mostrar o mesmo estado. Se o XP aparece diferente em cada lugar, é bug crítico.
 
@@ -147,11 +158,12 @@ O ciclo correto é:
 ```txt
 coletar
 → entender
-→ confirmar
-→ enriquecer
-→ usar
-→ validar
-→ descartar
+→ validar com o usuário
+→ salvar
+→ mostrar
+→ usar depois
+→ validar o que aconteceu
+→ atualizar ou descartar
 ```
 
 Exemplo: o usuário comenta que vai viajar para Roma. O GUTO não deve salvar automaticamente sem confirmar. Ele pergunta se entendeu certo. Se o usuário confirma, a memória fica ativa. Durante a semana, o GUTO pode usar esse contexto para adaptar treino, tom, clima ou agenda. Depois que a data passa, ele não descarta sozinho; pergunta se aconteceu.
@@ -196,7 +208,7 @@ Se qualquer parte decide sozinha, o produto quebra. Se onboarding salva joelho o
 
 ## Documentos Detalhados Por Área
 
-> **Arquitetura dos documentos (2026-05-27):** a fonte de verdade de cada área é a série **`*_DETALHADA`** (uma por área), que descreve o **GUTO finalizado — como tem que ser**, com uma seção **"Pontos de Atenção (doc × código)"** sinalizando o que ainda diverge no código. A série **`PARTE_1..5` é só leitura narrativa** e virou **ponteiro** para as DETALHADA. O **painel** tem um único canônico: **`GUTO_PAINEL_ADMIN_CANONICO_V1.md`** (os demais docs de painel são apoio/histórico).
+> **Arquitetura dos documentos (2026-06-17):** a fonte de verdade de cada área é a série **`*_DETALHADA`** (uma por área), agora separando **estado atual confirmado no código**, **parcial** e **FUTURO** quando houver visão ainda não implementada. A série **`PARTE_1..5` é só leitura narrativa** e virou **ponteiro** para as DETALHADA. O **painel** tem um único canônico: **`GUTO_PAINEL_ADMIN_CANONICO_V1.md`** (os demais docs de painel são apoio/histórico).
 
 Depois deste README, use o documento canônico da área antes de alterar código:
 

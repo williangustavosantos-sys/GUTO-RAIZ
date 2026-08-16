@@ -1,5 +1,7 @@
 # GUTO — Auditoria Página por Página, Botão por Botão
 
+> **Documento histórico. Não usar como fonte operacional atual sem comparar com o código em main.**
+
 Data: **2026-05-16**
 Auditor: Claude (Opus 4.7) operando em worktree `funny-swartz-015494`
 Repo de código auditado: `/Users/williandossantos/GUTOO/guto-app-v0/` (Next.js 16, React 19, Tailwind 4, Sentry)
