@@ -1,0 +1,3 @@
+## 2026-08-22 - Optimize Promise.allSettled on memory enrichment
+**Learning:** Sequential await inside for...of loops when doing external API calls severely limits concurrency and delays response times, especially for optional endpoints. Memory enrichment calls for proactive memories can be safely parallelized using `Promise.allSettled`, handling independent tasks safely without blocking others on failure.
+**Action:** When finding loops dealing with fetching independent pieces of remote data or long-running independent actions, batch process them using `Promise.allSettled` to increase concurrency and speed without modifying architecture.
