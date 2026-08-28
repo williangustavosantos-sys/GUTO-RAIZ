@@ -38,10 +38,24 @@ export default function App() {
   const [state, setState] = useState(() => engine.getSnapshot().state)
 
   const dispatch = (nextEvent: GutoOnlineEvent) => {
+    const prevState = engine.getSnapshot().state
     const snapshot = engine.dispatch(nextEvent)
-    setState(snapshot.state)
-    void saveOnlineSession(snapshot.state)
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+
+    // Only trigger re-render if something other than updatedAt changed
+    // or if we need to force a re-render for resting tick updates
+    const isTick = nextEvent.type === "TICK"
+    const changed = prevState !== snapshot.state
+
+    if (changed) {
+      setState(snapshot.state)
+
+      // Avoid expensive disk I/O and haptics on regular ticks
+      if (!isTick) {
+        void saveOnlineSession(snapshot.state)
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      }
+    }
+
     return snapshot
   }
 
@@ -63,10 +77,12 @@ export default function App() {
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (status) => {
-      if (status !== "active") void saveOnlineSession(state)
+      if (status !== "active") {
+        void saveOnlineSession(engine.getSnapshot().state)
+      }
     })
     return () => subscription.remove()
-  }, [state])
+  }, [engine])
 
   const currentExercise = sampleWorkoutPlan.exercises[state.exerciseIndex]
   const line = phaseCopy(state)
