@@ -1,0 +1,3 @@
+## 2024-06-25 - React Native Disk I/O & Haptics in TICK Events
+**Learning:** In a long-running app (like a workout tracker), triggering high-frequency TICK events every second can inadvertently cause massive performance issues if they force unconditional disk writes (like `AsyncStorage.setItem`) and hardware access (like haptic feedback). This drains the battery, causes unnecessary CPU work, and affects rendering performance, even if the state change looks minimal.
+**Action:** When implementing polling or `setInterval` ticking on the frontend, always differentiate tick/heartbeat updates from direct user actions. Skip side effects (like haptics and auto-saving state to disk) on high-frequency, automated state updates.
