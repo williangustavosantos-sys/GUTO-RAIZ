@@ -1,0 +1,24 @@
+# Invariantes — não quebrar
+
+- Nunca restaurar V1/V2 como Companion authority.
+- `COMPANION_LEGACY_REQUESTS` deve continuar `0` nas jornadas V3.
+- Panel continua autoridade administrativa.
+- GUTO V3 continua autoridade Companion.
+- PostgreSQL continua durable official truth.
+- Redis não vira user truth.
+- Mem0 não vira autoridade de treino, dieta, XP, contexto físico/médico ou estado ativo.
+- Gemini não calcula nem persiste macros oficiais e não escolhe sozinho uma mutação.
+- Workout e diet devem usar o confirmed context atual.
+- Quando uma alteração exigir regeneração, plano e confirmed context devem terminar na mesma versão.
+- First Contact não pode rerodar depois de `COMPLETED`.
+- Não gerar workout/diet antes da confirmação do First Contact.
+- Não criar dual truth entre frontend, cache, Redis, Mem0 e Postgres.
+- Não usar estado global de usuário, lock global ou chave sem tenant/usuário.
+- Preservar isolamento por usuário e tenant em dados, auth, idempotência e observabilidade.
+- Não transformar ambiguidade funcional em consulta médica.
+- Não expor PHI, chaves, URLs de banco completas, senhas ou JWTs em logs/documentos.
+- Não reescrever arquitetura para corrigir bug localizado.
+- Não adicionar frameworks, agentes ou serviços sem necessidade demonstrada.
+- Não tratar CI, curl ou teste unitário como aceite do fundador.
+- Não promover Production sem autorização e validação do fluxo crítico em Preview.
+- Não limpar stashes, untracked, worktrees ou alterações preexistentes sem autorização explícita.
